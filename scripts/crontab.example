@@ -1,0 +1,4 @@
+# Linux/macOS: auto-publish a new post every 2 hours.
+# Install with:  crontab scripts/crontab.example   (edit the path first)
+# Avoids the :00 mark to spread load.
+7 */2 * * * cd /path/to/aiblog && /usr/bin/node new-post.js && /usr/bin/node build.js >> /tmp/aiblog.log 2>&1

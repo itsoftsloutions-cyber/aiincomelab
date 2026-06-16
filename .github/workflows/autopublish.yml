@@ -1,0 +1,58 @@
+name: Auto-publish & Deploy
+
+# Publishes a new post every 2 hours and deploys to GitHub Pages — fully free.
+on:
+  schedule:
+    - cron: "7 */2 * * *"   # every 2 hours, offset 7 min to avoid the :00 rush
+  workflow_dispatch: {}
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Only generate a new post on scheduled runs, then always rebuild.
+      - name: Publish next queued topic
+        if: github.event_name == 'schedule'
+        run: node new-post.js
+
+      - name: Build site
+        run: node build.js
+
+      - name: Commit new content
+        if: github.event_name == 'schedule'
+        run: |
+          git config user.name  "aiincomelab-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add content/posts data/state.json
+          git commit -m "auto: publish next queued post" || echo "nothing to commit"
+          git push || echo "nothing to push"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: publish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

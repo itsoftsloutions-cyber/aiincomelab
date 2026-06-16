@@ -1,0 +1,34 @@
+{
+  "name": "AIIncomeLab",
+  "tagline": "AI Tools, Productivity & Online Income",
+  "description": "Hands-on guides to the best AI tools for productivity, automation, and making money online. Practical, tested, no fluff.",
+  "url": "https://aiincomelab.com",
+  "lang": "en",
+  "locale": "en_US",
+  "author": "AIIncomeLab Editorial",
+  "twitter": "@aiincomelab",
+  "themeColor": "#0b1020",
+  "logoText": "AIIncomeLab",
+  "adsense": {
+    "enabled": true,
+    "client": "ca-pub-0000000000000000",
+    "slots": {
+      "header": "0000000001",
+      "inArticle": "0000000002",
+      "footer": "0000000003"
+    }
+  },
+  "analytics": {
+    "ga4": "G-XXXXXXXXXX"
+  },
+  "social": {
+    "twitter": "https://twitter.com/aiincomelab",
+    "youtube": "https://youtube.com/@aiincomelab"
+  },
+  "nav": [
+    { "label": "AI Tools", "href": "/category/ai-tools/" },
+    { "label": "Make Money", "href": "/category/make-money/" },
+    { "label": "Productivity", "href": "/category/productivity/" },
+    { "label": "Guides", "href": "/category/guides/" }
+  ]
+}

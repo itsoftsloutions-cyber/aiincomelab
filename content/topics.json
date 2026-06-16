@@ -1,0 +1,69 @@
+[
+  {
+    "title": "Best AI Tools to Make Money Online in 2026",
+    "category": "make-money",
+    "keywords": ["ai tools to make money", "make money with ai", "ai side hustle 2026"],
+    "description": "A tested list of AI tools that actually help you earn online in 2026, with realistic income ranges and step-by-step setup.",
+    "intent": "Help readers pick AI tools that generate real income, ranked by ease and earning potential.",
+    "sections": [
+      { "h": "Why AI changed online income in 2026", "points": ["Automation lowered the cost of content, design, and code", "Solo operators can now run workflows that needed a team", "The winners pair one AI tool with one clear distribution channel"] },
+      { "h": "AI writing tools for content income", "points": ["Use them for outlines and drafts, then add first-hand experience", "Monetize via display ads, affiliate links, and digital products", "Realistic ramp: 3-6 months of consistent publishing"] },
+      { "h": "AI design and video tools", "points": ["Thumbnails, shorts, and product mockups at near-zero cost", "Sell on marketplaces or use to grow an owned audience", "Keep a recognizable visual style to build brand recall"] },
+      { "h": "AI automation and agents", "points": ["Connect tools to remove repetitive manual steps", "Offer automation setups as a freelance service", "Document your workflow as a lead magnet"] },
+      { "h": "A realistic 30-day action plan", "points": ["Week 1: pick one niche and one tool", "Week 2-3: publish or ship consistently", "Week 4: add one monetization channel and measure"] }
+    ]
+  },
+  {
+    "title": "How to Start an AI Blog That Ranks on Google",
+    "category": "guides",
+    "keywords": ["start ai blog", "ai blog seo", "rank on google 2026"],
+    "description": "A practical, no-hype guide to launching an AI blog and earning organic Google traffic with solid on-page SEO.",
+    "intent": "Walk a beginner through launching an SEO-ready blog and earning search traffic.",
+    "sections": [
+      { "h": "Pick a niche with demand and ad value", "points": ["Balance search volume with commercial intent", "Money, software, and B2B niches pay higher ad rates", "Validate with real search queries before committing"] },
+      { "h": "On-page SEO that still works", "points": ["One clear primary keyword per page", "Descriptive title tags and meta descriptions", "Internal links, fast pages, and clean URLs"] },
+      { "h": "Technical SEO essentials", "points": ["Submit an XML sitemap and robots.txt", "Add Article structured data (JSON-LD)", "Mobile-first, accessible, and quick to load"] },
+      { "h": "Content that earns links and rankings", "points": ["Cover a topic better than page one currently does", "Add original data, screenshots, or first-hand tests", "Update posts on a schedule to keep them fresh"] },
+      { "h": "Turn traffic into revenue", "points": ["Display ads once you have steady traffic", "Affiliate links for tools you genuinely use", "Email capture to build an owned audience"] }
+    ]
+  },
+  {
+    "title": "AI Productivity Workflow: Do 8 Hours of Work in 3",
+    "category": "productivity",
+    "keywords": ["ai productivity", "ai workflow", "work faster with ai"],
+    "description": "A repeatable AI-assisted workflow that compresses planning, drafting, and review so you ship more in less time.",
+    "intent": "Give readers a concrete, repeatable AI workflow to save hours each day.",
+    "sections": [
+      { "h": "The planning layer", "points": ["Turn vague goals into a task list with AI", "Estimate effort and sequence the work", "Keep a single source of truth for the day"] },
+      { "h": "The drafting layer", "points": ["Generate a first draft, never a final one", "Edit for accuracy and your own voice", "Batch similar tasks to stay in flow"] },
+      { "h": "The review layer", "points": ["Use AI as a checklist, not a judge", "Verify facts and numbers yourself", "Ship, then improve in the next cycle"] },
+      { "h": "Guardrails that prevent slop", "points": ["Always add first-hand experience", "Fact-check anything that sounds confident", "Measure output quality, not just speed"] }
+    ]
+  },
+  {
+    "title": "Best Free AI Tools You Can Use Today",
+    "category": "ai-tools",
+    "keywords": ["free ai tools", "best free ai 2026", "ai tools no cost"],
+    "description": "A curated list of genuinely free AI tools for writing, images, audio, and automation, with honest limits of each free tier.",
+    "intent": "Show readers high-quality free AI tools and how to get value without paying.",
+    "sections": [
+      { "h": "Free AI for writing and research", "points": ["Great for outlines, summaries, and brainstorming", "Watch usage limits on free tiers", "Always verify generated facts"] },
+      { "h": "Free AI for images and design", "points": ["Create thumbnails, banners, and mockups", "Check the license before commercial use", "Keep a consistent style for brand recall"] },
+      { "h": "Free AI for audio and video", "points": ["Transcribe, caption, and repurpose content", "Turn one long video into many short clips", "Free tiers are perfect for testing demand"] },
+      { "h": "Free AI for automation", "points": ["Connect apps to remove manual steps", "Start with one repetitive task", "Scale only what proves valuable"] }
+    ]
+  },
+  {
+    "title": "AI Affiliate Marketing: A Beginner's Playbook",
+    "category": "make-money",
+    "keywords": ["ai affiliate marketing", "affiliate marketing 2026", "passive income ai"],
+    "description": "Step-by-step beginner playbook for using AI to research, create, and scale an affiliate marketing site the right way.",
+    "intent": "Teach beginners an ethical, durable AI-assisted affiliate approach.",
+    "sections": [
+      { "h": "Choose a niche you can be useful in", "points": ["Pick products you would recommend honestly", "Higher-priced tools mean higher commissions", "Demand plus trust beats chasing trends"] },
+      { "h": "Create content that helps before it sells", "points": ["Comparisons, tutorials, and honest reviews", "Disclose affiliate relationships clearly", "Link only to tools you have tested"] },
+      { "h": "Scale with systems, not shortcuts", "points": ["Templatize your content production", "Track which posts convert and why", "Reinvest in your best-performing topics"] },
+      { "h": "Stay compliant and trustworthy", "points": ["Follow disclosure rules in your region", "Never fake reviews or results", "Trust compounds; spam decays"] }
+    ]
+  }
+]

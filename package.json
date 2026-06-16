@@ -1,0 +1,14 @@
+{
+  "name": "aiincomelab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SEO-optimized, ad-monetized AI blog. Zero runtime dependencies.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "new": "node new-post.js",
+    "autopublish": "node new-post.js && node build.js",
+    "serve": "node serve.js"
+  },
+  "license": "MIT"
+}
