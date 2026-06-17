@@ -4,6 +4,7 @@ description: "A repeatable AI-assisted workflow that compresses planning, drafti
 slug: "ai-productivity-workflow-do-8-hours-of-work-in-3"
 category: "productivity"
 date: "2026-06-16"
+author: "Kanav Sharma"
 keywords: ["ai productivity", "ai workflow", "work faster with ai"]
 ---
 

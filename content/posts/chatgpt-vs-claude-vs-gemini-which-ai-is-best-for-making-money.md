@@ -4,6 +4,7 @@ description: "A practical comparison of ChatGPT, Claude, and Gemini for content 
 slug: "chatgpt-vs-claude-vs-gemini-which-ai-is-best-for-making-money"
 category: "ai-tools"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["chatgpt vs claude vs gemini", "best ai for making money", "chatgpt for business 2026"]
 ---
 

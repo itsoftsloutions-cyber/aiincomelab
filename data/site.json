@@ -8,6 +8,9 @@
   "author": "Kanav Sharma",
   "twitter": "@kanavy9ah",
   "themeColor": "#0d1117",
+  "verification": {
+    "google": ""
+  },
   "logoText": "AIIncomeLab",
   "adsense": {
     "enabled": true,
@@ -68,7 +71,11 @@
     "sponsoredPostRate": "$150"
   },
   "social": {
-    "twitter": "https://x.com/kanavy9ah"
+    "twitter": "https://x.com/kanavy9ah",
+    "linkedin": "https://linkedin.com/in/kanav-sharma-aiincomelab/",
+    "github": "https://github.com/itsoftsloutions-cyber/aiincomelab",
+    "facebook": "",
+    "youtube": ""
   },
   "nav": [
     { "label": "AI Tools", "href": "/category/ai-tools/" },
@@ -79,8 +86,8 @@
     { "label": "Contact", "href": "/contact/" }
   ],
   "heroStats": [
-    { "value": "13+", "label": "In-depth guides" },
-    { "value": "4", "label": "Earning methods" },
+    { "value": "15+", "label": "In-depth guides" },
+    { "value": "6", "label": "Earning methods" },
     { "value": "2h", "label": "New post cycle" }
   ],
   "featuredCategories": [

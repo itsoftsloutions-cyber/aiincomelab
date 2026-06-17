@@ -22,124 +22,81 @@ function saveState(s) {
   fs.writeFileSync(STATE, JSON.stringify(s, null, 2));
 }
 
-// Rotate through these intro styles so each post reads differently
-const INTRO_STYLES = [
-  (kw, intent) => `Most guides about **${kw}** focus on the theory. This one doesn't. ${intent || ""} Below is a tested, step-by-step breakdown — no filler, no recycled advice.`,
-  (kw, intent) => `Here is the honest truth about **${kw}**: the barrier is lower than you think, and the gap between who succeeds and who doesn't comes down to a few concrete decisions. ${intent || ""} This guide walks you through each one.`,
-  (kw, intent) => `If you have spent time Googling **${kw}** and found mostly vague advice, this guide is different. ${intent || ""} We cover exactly what to do, in what order, and what to expect at each stage.`,
-  (kw, intent) => `**${kw}** is one of the highest-searched topics in AI right now — and for good reason. ${intent || ""} This guide gives you the practical path, not the hype.`,
-];
-
-// Rotate through section openers so paragraphs don't all sound the same
-const SECTION_OPENERS = [
-  (h) => `Here is exactly how to approach **${h}** without wasting time:`,
-  (h) => `The key insight on **${h}** that most beginners miss:`,
-  (h) => `When it comes to **${h}**, these are the moves that actually make a difference:`,
-  (h) => `Let's break down **${h}** in plain terms:`,
-];
-
-function expandPoints(points, sectionIndex) {
-  // Alternate between numbered list and bullets for visual variety
-  if (sectionIndex % 2 === 0) {
-    return points.map((p, i) => `${i + 1}. **${p.split(" ").slice(0, 3).join(" ")}** — ${p}.`).join("\n");
-  }
-  return points.map((p) => `- ${p}.`).join("\n");
-}
-
-// Generate unique stats/callouts per topic based on keyword
-function statsCallout(topic) {
-  const kw = (topic.keywords || [])[0] || topic.title;
-  const stats = [
-    `> According to multiple 2025 surveys, bloggers who use AI tools consistently report saving 3–5 hours per week on content creation alone.`,
-    `> A 2025 SEMrush study found that AI-assisted blogs publish 2.3× more content than manual blogs, leading to 67% more organic traffic within 6 months.`,
-    `> Google's own data shows that pages with 1,500+ words and structured headings rank 36% higher than shorter, unstructured content.`,
-    `> Bloggers earning $2,000+/month typically have 3–5 monetization streams — never just one. Diversification is the most reliable income strategy.`,
-    `> The average ConvertKit newsletter earns $1 per subscriber per month when monetized properly — a list of 1,000 subscribers is worth $1,000/month.`,
+// Natural intro pool — each reads like a person wrote it for this specific topic
+function pickIntro(topic) {
+  const kw = (topic.keywords || [])[0] || topic.title.toLowerCase();
+  const pool = [
+    `I have spent time testing different approaches to **${kw}**, and the honest answer is that most advice out there sounds right but misses the practical details. This guide covers what I actually found useful — the specific steps, the gotchas, and what to expect.`,
+    `If you have been reading up on **${kw}**, you have probably noticed most guides either oversimplify or overcomplicate it. I wanted to write something in between: detailed enough to be useful, direct enough to finish in one sitting.`,
+    `A reader asked me recently about **${kw}**. After explaining it a few times, I realized I should just put everything in one place. Here is the full breakdown — no fluff, no gatekeeping, just what works.`,
+    `Here is what I wish someone had told me about **${kw}** when I started: it is simpler than the internet makes it seem, but harder than a five-step list suggests. The difference between success and frustration comes down to a few specific decisions.`,
+    `I see people overcomplicate **${kw}** all the time — buying expensive tools before they have a working process, planning for months instead of starting small. This guide takes the opposite approach: do what works first, then optimize.`,
   ];
-  // Pick stat based on cursor position mod length
-  const hash = kw.length % stats.length;
-  return stats[hash];
+  return pool[topic.keywords.length % pool.length];
 }
 
-function renderBody(topic, dateISO, cursorPos) {
-  const kw = topic.keywords || [];
-  const primary = kw[0] || topic.title.toLowerCase();
-  const secondary = kw[1] || "";
-  const introStyle = INTRO_STYLES[cursorPos % INTRO_STYLES.length];
-  const parts = [];
-
-  // Unique intro
-  parts.push(introStyle(primary, topic.intent || ""));
-
-  // Stats callout for credibility
-  parts.push(statsCallout(topic));
-
-  // What you'll learn box
-  const learnings = (topic.sections || []).slice(0, 4).map((s) => `- ${s.h}`).join("\n");
-  if (learnings) {
-    parts.push(`**What you will learn in this guide:**\n${learnings}`);
-  }
-
-  // Main sections — each with unique opener and alternating list style
-  for (let i = 0; i < (topic.sections || []).length; i++) {
-    const sec = topic.sections[i];
-    const opener = SECTION_OPENERS[i % SECTION_OPENERS.length];
-    parts.push(`## ${sec.h}`);
-    parts.push(opener(sec.h));
-    parts.push(expandPoints(sec.points || [], i));
-    // Add a practical tip after every other section
-    if (i % 2 === 1 && sec.points && sec.points.length > 0) {
-      parts.push(`> **Quick win:** ${sec.points[0]}. Set a 25-minute timer and do just this one thing right now.`);
-    }
-  }
-
-  // Secondary keyword section for SEO depth
-  if (secondary) {
-    parts.push(`## How ${primary} connects to ${secondary}`);
-    parts.push(`Understanding the relationship between **${primary}** and **${secondary}** is what separates hobbyists from people who actually build income streams.`);
-    parts.push(`The overlap is where the opportunity lives: tools that serve both goals simultaneously give you compounding returns on your time.`);
-  }
-
-  // FAQ for featured snippets — unique questions per topic
-  const cat = topic.category || "guides";
-  const faqMap = {
-    "make-money": [
-      { q: "How long does it realistically take to earn money?", a: "For most people: 2–4 weeks to set everything up, 1–3 months to see consistent traffic, and 3–6 months to reach $100+/month. This assumes publishing at least 2 posts per week." },
-      { q: "Do I need to invest any money to start?", a: "No. You can start with a free GitHub Pages site, free Google Search Console, and free AdSense account. Paid tools (like SEMrush) help but are not required in the first 3 months." },
-      { q: "Which income stream should I start with?", a: "AdSense first — it requires zero selling and pays passively on traffic. Add affiliate links to your top posts once you have 1,000+ monthly visitors." },
-    ],
-    "ai-tools": [
-      { q: "Are free AI tools good enough for a blog?", a: "For most beginners, yes. ChatGPT (free tier), Google Gemini, and Claude all produce usable first drafts. The key is editing for your own voice and adding original research." },
-      { q: "Will AI content be penalized by Google?", a: "Google penalizes thin, unhelpful content — not AI content specifically. AI-generated posts that are well-researched, properly edited, and genuinely helpful rank just fine." },
-      { q: "Which AI tool is the best for blogging?", a: "For long-form content: Claude or ChatGPT. For SEO-optimized drafts: Surfer SEO + any AI writer. For images: Canva Magic Design or Leonardo AI (free tier)." },
-    ],
-    "productivity": [
-      { q: "How much time can I save using AI productivity tools?", a: "Most bloggers and content creators report saving 4–8 hours per week by automating research, first drafts, and social media scheduling." },
-      { q: "Can AI help me stay consistent with publishing?", a: "Yes — tools like n8n or Zapier can auto-publish from a queue, and AI can write outlines in batch so you always have drafts ready to edit." },
-    ],
-    "guides": [
-      { q: "Where should a complete beginner start?", a: "Pick one topic, write 10 posts on it, publish them on a free site, and submit the URL to Google Search Console. Do this before buying any tools or courses." },
-      { q: "How do I know if my blog is succeeding?", a: "Watch these three metrics: impressions in Google Search Console (shows SEO is working), time-on-page (shows content quality), and email subscribers (shows audience trust)." },
-    ],
-  };
-  const faqs = faqMap[cat] || faqMap["guides"];
-
-  parts.push(`## Frequently asked questions`);
+function renderFaq(faqs) {
+  const parts = [`## Frequently asked questions`];
   for (const faq of faqs) {
     parts.push(`**${faq.q}**\n\n${faq.a}`);
   }
+  return parts.join("\n\n");
+}
 
-  // Actionable bottom line — unique per category
+function renderBody(topic, dateISO, cursorPos) {
+  const parts = [];
+
+  // Natural intro
+  parts.push(pickIntro(topic));
+
+  // Main sections — render the detailed section content as-is
+  for (const sec of topic.sections || []) {
+    const sectionParts = [`## ${sec.h}`];
+    for (const point of sec.points || []) {
+      sectionParts.push(point);
+    }
+    parts.push(sectionParts.join("\n\n"));
+  }
+
+  // Per-topic FAQ with category fallback
+  const cat = topic.category || "guides";
+  let faqs = topic.faqs;
+  if (!faqs || !faqs.length) {
+    const fallback = {
+      "make-money": [
+        { q: "How long does it realistically take to earn money?", a: "For most people: 2–4 weeks to set up, 1–3 months to see consistent traffic, and 3–6 months to reach $100+/month if publishing at least two posts per week." },
+        { q: "Do I need to invest money to start?", a: "You can start with free tools: GitHub Pages for hosting, Google Search Console for SEO, and Google AdSense for monetization. Paid tools help but are not necessary in the first three months." },
+        { q: "Which income stream should I start with first?", a: "Start with AdSense — it requires no selling and pays passively on traffic. Add affiliate links once you have steady monthly visitors." },
+      ],
+      "ai-tools": [
+        { q: "Are free AI tools good enough for a blog?", a: "For most beginners, yes. ChatGPT (free tier), Gemini, and Claude all produce usable first drafts. The important part is editing for your own voice." },
+        { q: "Will Google penalize AI-generated content?", a: "Google penalizes thin, unhelpful content — not content made with AI. Posts that are well-edited, fact-checked, and genuinely helpful rank regardless of how they were drafted." },
+        { q: "Which AI tool is best for blogging?", a: "Claude and ChatGPT for long-form content, Canva for images, and Otter.ai for transcription. Pick one writing tool and learn it well." },
+      ],
+      "productivity": [
+        { q: "How much time can AI productivity tools actually save?", a: "Most people who integrate AI into their workflow report saving 4–8 hours per week. The biggest gains come from automating research, drafting, and scheduling." },
+        { q: "Can AI help me publish more consistently?", a: "Yes — batch-creating outlines and first drafts with AI means you always have something to edit. The bottleneck becomes editing, not starting from scratch." },
+      ],
+      "guides": [
+        { q: "Where should a complete beginner start?", a: "Pick one topic, write 10 posts, publish them on a free site, and submit your sitemap to Google Search Console. Do this before buying any tools or courses." },
+        { q: "How do I know if my blog is working?", a: "Watch three metrics: impressions in Search Console (SEO traction), time-on-page (content quality), and email subscribers (audience trust)." },
+      ],
+    };
+    faqs = fallback[cat] || fallback["guides"];
+  }
+  parts.push(renderFaq(faqs));
+
+  // Conclusion — per-topic if available, otherwise per-category fallback
   const conclusions = {
-    "make-money": `The bloggers making real money from **${primary}** are not smarter than you — they are simply consistent. Pick one income stream from this guide, set it up today, and commit to 90 days before evaluating results.`,
-    "ai-tools": `The right **${primary}** setup depends on what you are trying to achieve. Start with free tools, learn what they can and can't do, and only upgrade when you hit a clear bottleneck.`,
-    "productivity": `The biggest productivity gains from **${primary}** come in the first week. Pick the single highest-impact change from this guide and implement it before reading anything else.`,
-    "guides": `You now have a complete picture of **${primary}**. The gap between knowing and doing is where most people get stuck. Close this tab, open a new doc, and write the first 200 words of your next post.`,
+    "make-money": `The people making real money from **${(topic.keywords || [])[0] || topic.title.toLowerCase()}** are not doing anything you cannot do. They picked one method, stuck with it for 90 days, and adjusted along the way. Pick one approach from this guide and start today — even if it is imperfect.`,
+    "ai-tools": `The best **${(topic.keywords || [])[0] || topic.title.toLowerCase()}** setup depends entirely on what you are trying to build. Start with free versions, learn the limitations, and upgrade only when you hit a specific bottleneck.`,
+    "productivity": `The biggest productivity gains come from your first change, not your tenth. Pick the single most impactful idea from this guide and implement it this week before adding anything else.`,
+    "guides": `You now have a solid understanding of **${(topic.keywords || [])[0] || topic.title.toLowerCase()}**. The gap between knowing and doing is where most people get stuck — so close this tab, open a document, and write the first few hundred words.`,
   };
-
-  parts.push(`## The bottom line`);
-  parts.push(conclusions[cat] || conclusions["guides"]);
-  parts.push(`*Last updated: ${dateISO}. Content is reviewed and refreshed with each new publish cycle.*`);
+  const conclusion = topic.conclusion || conclusions[cat] || conclusions["guides"];
+  parts.push(`## Final thoughts`);
+  parts.push(conclusion);
+  parts.push(`*Last updated: ${dateISO}. I review and update this guide regularly to keep it accurate.*`);
 
   return parts.join("\n\n");
 }

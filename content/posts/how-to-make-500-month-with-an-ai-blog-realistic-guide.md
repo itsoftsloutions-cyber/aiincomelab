@@ -4,6 +4,7 @@ description: "A realistic, no-hype roadmap to earning $500/month from an AI-assi
 slug: "how-to-make-500-month-with-an-ai-blog-realistic-guide"
 category: "make-money"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["make money blogging 2026", "ai blog income", "500 dollars a month blogging"]
 ---
 

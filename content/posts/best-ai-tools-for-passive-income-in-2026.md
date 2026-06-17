@@ -4,6 +4,7 @@ description: "The AI tools most suited to building passive income streams — co
 slug: "best-ai-tools-for-passive-income-in-2026"
 category: "make-money"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["ai tools passive income", "passive income ai 2026", "make passive income with ai"]
 ---
 

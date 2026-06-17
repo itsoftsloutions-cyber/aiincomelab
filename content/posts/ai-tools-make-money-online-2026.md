@@ -4,6 +4,7 @@ description: "A tested, no-hype list of AI tools that actually help you earn onl
 slug: "ai-tools-make-money-online-2026"
 category: "make-money"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["ai tools to make money", "make money with ai 2026", "ai side hustle"]
 ---
 

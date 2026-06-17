@@ -212,9 +212,22 @@ ${isArticle && articleDate ? `<meta property="article:published_time" content="$
 ${site.social && site.social.twitter ? `<link rel="me" href="${site.social.twitter}">` : ""}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://formsubmit.co">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://images.unsplash.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${b('/assets/style.css')}">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="alternate" href="${canonical}" hreflang="${site.lang.split("-")[0]}" />
+<link rel="alternate" href="${canonical}" hreflang="x-default" />
 ${ad.enabled ? `<meta name="google-adsense-account" content="${ad.client}">` : ""}
+${site.verification && site.verification.google ? `<meta name="google-site-verification" content="${escapeHtml(site.verification.google)}">` : ""}
 ${adScriptTag()}
 ${analyticsTag()}
 ${orgSchema()}
@@ -424,7 +437,7 @@ function extractFaqPairs(body) {
   if (curQ && curA.length) pairs.push([curQ, curA.join(" ").trim()]);
   return pairs.slice(0, 5);
 }
-function breadcrumbJsonLd(post) {
+function postBreadcrumbJsonLd(post) {
   return `<script type="application/ld+json">${JSON.stringify({
     "@context": "https://schema.org", "@type": "BreadcrumbList",
     itemListElement: [
@@ -432,6 +445,45 @@ function breadcrumbJsonLd(post) {
       { "@type": "ListItem", position: 2, name: catLabel(post.category), item: `${site.url}/category/${post.category}/` },
       { "@type": "ListItem", position: 3, name: post.title, item: post.url },
     ],
+  })}</script>`;
+}
+
+function pageBreadcrumbJsonLd(name, url) {
+  return `<script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org", "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name: name, item: url },
+    ],
+  })}</script>`;
+}
+
+function categoryBreadcrumbJsonLd(name, url) {
+  return pageBreadcrumbJsonLd(name, url);
+}
+
+function pageJsonLd(type, name, description, url) {
+  return `<script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org", "@type": type, name, description, url,
+    breadcrumb: { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name, item: url },
+    ]},
+  })}</script>`;
+}
+
+function collectionPageJsonLd(category, posts) {
+  return `<script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org", "@type": "CollectionPage",
+    name: catLabel(category), description: `${catLabel(category)} articles — ${site.name}`,
+    url: `${site.url}/category/${category}/`,
+    breadcrumb: { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      { "@type": "ListItem", position: 2, name: catLabel(category), item: `${site.url}/category/${category}/` },
+    ]},
+    mainEntity: { "@type": "ItemList", itemListElement: posts.map((p, i) => ({
+      "@type": "ListItem", position: i + 1, url: p.url, name: p.title,
+    }))},
   })}</script>`;
 }
 
@@ -511,6 +563,17 @@ function build() {
     jsonld: `<script type="application/ld+json">${JSON.stringify({
       "@context": "https://schema.org", "@type": "WebSite", name: site.name, url: site.url + "/",
       potentialAction: { "@type": "SearchAction", target: `${site.url}/?q={query}`, "query-input": "required name=query" },
+      breadcrumb: { "@type": "BreadcrumbList", itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
+      ]},
+    })}</script>
+<script type="application/ld+json">${JSON.stringify({
+      "@context": "https://schema.org", "@type": "ItemList",
+      name: "Latest Articles", description: site.description,
+      url: site.url + "/", numberOfItems: posts.length,
+      itemListElement: posts.slice(0, 12).map((p, i) => ({
+        "@type": "ListItem", position: i + 1, url: p.url, name: p.title,
+      })),
     })}</script>`,
   }));
 
@@ -520,6 +583,20 @@ function build() {
     const relatedHtml = related.length
       ? `<section class="related"><h3>Related Articles</h3><div class="grid grid-sm">${related.map((r) => postCard(r)).join("")}</div></section>`
       : "";
+    function socialShareHtml(title, url) {
+      const encodedUrl = encodeURIComponent(url);
+      const encodedTitle = encodeURIComponent(title);
+      return `<div class="social-share">
+  <span class="social-share-label">Share this post</span>
+  <div class="social-share-btns">
+    <a class="share-btn share-x" href="https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}" target="_blank" rel="noopener" title="Share on X">X</a>
+    <a class="share-btn share-fb" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener" title="Share on Facebook">FB</a>
+    <a class="share-btn share-li" href="https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}" target="_blank" rel="noopener" title="Share on LinkedIn">in</a>
+    <a class="share-btn share-rd" href="https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}" target="_blank" rel="noopener" title="Share on Reddit">RD</a>
+    <button class="share-btn share-cp" onclick="navigator.clipboard.writeText('${url}');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)" title="Copy link">Copy</button>
+  </div>
+</div>`;
+    }
     const body = `
 <div class="post-hero" style="background-image:url('${coverImage(p)}')">
   <div class="post-hero-overlay">
@@ -537,16 +614,24 @@ function build() {
 <div class="wrap-wide content-sidebar-wrap post-wrap">
   <article class="post-content">
     <div class="content">${renderArticleBody(p)}</div>
+    ${socialShareHtml(p.title, p.url)}
     ${relatedHtml}
   </article>
   ${sidebar(posts)}
 </div>`;
+    const heroImg = coverImage(p);
+    const heroPreload = `<link rel="preload" as="image" href="${heroImg}" fetchpriority="high">`;
     write(`posts/${p.slug}/index.html`, layout({
       title: p.title, description: p.description, canonical: p.url,
-      isArticle: true, articleDate: p.date, articleImage: coverImage(p),
-      head: p.keywords.length ? `<meta name="keywords" content="${escapeHtml(p.keywords.join(", "))}">` : "",
+      isArticle: true, articleDate: p.date, articleImage: heroImg,
+      head: heroPreload + (p.keywords.length
+        ? `<meta name="keywords" content="${escapeHtml(p.keywords.join(", "))}">
+<meta name="news_keywords" content="${escapeHtml(p.keywords.join(", "))}">
+${p.keywords.map((k) => `<meta property="article:tag" content="${escapeHtml(k)}">`).join("\n")}
+<meta property="article:section" content="${escapeHtml(catLabel(p.category))}">`
+        : `<meta property="article:section" content="${escapeHtml(catLabel(p.category))}">`),
       body,
-      jsonld: articleJsonLd(p) + breadcrumbJsonLd(p),
+      jsonld: articleJsonLd(p) + postBreadcrumbJsonLd(p),
     }));
   }
 
@@ -574,20 +659,26 @@ function build() {
       description: `${catLabel(c)} articles — ${site.name}: ${site.tagline}.`,
       canonical: `${site.url}/category/${c}/`,
       body,
+      jsonld: collectionPageJsonLd(c, list) + categoryBreadcrumbJsonLd(catLabel(c), `${site.url}/category/${c}/`),
     }));
   }
 
   // ── Static pages ──
+  const aboutUrl = `${site.url}/about/`;
   write("about/index.html", layout({
-    title: "About", description: `About ${site.name} — hands-on AI tools guides, productivity tips, and proven ways to earn money online.`, canonical: `${site.url}/about/`,
+    title: "About", description: `About ${site.name} — hands-on AI tools guides, productivity tips, and proven ways to earn money online.`, canonical: aboutUrl,
     body: `<div class="wrap-wide"><article class="post-content static-page"><h1>About ${escapeHtml(site.name)}</h1><div class="content">${markdownToHtml(ABOUT_MD)}</div></article></div>`,
+    jsonld: pageBreadcrumbJsonLd("About", aboutUrl) + pageJsonLd("AboutPage", "About", `About ${site.name}`, aboutUrl),
   }));
+  const privacyUrl = `${site.url}/privacy/`;
   write("privacy/index.html", layout({
-    title: "Privacy Policy & Affiliate Disclosure", description: `Privacy policy, cookie policy, and affiliate disclosure for ${site.name}.`, canonical: `${site.url}/privacy/`,
+    title: "Privacy Policy & Affiliate Disclosure", description: `Privacy policy, cookie policy, and affiliate disclosure for ${site.name}.`, canonical: privacyUrl,
     body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Privacy Policy &amp; Disclosure</h1><div class="content">${markdownToHtml(PRIVACY_MD)}</div></article></div>`,
+    jsonld: pageBreadcrumbJsonLd("Privacy Policy", privacyUrl),
   }));
+  const contactUrl = `${site.url}/contact/`;
   write("contact/index.html", layout({
-    title: "Contact Us", description: `Contact Kanav Sharma at ${site.name} — questions, sponsorships, content corrections, or advertising enquiries.`, canonical: `${site.url}/contact/`,
+    title: "Contact Us", description: `Contact Kanav Sharma at ${site.name} — questions, sponsorships, content corrections, or advertising enquiries.`, canonical: contactUrl,
     body: `<div class="wrap-wide"><article class="post-content static-page">
 <h1>Contact Us</h1>
 <div class="contact-grid">
@@ -653,10 +744,12 @@ function build() {
 </div>
 <div class="consult-banner"><h3>Questions or want to work together?</h3><p>Reach out via our <a href="${b('/contact/')}">contact page</a> — we respond within 2 business days.</p><a href="${b('/contact/')}" class="consult-btn">Contact us →</a></div>
 </article></div>`;
+  const resourcesUrl = `${site.url}/resources/`;
   write("resources/index.html", layout({
     title: "Best AI Tools & Resources", description: `Tested tools and resources for AI blogging, SEO, and online income — ${site.name}.`,
-    canonical: `${site.url}/resources/`,
+    canonical: resourcesUrl,
     body: resourceBody,
+    jsonld: pageBreadcrumbJsonLd("Resources", resourcesUrl),
   }));
 
   // ── SEO files ──
@@ -666,19 +759,83 @@ function build() {
     const p = posts.find((x) => x.category === c);
     return (p && p.date) || latestDate;
   };
+  function isoDate(d) { return d + "T08:00:00+00:00"; }
   const sitemapEntries = [
-    { loc: site.url + "/", lastmod: latestDate, changefreq: "daily", priority: "1.0" },
-    ...cats.map((c) => ({ loc: `${site.url}/category/${c}/`, lastmod: catLastmod(c), changefreq: "weekly", priority: "0.8" })),
-    { loc: `${site.url}/resources/`, lastmod: latestDate, changefreq: "weekly", priority: "0.7" },
-    { loc: `${site.url}/about/`, lastmod: latestDate, changefreq: "monthly", priority: "0.5" },
-    { loc: `${site.url}/contact/`, lastmod: latestDate, changefreq: "monthly", priority: "0.4" },
-    { loc: `${site.url}/privacy/`, lastmod: latestDate, changefreq: "yearly", priority: "0.3" },
-    ...posts.map((p) => ({ loc: p.url, lastmod: p.date, changefreq: "monthly", priority: "0.7" })),
+    { loc: site.url + "/", lastmod: isoDate(latestDate), changefreq: "daily", priority: "1.0", image: "" },
+    ...cats.map((c) => ({ loc: `${site.url}/category/${c}/`, lastmod: isoDate(catLastmod(c)), changefreq: "weekly", priority: "0.8", image: "" })),
+    { loc: `${site.url}/resources/`, lastmod: isoDate(latestDate), changefreq: "weekly", priority: "0.7", image: "" },
+    { loc: `${site.url}/about/`, lastmod: isoDate(latestDate), changefreq: "monthly", priority: "0.5", image: "" },
+    { loc: `${site.url}/contact/`, lastmod: isoDate(latestDate), changefreq: "monthly", priority: "0.4", image: "" },
+    { loc: `${site.url}/privacy/`, lastmod: isoDate(latestDate), changefreq: "yearly", priority: "0.3", image: "" },
+    { loc: `${site.url}/404.html`, lastmod: isoDate(latestDate), changefreq: "yearly", priority: "0.1", image: "" },
+    { loc: `${site.url}/rss.xml`, lastmod: isoDate(latestDate), changefreq: "daily", priority: "0.3", image: "" },
+    ...posts.map((p) => ({ loc: p.url, lastmod: isoDate(p.date), changefreq: "monthly", priority: "0.7", image: coverImage(p) })),
   ];
-  write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries.map((e) => `  <url><loc>${e.loc}</loc><lastmod>${e.lastmod}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`).join("\n")}\n</urlset>`);
-  write("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
+  write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${sitemapEntries.map((e) => {
+  const img = e.image ? `\n    <image:image><image:loc>${escapeHtml(e.image)}</image:loc><image:caption>${escapeHtml(site.name)}</image:caption></image:image>` : "";
+  return `  <url><loc>${e.loc}</loc><lastmod>${e.lastmod}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority>${img}</url>`;
+}).join("\n")}
+</urlset>`);
+  write("robots.txt", `User-agent: *
+Allow: /
+Crawl-delay: 10
+Disallow: /*?*
+Disallow: /*.json$
+Disallow: /*.xml$
+Allow: /sitemap.xml$
+Allow: /rss.xml$
+
+Sitemap: ${site.url}/sitemap.xml
+`);
   if (ad.enabled) write("ads.txt", `google.com, ${ad.client.replace(/^ca-/, "")}, DIRECT, f08c47fec0942fa0\n`);
-  write("rss.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>\n  <title>${escapeHtml(site.name)}</title>\n  <link>${site.url}/</link>\n  <description>${escapeHtml(site.description)}</description>\n  <language>${site.lang}</language>\n${posts.slice(0, 20).map((p) => `  <item>\n    <title>${escapeHtml(p.title)}</title>\n    <link>${p.url}</link>\n    <guid>${p.url}</guid>\n    <pubDate>${new Date(p.date).toUTCString()}</pubDate>\n    <description>${escapeHtml(p.description)}</description>\n  </item>`).join("\n")}\n</channel></rss>`);
+
+  function renderPostBodyToHtml(post) {
+    return renderArticleBody(post);
+  }
+
+  const rssItems = posts.slice(0, 50).map((p) => {
+    const cats = p.keywords.length
+      ? p.keywords.map((k) => `    <category>${escapeHtml(k)}</category>`).join("\n") + "\n"
+      : "";
+    const img = coverImage(p);
+    const htmlBody = renderPostBodyToHtml(p);
+    const isoStr = new Date(p.date).toISOString();
+    return `  <item>
+    <title>${escapeHtml(p.title)}</title>
+    <link>${p.url}</link>
+    <guid isPermaLink="true">${p.url}</guid>
+    <pubDate>${new Date(p.date).toUTCString()}</pubDate>
+    <dc:creator><![CDATA[${escapeHtml(p.author || site.author)}]]></dc:creator>
+    <description>${escapeHtml(p.description)}</description>
+    <content:encoded><![CDATA[${htmlBody}]]></content:encoded>
+    <media:content url="${img}" width="800" height="450" medium="image" type="image/jpeg"></media:content>
+    <media:thumbnail url="${img}" width="800" height="450"/>
+    <media:credit role="photographer" scheme="urn:unsplash">Unsplash</media:credit>
+${cats}\
+  </item>`;
+  }).join("\n");
+
+  write("rss.xml", `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>${escapeHtml(site.name)}</title>
+  <link>${site.url}/</link>
+  <description>${escapeHtml(site.description)}</description>
+  <language>${site.lang}</language>
+  <lastBuildDate>${new Date(posts[0] ? posts[0].date : new Date().toISOString().slice(0, 10)).toUTCString()}</lastBuildDate>
+  <atom:link href="${site.url}/rss.xml" rel="self" type="application/rss+xml"/>
+  <image>
+    <url>${site.url}/assets/logo.png</url>
+    <title>${escapeHtml(site.name)}</title>
+    <link>${site.url}/</link>
+    <width>200</width>
+    <height>60</height>
+  </image>
+${rssItems}
+</channel>
+</rss>`);
   write("site.webmanifest", JSON.stringify({ name: site.name, short_name: site.logoText, start_url: b("/"), display: "standalone", background_color: site.themeColor, theme_color: site.themeColor }, null, 2));
 
   console.log(`✓ Built ${posts.length} posts, ${cats.length} categories → ${path.relative(root, OUT)}/`);
@@ -1139,6 +1296,15 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .footer-nav-col a{color:var(--muted);font-size:13px;transition:color var(--transition)}
 .footer-nav-col a:hover{color:var(--ink)}
 .footer-bottom{border-top:1px solid var(--border);padding:20px 0;text-align:center}
+
+/* ─── Social Share ─── */
+.social-share{margin:32px 0 24px;padding:20px 24px;background:var(--surface2);border-radius:var(--radius);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.social-share-label{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.social-share-btns{display:flex;gap:8px;flex-wrap:wrap}
+.share-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;padding:8px 14px;font-size:13px;font-weight:600;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer;transition:all var(--transition);font-family:var(--font-sans)}
+.share-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.share-cp{font-size:12px}
+@media(max-width:600px){.social-share{flex-direction:column;align-items:flex-start;gap:12px}}
 .footer-legal{margin-top:8px;font-size:12px}
 .footer-legal a{color:var(--muted)}
 .footer-legal a:hover{color:var(--accent)}

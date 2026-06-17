@@ -4,6 +4,7 @@ description: "A practical, no-hype guide to launching an AI blog and earning org
 slug: "how-to-start-an-ai-blog-that-ranks-on-google"
 category: "guides"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["start ai blog", "ai blog seo", "rank on google 2026"]
 ---
 

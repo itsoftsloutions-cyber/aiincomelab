@@ -4,6 +4,7 @@ description: "A curated list of genuinely free AI tools for writing, images, aud
 slug: "best-free-ai-tools-you-can-use-today"
 category: "ai-tools"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["free ai tools", "best free ai 2026", "ai tools no cost"]
 ---
 

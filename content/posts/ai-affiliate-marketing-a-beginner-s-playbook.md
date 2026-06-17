@@ -4,6 +4,7 @@ description: "Step-by-step beginner playbook for using AI to research, create, a
 slug: "ai-affiliate-marketing-a-beginner-s-playbook"
 category: "make-money"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["ai affiliate marketing", "affiliate marketing 2026", "passive income ai"]
 ---
 

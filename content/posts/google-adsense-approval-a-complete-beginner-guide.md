@@ -4,6 +4,7 @@ description: "Everything a new blogger needs to know to get Google AdSense appro
 slug: "google-adsense-approval-a-complete-beginner-guide"
 category: "guides"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["google adsense approval", "adsense approval tips", "how to get adsense approved"]
 ---
 

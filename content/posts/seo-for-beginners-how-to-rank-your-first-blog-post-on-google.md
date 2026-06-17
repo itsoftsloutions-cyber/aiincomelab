@@ -4,6 +4,7 @@ description: "A plain-English SEO guide for complete beginners — the exact ste
 slug: "seo-for-beginners-how-to-rank-your-first-blog-post-on-google"
 category: "guides"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["seo for beginners", "rank blog post google", "first page google 2026"]
 ---
 
