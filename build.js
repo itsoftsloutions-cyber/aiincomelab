@@ -158,6 +158,21 @@ function cookieBanner() {
 <script>if(localStorage.getItem('cc'))document.getElementById('cookieBanner').style.display='none';</script>`;
 }
 
+// Sitewide Organization schema with sameAs social profiles — strengthens brand entity
+// recognition (knowledge graph) and consolidates E-E-A-T/author signals across pages.
+function orgSchema() {
+  const sameAs = Object.values(site.social || {}).filter(Boolean);
+  return `<script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: site.name,
+    url: site.url + "/",
+    logo: { "@type": "ImageObject", url: site.url + "/assets/logo.png", width: 200, height: 60 },
+    description: site.description,
+    ...(sameAs.length ? { sameAs } : {}),
+  })}</script>`;
+}
+
 function layout({ title, description, canonical, head = "", body, jsonld = "", fullWidth = false, isArticle = false, articleDate = "", articleImage = "" }) {
   const fullTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
   const ogType = isArticle ? "article" : "website";
@@ -197,6 +212,7 @@ ${isArticle && articleDate ? `<meta property="article:published_time" content="$
 ${ad.enabled ? `<meta name="google-adsense-account" content="${ad.client}">` : ""}
 ${adScriptTag()}
 ${analyticsTag()}
+${orgSchema()}
 ${jsonld}
 ${head}
 </head>
@@ -607,9 +623,22 @@ function build() {
   }));
 
   // ── SEO files ──
-  const urls = [site.url + "/", ...cats.map((c) => `${site.url}/category/${c}/`),
-    `${site.url}/about/`, `${site.url}/privacy/`, `${site.url}/contact/`, `${site.url}/resources/`, ...posts.map((p) => p.url)];
-  write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>`);
+  // Sitemap with lastmod/changefreq/priority. lastmod helps Google schedule recrawls.
+  const latestDate = (posts[0] && posts[0].date) || new Date().toISOString().slice(0, 10);
+  const catLastmod = (c) => {
+    const p = posts.find((x) => x.category === c);
+    return (p && p.date) || latestDate;
+  };
+  const sitemapEntries = [
+    { loc: site.url + "/", lastmod: latestDate, changefreq: "daily", priority: "1.0" },
+    ...cats.map((c) => ({ loc: `${site.url}/category/${c}/`, lastmod: catLastmod(c), changefreq: "weekly", priority: "0.8" })),
+    { loc: `${site.url}/resources/`, lastmod: latestDate, changefreq: "weekly", priority: "0.7" },
+    { loc: `${site.url}/about/`, lastmod: latestDate, changefreq: "monthly", priority: "0.5" },
+    { loc: `${site.url}/contact/`, lastmod: latestDate, changefreq: "monthly", priority: "0.4" },
+    { loc: `${site.url}/privacy/`, lastmod: latestDate, changefreq: "yearly", priority: "0.3" },
+    ...posts.map((p) => ({ loc: p.url, lastmod: p.date, changefreq: "monthly", priority: "0.7" })),
+  ];
+  write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries.map((e) => `  <url><loc>${e.loc}</loc><lastmod>${e.lastmod}</lastmod><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`).join("\n")}\n</urlset>`);
   write("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
   if (ad.enabled) write("ads.txt", `google.com, ${ad.client.replace(/^ca-/, "")}, DIRECT, f08c47fec0942fa0\n`);
   write("rss.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>\n  <title>${escapeHtml(site.name)}</title>\n  <link>${site.url}/</link>\n  <description>${escapeHtml(site.description)}</description>\n  <language>${site.lang}</language>\n${posts.slice(0, 20).map((p) => `  <item>\n    <title>${escapeHtml(p.title)}</title>\n    <link>${p.url}</link>\n    <guid>${p.url}</guid>\n    <pubDate>${new Date(p.date).toUTCString()}</pubDate>\n    <description>${escapeHtml(p.description)}</description>\n  </item>`).join("\n")}\n</channel></rss>`);
