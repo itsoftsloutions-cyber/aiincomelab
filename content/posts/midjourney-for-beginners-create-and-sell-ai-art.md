@@ -5,6 +5,7 @@ description: "A beginner's guide to Midjourney — how to create stunning AI ima
 slug: "midjourney-for-beginners-create-and-sell-ai-art"
 category: "ai-tools"
 date: "2026-06-17"
+author: "Kanav Sharma"
 keywords: ["midjourney for beginners", "sell ai art", "make money with ai images"]
 ---
 Here is what I wish someone had told me about **midjourney for beginners** when I started: it is simpler than the internet makes it seem, but harder than a five-step list suggests. The difference between success and frustration comes down to a few specific decisions.
