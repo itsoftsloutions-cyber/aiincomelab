@@ -85,11 +85,15 @@ function affiliateSidebarWidget() {
 }
 function emailCaptureWidget(compact = false) {
   if (!money.emailCapture) return "";
-  const action = money.emailProvider || "#";
+  // Use Formsubmit.co as newsletter backend — works with no account or API key
+  const action = "https://formsubmit.co/itsoftsloutions@gmail.com";
   if (compact) return `<div class="email-compact">
   <p>${escapeHtml(money.newsletterText || "Get free AI income tips weekly.")}</p>
-  <form action="${action}" method="get" target="_blank" class="email-form-inline">
-    <input type="email" name="email_address" placeholder="Your email" required>
+  <form action="${action}" method="POST" class="email-form-inline">
+    <input type="hidden" name="_subject" value="AIIncomeLab Newsletter Subscribe">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="${site.url}/?subscribed=1">
+    <input type="email" name="email" placeholder="Your email" required>
     <button type="submit">Subscribe →</button>
   </form>
 </div>`;
@@ -97,19 +101,18 @@ function emailCaptureWidget(compact = false) {
   <div class="email-icon">✉️</div>
   <h3>Free weekly AI income tips</h3>
   <p>${escapeHtml(money.newsletterText || "Get weekly AI tool picks & income strategies — free.")}</p>
-  <form action="${action}" method="get" target="_blank" class="email-form">
-    <input type="email" name="email_address" placeholder="Your best email" required>
+  <form action="${action}" method="POST" class="email-form">
+    <input type="hidden" name="_subject" value="AIIncomeLab Newsletter Subscribe">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="${site.url}/?subscribed=1">
+    <input type="email" name="email" placeholder="Your best email" required>
     <button type="submit">Subscribe free →</button>
   </form>
-  <p class="email-fine">No spam, unsubscribe any time.</p>
+  <p class="email-fine">No spam. Unsubscribe any time.</p>
 </div>`;
 }
 function supportWidget() {
-  const links = [];
-  if (money.buyMeACoffee) links.push(`<a href="${money.buyMeACoffee}" target="_blank" rel="noopener">☕ Buy me a coffee</a>`);
-  if (money.gumroad) links.push(`<a href="${money.gumroad}" target="_blank" rel="noopener">🛒 Digital products</a>`);
-  if (!links.length) return "";
-  return `<aside class="widget widget-support"><h4>Support this site</h4>${links.join(" · ")}</aside>`;
+  return "";
 }
 function consultingWidget() { return ""; }
 function sponsoredBanner() {
@@ -205,6 +208,7 @@ ${isArticle && articleDate ? `<meta property="article:published_time" content="$
 <meta name="twitter:description" content="${escapeHtml(description)}">
 <meta name="twitter:image" content="${ogImage}">
 <link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.name)} RSS" href="${site.url}/rss.xml">
+${site.social && site.social.twitter ? `<link rel="me" href="${site.social.twitter}">` : ""}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
@@ -217,6 +221,8 @@ ${jsonld}
 ${head}
 </head>
 <body>
+<div id="read-progress"></div>
+<button id="back-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 ${cookieBanner()}
 ${topBar()}
 ${header()}
@@ -224,6 +230,22 @@ ${header()}
 ${body}
 </main>
 ${footer()}
+<script>
+(function(){
+  var bar=document.getElementById('read-progress');
+  var btn=document.getElementById('back-top');
+  function upd(){
+    var s=document.documentElement;
+    var pct=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;
+    if(bar)bar.style.width=Math.min(100,pct)+'%';
+    if(btn){if(s.scrollTop>400)btn.classList.add('visible');else btn.classList.remove('visible');}
+  }
+  window.addEventListener('scroll',upd,{passive:true});
+})();
+document.querySelector('.nav-toggle')?.addEventListener('click',function(){
+  document.getElementById('mobileNav').classList.toggle('open');
+});
+</script>
 </body>
 </html>`;
 }
@@ -296,12 +318,7 @@ function footer() {
       <nav class="footer-legal"><a href="${b('/privacy/')}">Privacy Policy</a> · <a href="${b('/about/')}">About</a> · <a href="${b('/contact/')}">Contact</a></nav>
     </div>
   </div>
-</footer>
-<script>
-document.querySelector('.nav-toggle')?.addEventListener('click',()=>{
-  document.getElementById('mobileNav').classList.toggle('open');
-});
-</script>`;
+</footer>`;
 }
 
 // ── Post rendering ───────────────────────────────────────────────────────────
@@ -560,10 +577,7 @@ function build() {
     <div class="contact-card"><span class="contact-icon">👤</span><div><strong>Author / Editor</strong><p>Kanav Sharma</p></div></div>
     <div class="contact-card"><span class="contact-icon">✉️</span><div><strong>Email</strong><p><a href="mailto:itsoftsloutions@gmail.com">itsoftsloutions@gmail.com</a></p></div></div>
     <div class="contact-card"><span class="contact-icon">📣</span><div><strong>Sponsorships &amp; Advertising</strong><p>Starting from $150 per sponsored post.<br>Email: <a href="mailto:itsoftsloutions@gmail.com?subject=Sponsorship">itsoftsloutions@gmail.com</a></p></div></div>
-    <div class="contact-card"><span class="contact-icon">🔗</span><div><strong>Social Media</strong><p>
-      <a href="https://twitter.com/aiincomelab" target="_blank" rel="noopener">Twitter / X →</a><br>
-      <a href="https://youtube.com/@aiincomelab" target="_blank" rel="noopener">YouTube →</a>
-    </p></div></div>
+    <div class="contact-card"><span class="contact-icon">🔗</span><div><strong>Follow on X / Twitter</strong><p><a href="https://x.com/kanavy9ah" target="_blank" rel="noopener me">@kanavy9ah on X →</a></p></div></div>
     <div class="contact-card"><span class="contact-icon">⏱️</span><div><strong>Response Time</strong><p>We reply within 2 business days.</p></div></div>
   </div>
   <div class="contact-form-wrap">
@@ -611,7 +625,7 @@ function build() {
   <div class="resource-card"><a href="https://ezoic.com" target="_blank" rel="noopener"><span class="res-badge">Higher RPM</span><strong>Ezoic — AI ad optimization</strong></a></div>
   <div class="resource-card"><a href="https://www.mediavine.com" target="_blank" rel="noopener"><span class="res-badge">Premium</span><strong>Mediavine — 50k sessions+</strong></a></div>
   <div class="resource-card"><a href="https://app.convertkit.com" target="_blank" rel="noopener"><span class="res-badge">Free Plan</span><strong>ConvertKit — email newsletter</strong></a></div>
-  <div class="resource-card"><a href="${money.gumroad || 'https://gumroad.com'}" target="_blank" rel="noopener"><span class="res-badge">0% fee</span><strong>Gumroad — sell digital products</strong></a></div>
+  <div class="resource-card"><a href="https://gumroad.com" target="_blank" rel="noopener"><span class="res-badge">0% fee</span><strong>Gumroad — sell digital products</strong></a></div>
   <div class="resource-card"><a href="https://www.amazon.com/associates" target="_blank" rel="noopener"><span class="res-badge">Affiliate</span><strong>Amazon Associates — product links</strong></a></div>
 </div>
 <h2>Start Your Own Blog</h2>
@@ -744,13 +758,11 @@ For media enquiries, quotes, or interviews, email with subject line "Press".
 
 Found a factual error in an article? We take accuracy seriously. Email the article URL and the correction and we will fix it promptly.
 
-## Social media
+## Follow us
 
-Follow us for daily AI income tips:
+Stay updated with new AI income guides:
 
-- Twitter / X: [@aiincomelab](https://twitter.com/aiincomelab)
-- YouTube: [youtube.com/@aiincomelab](https://youtube.com/@aiincomelab)
-- Pinterest: [pinterest.com/aiincomelab](https://pinterest.com/aiincomelab)`;
+- X / Twitter: [@kanavy9ah](https://x.com/kanavy9ah)`;
 
 // ── Premium CSS ───────────────────────────────────────────────────────────────
 const PREMIUM_CSS = `
@@ -985,6 +997,14 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .contact-form textarea{resize:vertical}
 .contact-submit{background:var(--accent);color:#0d1117;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;align-self:flex-start;transition:background var(--transition)}
 .contact-submit:hover{background:#79c0ff}
+
+/* ─── Reading progress bar ─── */
+#read-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#58a6ff,#3fb950);z-index:9999;transition:width .1s linear;border-radius:0 2px 2px 0}
+
+/* ─── Back to top ─── */
+#back-top{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--accent);color:#0d1117;border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(88,166,255,.4);transition:background var(--transition),transform var(--transition)}
+#back-top:hover{background:#79c0ff;transform:translateY(-2px)}
+#back-top.visible{display:flex}
 
 /* ─── Cookie banner ─── */
 .cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--surface);border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -4px 20px rgba(0,0,0,.4)}

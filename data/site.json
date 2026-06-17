@@ -25,10 +25,7 @@
   "monetization": {
     "affiliateDisclosure": true,
     "emailCapture": true,
-    "emailProvider": "https://app.convertkit.com/landing_pages/YOUR_FORM_ID",
     "newsletterText": "Get weekly AI tool picks & income strategies — free.",
-    "buyMeACoffee": "https://buymeacoffee.com/aiincomelab",
-    "gumroad": "https://aiincomelab.gumroad.com",
     "topAffiliateBanners": [
       {
         "label": "Jasper AI — best AI writer for blogs",
