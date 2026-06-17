@@ -9,6 +9,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "public");
 const PORT = process.env.PORT || 8080;
 
+// The build emits root-relative URLs prefixed with the GitHub Pages project
+// base path (e.g. "/aiincomelab/..."). Locally we serve public/ at the server
+// root, so strip that prefix from incoming requests — otherwise every image,
+// internal link, and form page 404s in local preview even though production
+// (github.io/aiincomelab) is correct.
+const BASE = (() => {
+  try {
+    const site = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "site.json"), "utf8"));
+    return new URL(site.url).pathname.replace(/\/$/, "");
+  } catch { return ""; }
+})();
+
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript",
   ".xml": "application/xml", ".json": "application/json", ".txt": "text/plain",
@@ -17,6 +29,10 @@ const TYPES = {
 
 http.createServer((req, res) => {
   let urlPath = decodeURIComponent(req.url.split("?")[0]);
+  // Mirror production: treat "/aiincomelab/foo" the same as "/foo" locally.
+  if (BASE && (urlPath === BASE || urlPath.startsWith(BASE + "/"))) {
+    urlPath = urlPath.slice(BASE.length) || "/";
+  }
   let file = path.join(ROOT, urlPath);
   if (urlPath.endsWith("/")) file = path.join(file, "index.html");
   if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end("Forbidden"); }

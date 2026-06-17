@@ -25,6 +25,7 @@ function write(rel, content) {
   fs.writeFileSync(file, content);
 }
 function readingTime(text) { return Math.max(1, Math.round(text.trim().split(/\s+/).length / 200)); }
+function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 function fmtDate(iso) {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
@@ -161,6 +162,61 @@ function analyticsTag() {
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');</script>`;
 }
 
+// GA4 custom-event tracking — measures the actions that drive revenue:
+// outbound/affiliate clicks, newsletter (CTA) signups, and scroll depth.
+// All events no-op gracefully when GA4 is not configured (gtag undefined).
+function eventTrackingScript() {
+  const id = site.analytics && site.analytics.ga4;
+  if (!id || /X{4,}/.test(id)) return "";
+  return `<script>
+(function(){
+  function track(name,params){ if(typeof gtag==='function'){ try{ gtag('event',name,params||{}); }catch(e){} } }
+  var host=location.hostname;
+  // ── Outbound + affiliate click tracking ──
+  document.addEventListener('click',function(e){
+    var a=e.target.closest && e.target.closest('a[href]');
+    if(!a) return;
+    var href=a.getAttribute('href')||'';
+    if(/^(mailto:|tel:|#)/i.test(href)) { if(href.indexOf('mailto:')===0) track('contact_click',{link_url:href}); return; }
+    var url; try{ url=new URL(a.href, location.href); }catch(_){ return; }
+    if(url.hostname && url.hostname!==host){
+      var rel=(a.getAttribute('rel')||'').toLowerCase();
+      var isAff=/nofollow|sponsored/.test(rel)||a.matches('.aff-item,.inline-aff,.aff-card,.aff-tools a');
+      track(isAff?'affiliate_click':'outbound_click',{
+        link_url:url.href, link_domain:url.hostname,
+        link_text:(a.textContent||'').trim().slice(0,90),
+        affiliate: isAff?1:0
+      });
+    }
+  },{passive:true});
+  // ── CTA: newsletter signups + header/top-bar CTAs ──
+  document.addEventListener('submit',function(e){
+    var f=e.target;
+    if(f && f.matches && f.matches('.email-form,.email-form-inline')){
+      track('newsletter_signup',{form_location:f.closest('.email-box')?'inline':'compact'});
+    }
+  },true);
+  document.addEventListener('click',function(e){
+    var c=e.target.closest && e.target.closest('.header-cta,.top-bar-cta');
+    if(c) track('cta_click',{cta_text:(c.textContent||'').trim().slice(0,60)});
+  },{passive:true});
+  // ── Scroll depth (25/50/75/100) — fired once per milestone ──
+  var fired={}, marks=[25,50,75,100];
+  function onScroll(){
+    var d=document.documentElement, h=d.scrollHeight-d.clientHeight;
+    if(h<=0) return;
+    var pct=(d.scrollTop/h)*100;
+    for(var i=0;i<marks.length;i++){
+      var m=marks[i];
+      if(pct>=m && !fired[m]){ fired[m]=1; track('scroll_depth',{percent_scrolled:m}); }
+    }
+    if(fired[100]) window.removeEventListener('scroll',onScroll);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+})();
+</script>`;
+}
+
 // ── Revenue widgets ──────────────────────────────────────────────────────────
 function affiliateSidebarWidget() {
   const banners = (money.topAffiliateBanners || []);
@@ -218,6 +274,29 @@ function affiliateBannerInline() {
   if (!banners.length) return "";
   const items = banners.map((b) => `<a class="inline-aff" href="${b.href}" target="_blank" rel="noopener nofollow">${b.badge ? `<span>${escapeHtml(b.badge)}</span>` : ""}${escapeHtml(b.label)} →</a>`).join("");
   return `<div class="aff-inline-row">${items}</div>`;
+}
+
+// Structured in-article affiliate block — a scannable "recommended tools" card grid
+// drawn from monetization.topAffiliateBanners (+ optional Amazon gear). Higher RPM than
+// a plain inline link row, and FTC-compliant via the inline disclosure line.
+function affiliateToolsBlock(limit = 4) {
+  const tools = (money.topAffiliateBanners || []).slice(0, limit);
+  const amazon = (money.amazonProducts || []).slice(0, 2).map((p) => {
+    const tag = money.amazonTag ? `?tag=${encodeURIComponent(money.amazonTag)}` : "";
+    return { label: p.label, badge: p.badge, href: `https://www.amazon.com/dp/${encodeURIComponent(p.asin)}/${tag}` };
+  });
+  const all = tools.concat(amazon);
+  if (!all.length) return "";
+  const cards = all.map((t) => `
+    <a class="aff-card" href="${t.href}" target="_blank" rel="noopener nofollow sponsored">
+      ${t.badge ? `<span class="aff-card-badge">${escapeHtml(t.badge)}</span>` : ""}
+      <span class="aff-card-label">${escapeHtml(t.label)}</span>
+      <span class="aff-card-cta">Check it out →</span>
+    </a>`).join("");
+  return `<aside class="aff-tools" aria-label="Recommended tools">
+  <div class="aff-tools-head"><span class="aff-tools-title">🛠️ Tools I recommend for this</span><span class="aff-tools-note">Affiliate links — I may earn a commission at no cost to you.</span></div>
+  <div class="aff-tools-grid">${cards}</div>
+</aside>`;
 }
 
 // ── Sidebar ──────────────────────────────────────────────────────────────────
@@ -371,8 +450,40 @@ ${footer(noAds)}
     var mTheme=document.documentElement.getAttribute('data-theme')==='dark'?'dark':'default';
     mermaid.initialize({startOnLoad:true,theme:mTheme});
   }
+  // ── Forms: AJAX submit with inline feedback (progressive enhancement) ──
+  // Plain POST still works without JS. For FormSubmit.co we POST to the /ajax/
+  // endpoint so users get immediate on-page confirmation instead of being
+  // redirected off-site (which looked broken in local preview).
+  document.querySelectorAll('.contact-form,.email-form,.email-form-inline').forEach(function(form){
+    form.addEventListener('submit',function(e){
+      var action=form.getAttribute('action')||'';
+      var m=action.match(/formsubmit\\.co\\/(?:ajax\\/)?(.+)$/);
+      if(!m)return; // unknown backend — let native submit proceed
+      e.preventDefault();
+      var btn=form.querySelector('button[type="submit"],button:not([type])');
+      var label=btn?btn.textContent:'';
+      if(btn){btn.disabled=true;btn.textContent='Sending…';}
+      var fd=new FormData(form);
+      fetch('https://formsubmit.co/ajax/'+m[1],{method:'POST',headers:{'Accept':'application/json'},body:fd})
+        .then(function(r){return r.json();})
+        .then(function(){
+          var ok=document.createElement('p');
+          ok.className='form-status form-status-ok';
+          ok.textContent='✓ Thanks! Your message was sent.';
+          form.replaceWith(ok);
+        })
+        .catch(function(){
+          if(btn){btn.disabled=false;btn.textContent=label;}
+          var err=form.querySelector('.form-status-err')||document.createElement('p');
+          err.className='form-status form-status-err';
+          err.textContent='Something went wrong — please email itsoftsloutions@gmail.com directly.';
+          if(!err.parentNode)form.appendChild(err);
+        });
+    });
+  });
 })();
 </script>
+${eventTrackingScript()}
 </body>
 </html>`;
 }
@@ -475,12 +586,60 @@ function loadPosts() {
   return posts;
 }
 
-function renderArticleBody(post) {
+// Auto internal-linking: link the first mention of another post's primary keyword/title
+// to that post. Only touches plain body text — never inside existing anchors, headings,
+// code/pre, so it can't break markup or double-link. Capped to keep it natural.
+function injectInternalLinks(html, post, allPosts) {
+  const candidates = [];
+  for (const o of allPosts) {
+    if (o.slug === post.slug) continue;
+    const url = b(`/posts/${o.slug}/`);
+    const phrases = [];
+    (o.keywords || []).forEach((k) => { if (k && k.length >= 10) phrases.push(k); });
+    for (const ph of phrases) candidates.push({ phrase: ph.toLowerCase(), url, title: o.title });
+  }
+  candidates.sort((a, b) => b.phrase.length - a.phrase.length);
+  const usedUrls = new Set(), usedPhrases = new Set();
+  let linkCount = 0;
+  const MAX = 5;
+  const parts = html.split(/(<[^>]+>)/);
+  let inAnchor = 0, inHeading = 0, inCode = 0;
+  for (let i = 0; i < parts.length; i++) {
+    const tok = parts[i];
+    if (tok.startsWith("<")) {
+      const t = tok.toLowerCase();
+      if (/^<a[\s>]/.test(t)) inAnchor++;
+      else if (/^<\/a>/.test(t)) inAnchor = Math.max(0, inAnchor - 1);
+      else if (/^<h[1-6][\s>]/.test(t)) inHeading++;
+      else if (/^<\/h[1-6]>/.test(t)) inHeading = Math.max(0, inHeading - 1);
+      else if (/^<(code|pre)[\s>]/.test(t)) inCode++;
+      else if (/^<\/(code|pre)>/.test(t)) inCode = Math.max(0, inCode - 1);
+      continue;
+    }
+    if (inAnchor || inHeading || inCode || linkCount >= MAX || !tok.trim()) continue;
+    let text = tok;
+    for (const c of candidates) {
+      if (linkCount >= MAX) break;
+      if (usedUrls.has(c.url) || usedPhrases.has(c.phrase)) continue;
+      const re = new RegExp("\\b(" + escapeRegex(c.phrase) + ")\\b", "i");
+      if (re.test(text)) {
+        text = text.replace(re, (m) => `<a class="internal-link" href="${c.url}" title="${escapeHtml(c.title)}">${m}</a>`);
+        usedUrls.add(c.url); usedPhrases.add(c.phrase); linkCount++;
+      }
+    }
+    parts[i] = text;
+  }
+  return parts.join("");
+}
+
+function renderArticleBody(post, allPosts) {
   let html = markdownToHtml(post.body);
+  if (allPosts && allPosts.length) html = injectInternalLinks(html, post, allPosts);
   let count = 0;
   html = html.replace(/<\/p>/g, (m) => {
     count++;
     if (count === 2) return `</p>\n${adUnit("inArticle")}\n${affiliateBannerInline()}`;
+    if (count === 4) return `</p>\n${affiliateToolsBlock()}\n`;
     if (count === 6) return `</p>\n${emailCaptureWidget(false)}\n`;
     return m;
   });
@@ -716,7 +875,7 @@ function build() {
 </div>
 <div class="wrap-wide content-sidebar-wrap post-wrap">
   <article class="post-content">
-    <div class="content">${renderArticleBody(p)}</div>
+    <div class="content">${renderArticleBody(p, posts)}</div>
     ${socialShareHtml(p.title, p.url)}
     ${relatedHtml}
   </article>
@@ -1458,6 +1617,20 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .inline-aff:hover{border-color:var(--accent);text-decoration:none}
 .inline-aff span{background:var(--accent);color:#0d1117;padding:1px 6px;border-radius:10px;font-size:11px}
 
+/* ─── Structured affiliate tools block ─── */
+.aff-tools{margin:32px 0;padding:20px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface2)}
+.aff-tools-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:14px}
+.aff-tools-title{font-weight:800;font-size:15px;color:var(--ink)}
+.aff-tools-note{font-size:11px;color:var(--muted)}
+.aff-tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.aff-card{position:relative;display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-decoration:none;transition:border-color var(--transition),transform var(--transition)}
+.aff-card:hover{border-color:var(--accent);transform:translateY(-2px);text-decoration:none}
+.aff-card-badge{align-self:flex-start;background:var(--accent);color:#0d1117;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.3px}
+.aff-card-label{font-weight:700;font-size:14px;color:var(--ink);line-height:1.35}
+.aff-card-cta{font-size:12px;font-weight:700;color:var(--accent)}
+.internal-link{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+.internal-link:hover{text-decoration-thickness:2px}
+
 /* ─── Email capture ─── */
 .email-box{background:linear-gradient(135deg,var(--accent),#0d47a1);border:none;border-radius:var(--radius-lg);padding:28px;text-align:center;margin:32px 0;color:#fff}
 .email-box h3,.email-box p{color:#fff!important}
@@ -1476,6 +1649,9 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .email-form button:hover,.email-form-inline button:hover{background:#f0f2f5}
 .email-compact .email-form-inline button{background:var(--accent);color:#fff}
 .email-fine{font-size:12px;color:var(--muted);margin-top:8px!important}
+.form-status{padding:12px 16px;border-radius:var(--radius);font-size:14px;font-weight:600;margin:8px 0}
+.form-status-ok{background:rgba(63,185,80,.12);color:#1a7f37;border:1px solid rgba(63,185,80,.4)}
+.form-status-err{background:rgba(207,34,46,.1);color:#cf222e;border:1px solid rgba(207,34,46,.35)}
 .email-compact{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
 .email-compact p{font-size:13px;color:var(--muted);margin-bottom:10px}
 
