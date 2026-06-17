@@ -117,7 +117,7 @@ function sponsoredBanner() {
   return `<aside class="widget widget-sponsored">
   <h4>Advertise Here</h4>
   <p class="consult-text">Sponsored posts from <strong>${money.sponsoredPostRate}</strong>. Reach AI-focused readers interested in tools &amp; income.</p>
-  <a class="consult-btn" href="mailto:contact@aiincomelab.com?subject=Sponsorship%20Enquiry">Get in touch →</a>
+  <a class="consult-btn" href="mailto:itsoftsloutions@gmail.com?subject=Sponsorship%20Enquiry">Get in touch →</a>
 </aside>`;
 }
 function affiliateBannerInline() {
@@ -552,13 +552,14 @@ function build() {
     body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Privacy Policy &amp; Disclosure</h1><div class="content">${markdownToHtml(PRIVACY_MD)}</div></article></div>`,
   }));
   write("contact/index.html", layout({
-    title: "Contact Us", description: `Contact the ${site.name} team — questions, sponsorships, content corrections, or advertising enquiries.`, canonical: `${site.url}/contact/`,
+    title: "Contact Us", description: `Contact Kanav Sharma at ${site.name} — questions, sponsorships, content corrections, or advertising enquiries.`, canonical: `${site.url}/contact/`,
     body: `<div class="wrap-wide"><article class="post-content static-page">
 <h1>Contact Us</h1>
 <div class="contact-grid">
   <div class="contact-info">
-    <div class="contact-card"><span class="contact-icon">✉️</span><div><strong>Email</strong><p>contact@aiincomelab.com</p></div></div>
-    <div class="contact-card"><span class="contact-icon">📣</span><div><strong>Sponsorships &amp; Advertising</strong><p>Starting from $150 per sponsored post. Email with subject "Sponsorship".</p></div></div>
+    <div class="contact-card"><span class="contact-icon">👤</span><div><strong>Author / Editor</strong><p>Kanav Sharma</p></div></div>
+    <div class="contact-card"><span class="contact-icon">✉️</span><div><strong>Email</strong><p><a href="mailto:itsoftsloutions@gmail.com">itsoftsloutions@gmail.com</a></p></div></div>
+    <div class="contact-card"><span class="contact-icon">📣</span><div><strong>Sponsorships &amp; Advertising</strong><p>Starting from $150 per sponsored post.<br>Email: <a href="mailto:itsoftsloutions@gmail.com?subject=Sponsorship">itsoftsloutions@gmail.com</a></p></div></div>
     <div class="contact-card"><span class="contact-icon">🔗</span><div><strong>Social Media</strong><p>
       <a href="https://twitter.com/aiincomelab" target="_blank" rel="noopener">Twitter / X →</a><br>
       <a href="https://youtube.com/@aiincomelab" target="_blank" rel="noopener">YouTube →</a>
@@ -567,9 +568,12 @@ function build() {
   </div>
   <div class="contact-form-wrap">
     <h2>Send us a message</h2>
-    <form class="contact-form" action="mailto:contact@aiincomelab.com" method="get" enctype="text/plain">
+    <form class="contact-form" action="https://formsubmit.co/itsoftsloutions@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="AIIncomeLab Contact Form">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
       <label>Your name<input type="text" name="name" placeholder="Jane Smith" required></label>
-      <label>Your email<input type="email" name="from" placeholder="you@example.com" required></label>
+      <label>Your email<input type="email" name="email" placeholder="you@example.com" required></label>
       <label>Subject
         <select name="subject">
           <option value="General question">General question</option>
@@ -579,9 +583,10 @@ function build() {
           <option value="Other">Other</option>
         </select>
       </label>
-      <label>Message<textarea name="body" rows="5" placeholder="Tell us how we can help…" required></textarea></label>
+      <label>Message<textarea name="message" rows="5" placeholder="Tell us how we can help…" required></textarea></label>
       <button type="submit" class="contact-submit">Send message →</button>
     </form>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">First submission activates the form — Formsubmit will send a one-time confirmation to itsoftsloutions@gmail.com.</p>
   </div>
 </div>
 <div class="content" style="margin-top:40px">${markdownToHtml(CONTACT_MD)}</div>
@@ -654,7 +659,7 @@ ${site.name} publishes practical, hands-on guides about AI tools, automation, pr
 
 ## Who writes here?
 
-Our editorial team researches and writes each guide. We focus on accuracy over speed. Every recommendation comes from hands-on use.
+**Kanav Sharma** is the founder and editor of ${site.name}. He researches AI tools and online income strategies, tests them personally, and writes practical guides based on real results. You can reach him at [itsoftsloutions@gmail.com](mailto:itsoftsloutions@gmail.com).
 
 ## How we make money
 
@@ -703,7 +708,7 @@ We use:
 
 ## 5. Your rights
 
-You may request deletion of any personal data we hold. Contact us at contact@aiincomelab.com. We respond within 30 days.
+You may request deletion of any personal data we hold. Contact us at itsoftsloutions@gmail.com. We respond within 30 days.
 
 ## 6. Changes
 
@@ -711,13 +716,17 @@ We may update this policy. The date at the top of this page will reflect the lat
 
 ## 7. Contact
 
-Questions about privacy: contact@aiincomelab.com`;
+Questions about privacy: itsoftsloutions@gmail.com`;
 
 const CONTACT_MD = `Have a question, correction, or want to work together? We read every message.
 
+## About the author
+
+**Kanav Sharma** is the founder and editor of AIIncomeLab. He researches AI tools and online income strategies, tests them personally, and writes practical guides based on real results.
+
 ## General enquiries
 
-Email: **contact@aiincomelab.com**
+Email: **itsoftsloutions@gmail.com**
 
 We aim to respond within 2 business days.
 
@@ -725,7 +734,7 @@ We aim to respond within 2 business days.
 
 Interested in reaching our audience of AI-focused readers? Sponsored posts start from $150.
 
-Email: **contact@aiincomelab.com** with subject line "Sponsorship"
+Email: **itsoftsloutions@gmail.com** with subject line "Sponsorship"
 
 ## Press & media
 
