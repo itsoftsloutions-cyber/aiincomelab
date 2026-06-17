@@ -65,5 +65,75 @@
       { "h": "Scale with systems, not shortcuts", "points": ["Templatize your content production", "Track which posts convert and why", "Reinvest in your best-performing topics"] },
       { "h": "Stay compliant and trustworthy", "points": ["Follow disclosure rules in your region", "Never fake reviews or results", "Trust compounds; spam decays"] }
     ]
+  },
+  {
+    "title": "ChatGPT vs Claude vs Gemini: Which AI Is Best for Making Money",
+    "category": "ai-tools",
+    "keywords": ["chatgpt vs claude vs gemini", "best ai for making money", "chatgpt for business 2026"],
+    "description": "A practical comparison of ChatGPT, Claude, and Gemini for content creation, automation, and online income — with clear recommendations by use case.",
+    "intent": "Help readers pick the right AI tool for their income goal instead of paying for all of them.",
+    "sections": [
+      { "h": "The honest short answer", "points": ["All three are capable; the best one depends on your task", "Free tiers are sufficient to test before paying", "Switching cost is low — trial before committing"] },
+      { "h": "Best for content and blogging", "points": ["Long-form structured writing with citation-style responses", "Instruction-following for templates and outlines", "Consistency across many drafts matters more than perfection"] },
+      { "h": "Best for coding and automation", "points": ["Code generation and debugging speed matters most", "Look for tool-use and function-calling support", "Test against your actual stack, not benchmarks"] },
+      { "h": "Best for research and analysis", "points": ["Web browsing and document analysis differ by model", "Check context window length for large documents", "Multi-step reasoning quality varies by task type"] },
+      { "h": "Free vs paid: when to upgrade", "points": ["Free tiers are enough to validate a niche or product", "Upgrade only after your first monetization milestone", "One paid tier is almost always enough — avoid stacking subscriptions"] }
+    ]
+  },
+  {
+    "title": "How to Make $500/Month with an AI Blog (Realistic Guide)",
+    "category": "make-money",
+    "keywords": ["make money blogging 2026", "ai blog income", "500 dollars a month blogging"],
+    "description": "A realistic, no-hype roadmap to earning $500/month from an AI-assisted blog — showing the exact traffic, RPMs, and timelines involved.",
+    "intent": "Give readers a grounded income target with the exact steps and benchmarks to hit it.",
+    "sections": [
+      { "h": "The math behind $500/month", "points": ["At $5 RPM you need 100,000 monthly pageviews", "At $15 RPM (better niche) you need 33,000 pageviews", "Affiliate income can cut the traffic requirement in half"] },
+      { "h": "How long it realistically takes", "points": ["Most blogs hit $100/month at 6-9 months of consistent publishing", "$500/month is achievable at 12-18 months for most niches", "Shortcuts exist but they also cut your content's lifespan"] },
+      { "h": "The content and publishing loop", "points": ["One high-quality post per week beats daily thin content", "AI handles the draft; you handle accuracy and original examples", "Update old posts quarterly to protect rankings"] },
+      { "h": "Monetization stack for $500/month", "points": ["Display ads: apply to AdSense at launch, Mediavine/AdThrive later", "Affiliate links: 2-3 programs you actively use", "Digital product: one $29-$49 guide adds significant MRR at low traffic"] },
+      { "h": "What kills the goal", "points": ["Changing niche before the first post ranks — give it 90 days", "Ignoring analytics and repeating what does not convert", "Obsessing over design instead of publishing"] }
+    ]
+  },
+  {
+    "title": "Google AdSense Approval: A Complete Beginner Guide",
+    "category": "guides",
+    "keywords": ["google adsense approval", "adsense approval tips", "how to get adsense approved"],
+    "description": "Everything a new blogger needs to know to get Google AdSense approved fast — what Google actually checks, what to fix, and what to avoid.",
+    "intent": "Help new bloggers pass AdSense review on the first or second attempt.",
+    "sections": [
+      { "h": "What Google actually reviews", "points": ["Enough content — typically 15-20 original posts of 700+ words", "A working Privacy Policy and About page", "Clean navigation and a real, human-readable site"] },
+      { "h": "Technical requirements", "points": ["Your site must load quickly on mobile", "No broken pages or under-construction notices", "A custom domain is not strictly required but strongly recommended"] },
+      { "h": "Content Google will reject", "points": ["Thin AI content with no original value", "Medical or legal claims without expertise signals", "Copied or scraped text from other sites"] },
+      { "h": "The application process step by step", "points": ["Sign in at adsense.google.com with your Google account", "Add your site URL and verify ownership via a meta tag or file", "Wait 1-14 days for the review decision"] },
+      { "h": "What to do after approval", "points": ["Add the auto-ads script to every page", "Set up ad units for header, in-article, and footer", "Check your ads.txt file is live at /ads.txt"] }
+    ]
+  },
+  {
+    "title": "SEO for Beginners: How to Rank Your First Blog Post on Google",
+    "category": "guides",
+    "keywords": ["seo for beginners", "rank blog post google", "first page google 2026"],
+    "description": "A plain-English SEO guide for complete beginners — the exact steps to pick a keyword, write the post, and get it on Google's first page.",
+    "intent": "Take a beginner from zero SEO knowledge to publishing their first properly-optimized post.",
+    "sections": [
+      { "h": "Pick the right keyword first", "points": ["Target long-tail keywords with 100-1,000 monthly searches", "Check the first-page difficulty: if all results are big brands, pick something narrower", "One primary keyword per post; work in 2-3 related phrases naturally"] },
+      { "h": "Write the post around the keyword", "points": ["Put the keyword in the title, first paragraph, and one H2", "Answer the search intent directly in the first 100 words", "Include an FAQ section — it earns featured snippets"] },
+      { "h": "Technical basics that matter", "points": ["A descriptive URL slug: /best-free-ai-tools, not /post-123", "A meta description under 155 characters with the keyword", "One image with a descriptive alt text"] },
+      { "h": "After you publish", "points": ["Submit the post URL in Google Search Console Inspect URL tool", "Build 2-3 internal links from other posts to this one", "Share on one social channel to seed initial crawl signal"] },
+      { "h": "Timeline and what to expect", "points": ["New domains typically see Google traffic at 3-6 months", "First rankings are usually for long-tail variants of your target keyword", "Patience plus consistency beats any shortcut"] }
+    ]
+  },
+  {
+    "title": "Best AI Tools for Passive Income in 2026",
+    "category": "make-money",
+    "keywords": ["ai tools passive income", "passive income ai 2026", "make passive income with ai"],
+    "description": "The AI tools most suited to building passive income streams — content, digital products, automation — with honest expectations for each.",
+    "intent": "Show readers which AI tools pair best with passive income models and why.",
+    "sections": [
+      { "h": "What passive income actually means", "points": ["It requires upfront work — passive is the maintenance, not the setup", "Content, digital products, and automation are the realistic models", "AI shrinks the setup work but does not eliminate it"] },
+      { "h": "AI for content passive income", "points": ["Blog posts and videos that rank and earn ad revenue long-term", "Once a post ranks, it earns with minimal maintenance", "AI speeds up publishing; quality and consistency build the asset"] },
+      { "h": "AI for digital product creation", "points": ["Ebooks, templates, and mini-courses can be created faster with AI", "Sell on Gumroad or Lemon Squeezy for zero upfront cost", "Validate demand with a free lead magnet before building the paid product"] },
+      { "h": "AI for automation income", "points": ["Build and sell AI workflow setups to small businesses", "Productize a repeatable automation as a subscription", "Start with one client, document the process, then scale"] },
+      { "h": "Honest expectations", "points": ["Passive income from content typically takes 6-18 months to materialize", "Digital products can earn within weeks if you have an audience", "Automation services are active income first, then passive with the right pricing"] }
+    ]
   }
 ]
