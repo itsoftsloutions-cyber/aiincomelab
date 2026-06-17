@@ -45,8 +45,92 @@ const UNSPLASH_COVERS = {
   guides:        "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80",
 };
 function coverImage(post) {
+  if (post.svgImage) return b(`/assets/post-svg/${post.slug}.svg`);
   if (post.image) return post.image;
   return UNSPLASH_COVERS[post.category] || UNSPLASH_COVERS["guides"];
+}
+
+// ── Deterministic SVG hero generator ────────────────────────────────────────
+// Creates a unique, visually distinct SVG per post slug — no external images,
+// no copyright risk. Hash determines color palette, shapes, and layout.
+function hashStr(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+function hslFromHash(h, offset = 0) {
+  const hue = (h + offset) % 360;
+  return `hsl(${hue}, 65%, 55%)`;
+}
+function generatePostSvg(slug, title) {
+  const h = hashStr(slug);
+  const c1 = hslFromHash(h, 0);
+  const c2 = hslFromHash(h, 120);
+  const c3 = hslFromHash(h, 240);
+  const c4 = hslFromHash(h, 60);
+  const angle = (h % 360);
+  const r1 = 30 + (h % 40);
+  const r2 = 20 + ((h >> 4) % 30);
+  const cx1 = 100 + (h % 600);
+  const cy1 = 50 + ((h >> 3) % 300);
+  const cx2 = 200 + ((h >> 2) % 500);
+  const cy2 = 100 + ((h >> 5) % 250);
+  const nCircles = 3 + (h % 5);
+  const circles = [];
+  for (let n = 0; n < nCircles; n++) {
+    const nh = hashStr(slug + n);
+    const cx = nh % 800;
+    const cy = (nh >> 4) % 450;
+    const r = 15 + (nh % 60);
+    const col = hslFromHash(nh, n * 90);
+    const op = 0.12 + ((nh >> 8) % 8) * 0.04;
+    circles.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" opacity="${op}"/>`);
+  }
+  const nRects = 2 + ((h >> 6) % 3);
+  const rects = [];
+  for (let n = 0; n < nRects; n++) {
+    const nh = hashStr(slug + "r" + n);
+    const rx = nh % 700;
+    const ry = (nh >> 4) % 350;
+    const rw = 40 + (nh % 120);
+    const rh = 20 + ((nh >> 6) % 60);
+    const rot = (nh >> 3) % 360;
+    const col = hslFromHash(nh, n * 60 + 30);
+    const op = 0.08 + ((nh >> 9) % 6) * 0.03;
+    rects.push(`<rect x="${rx}" y="${ry}" width="${rw}" height="${rh}" rx="8" fill="${col}" opacity="${op}" transform="rotate(${rot} ${rx + rw / 2} ${ry + rh / 2})"/>`);
+  }
+  const nLines = 2 + ((h >> 8) % 4);
+  const lines = [];
+  for (let n = 0; n < nLines; n++) {
+    const nh = hashStr(slug + "l" + n);
+    const x1 = nh % 800;
+    const y1 = (nh >> 4) % 450;
+    const x2 = (nh >> 2) % 800;
+    const y2 = (nh >> 6) % 450;
+    lines.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${hslFromHash(nh, n * 45)}" stroke-width="2" opacity="0.18"/>`);
+  }
+  const escTitle = escapeHtml(title || slug);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bg-${slug}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${c1}"/>
+      <stop offset="50%" stop-color="${c2}"/>
+      <stop offset="100%" stop-color="${c3}"/>
+    </linearGradient>
+    <linearGradient id="accent-${slug}" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="${c4}" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="${c1}" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg-${slug})"/>
+  <rect width="800" height="450" fill="url(#accent-${slug})"/>
+  ${circles.join("\n  ")}
+  ${rects.join("\n  ")}
+  ${lines.join("\n  ")}
+  <circle cx="${cx1}" cy="${cy1}" r="${r1}" fill="${c4}" opacity="0.15"/>
+  <circle cx="${cx2}" cy="${cy2}" r="${r2}" fill="${c1}" opacity="0.18"/>
+  <text x="400" y="225" text-anchor="middle" fill="white" font-family="Inter,system-ui,sans-serif" font-size="32" font-weight="800" opacity="0.9">${escTitle.length > 40 ? escTitle.slice(0, 37) + "..." : escTitle}</text>
+</svg>`;
 }
 
 // ── AdSense ─────────────────────────────────────────────────────────────────
@@ -176,7 +260,7 @@ function orgSchema() {
   })}</script>`;
 }
 
-function layout({ title, description, canonical, head = "", body, jsonld = "", fullWidth = false, isArticle = false, articleDate = "", articleImage = "" }) {
+function layout({ title, description, canonical, head = "", body, jsonld = "", fullWidth = false, isArticle = false, articleDate = "", articleImage = "", noAds = false }) {
   const fullTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
   const ogType = isArticle ? "article" : "website";
   const ogImage = articleImage || `${site.url}/assets/og-default.png`;
@@ -190,7 +274,7 @@ function layout({ title, description, canonical, head = "", body, jsonld = "", f
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
 <meta name="theme-color" content="${site.themeColor}">
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="robots" content="${noAds ? "noindex, follow" : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"}">
 <meta property="og:type" content="${ogType}">
 <meta property="og:site_name" content="${escapeHtml(site.name)}">
 <meta property="og:title" content="${escapeHtml(fullTitle)}">
@@ -221,6 +305,7 @@ ${site.social && site.social.twitter ? `<link rel="me" href="${site.social.twitt
 <link rel="dns-prefetch" href="https://images.unsplash.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${b('/assets/style.css')}">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -228,7 +313,7 @@ ${site.social && site.social.twitter ? `<link rel="me" href="${site.social.twitt
 <link rel="alternate" href="${canonical}" hreflang="x-default" />
 ${ad.enabled ? `<meta name="google-adsense-account" content="${ad.client}">` : ""}
 ${site.verification && site.verification.google ? `<meta name="google-site-verification" content="${escapeHtml(site.verification.google)}">` : ""}
-${adScriptTag()}
+${noAds ? "" : adScriptTag()}
 ${analyticsTag()}
 ${orgSchema()}
 ${jsonld}
@@ -243,7 +328,7 @@ ${header()}
 <main class="site-main${fullWidth ? " full-width" : ""}">
 ${body}
 </main>
-${footer()}
+${footer(noAds)}
 <script>
 (function(){
   // ── Theme ──
@@ -274,6 +359,11 @@ ${footer()}
   document.querySelector('.nav-toggle')?.addEventListener('click',function(){
     document.getElementById('mobileNav').classList.toggle('open');
   });
+  // ── Mermaid diagrams ──
+  if(document.querySelector('.mermaid')){
+    var mTheme=document.documentElement.getAttribute('data-theme')==='dark'?'dark':'default';
+    mermaid.initialize({startOnLoad:true,theme:mTheme});
+  }
 })();
 </script>
 </body>
@@ -308,7 +398,7 @@ function header() {
 </nav>`;
 }
 
-function footer() {
+function footer(noAds = false) {
   const cats = (site.nav || []).filter(n => !n.href.includes('/contact')).map((n) => `<a href="${b(n.href)}">${escapeHtml(n.label)}</a>`).join("\n");
   const socials = Object.entries(site.social || {}).map(([k, v]) => `<a href="${v}" target="_blank" rel="noopener">${k.charAt(0).toUpperCase() + k.slice(1)}</a>`).join(" · ");
   const year = new Date().getFullYear();
@@ -342,11 +432,11 @@ function footer() {
         ${supportWidget()}
       </div>
     </div>
-    ${adUnit("footer")}
+    ${noAds ? "" : adUnit("footer")}
     <div class="footer-bottom">
       <p class="footer-fine">&copy; ${year} ${escapeHtml(site.name)} — AI Tools, Productivity &amp; Online Income.</p>
       <p class="footer-fine">Affiliate disclosure: some links earn us a commission at no extra cost to you. We only recommend tools we have personally tested.</p>
-      <nav class="footer-legal"><a href="${b('/privacy/')}">Privacy Policy</a> · <a href="${b('/about/')}">About</a> · <a href="${b('/contact/')}">Contact</a></nav>
+      <nav class="footer-legal"><a href="${b('/privacy/')}">Privacy Policy</a> · <a href="${b('/terms/')}">Terms of Service</a> · <a href="${b('/about/')}">About</a> · <a href="${b('/contact/')}">Contact</a></nav>
     </div>
   </div>
 </footer>`;
@@ -514,6 +604,12 @@ function build() {
 
   const posts = loadPosts();
 
+  // ── Generate unique SVG hero images for every post ──
+  for (const p of posts) {
+    p.svgImage = true;
+    write(`assets/post-svg/${p.slug}.svg`, generatePostSvg(p.slug, p.title));
+  }
+
   write("assets/style.css", PREMIUM_CSS);
 
   // ── Homepage ──
@@ -677,6 +773,7 @@ ${p.keywords.map((k) => `<meta property="article:tag" content="${escapeHtml(k)}"
     jsonld: pageBreadcrumbJsonLd("Privacy Policy", privacyUrl),
   }));
   const contactUrl = `${site.url}/contact/`;
+  const termsUrl = `${site.url}/terms/`;
   write("contact/index.html", layout({
     title: "Contact Us", description: `Contact Kanav Sharma at ${site.name} — questions, sponsorships, content corrections, or advertising enquiries.`, canonical: contactUrl,
     body: `<div class="wrap-wide"><article class="post-content static-page">
@@ -715,9 +812,103 @@ ${p.keywords.map((k) => `<meta property="article:tag" content="${escapeHtml(k)}"
 <div class="content" style="margin-top:40px">${markdownToHtml(CONTACT_MD)}</div>
 </article></div>`,
   }));
+  write("terms/index.html", layout({
+    title: "Terms of Service", description: `Terms of service for ${site.name}.`, canonical: termsUrl,
+    body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Terms of Service</h1><div class="content">${markdownToHtml(TERMS_MD)}</div></article></div>`,
+    jsonld: pageBreadcrumbJsonLd("Terms of Service", termsUrl),
+  }));
   write("404.html", layout({
     title: "Not Found", description: "Page not found.", canonical: `${site.url}/404.html`,
+    noAds: true,
     body: `<div class="wrap-wide" style="padding:80px 0 120px;text-align:center"><h1 style="font-size:80px;margin:0">404</h1><p style="font-size:20px;color:var(--muted)">That page doesn't exist. <a href="${b('/')}">Go home →</a></p></div>`,
+  }));
+
+  // ── Rich Text Editor page ──
+  const editorUrl = `${site.url}/editor/`;
+  const catOptions = cats.map((c) => `<option value="${c}">${escapeHtml(catLabel(c))}</option>`).join("");
+  write("editor/index.html", layout({
+    title: "Post Editor", description: `Rich text editor for creating and editing blog posts — ${site.name}.`,
+    canonical: editorUrl, fullWidth: true, noAds: true,
+    head: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18/dist/easymde.min.css">
+<script src="https://cdn.jsdelivr.net/npm/easymde@2.18/dist/easymde.min.js"></script>`,
+    body: `<div class="wrap-wide" style="padding:40px 0 80px">
+<article class="post-content">
+  <h1>Blog Post Editor</h1>
+  <p style="color:var(--muted);margin-bottom:24px">Write, edit, and preview posts with support for Mermaid flow diagrams, step-by-step guides, and callout blocks. Save drafts locally and download ready-to-publish markdown.</p>
+  <div class="editor-meta">
+    <label class="editor-label">Title<input type="text" id="editorTitle" placeholder="Enter post title..." class="editor-input"></label>
+    <label class="editor-label">Category<select id="editorCategory" class="editor-input">${catOptions}</select></label>
+    <label class="editor-label">Keywords (comma separated)<input type="text" id="editorKeywords" placeholder="ai tools, make money, blog" class="editor-input"></label>
+  </div>
+  <div class="editor-frontmatter-hint">Frontmatter is auto-generated from the fields above.</div>
+  <textarea id="editorBody"></textarea>
+  <div class="editor-actions">
+    <button onclick="editorSave()" class="editor-btn editor-btn-save">Save Draft</button>
+    <button onclick="editorDownload()" class="editor-btn editor-btn-download">Download .md</button>
+    <button onclick="editorClear()" class="editor-btn editor-btn-clear">New Post</button>
+    <span id="editorStatus" class="editor-status"></span>
+  </div>
+</article>
+<div class="editor-help">
+  <h3>Markdown Extensions</h3>
+  <div class="editor-help-grid">
+    <div class="editor-help-item"><strong>Flow Diagrams</strong><pre class="editor-code">\\\`\\\`\\\`mermaid
+graph TD
+  A[Start] --> B[Step]
+  B --> C[Done]
+\\\`\\\`\\\`</pre></div>
+    <div class="editor-help-item"><strong>Step-by-Step</strong><pre class="editor-code">\\\`\\\`\\\`steps
+1. First do this
+2. Then do that
+3. Finally done
+\\\`\\\`\\\`</pre></div>
+    <div class="editor-help-item"><strong>Callout Blocks</strong><pre class="editor-code">::: tip
+This is a helpful tip
+:::
+
+::: warning
+Be careful with this
+:::</pre></div>
+    <div class="editor-help-item"><strong>SVG Images</strong><p>Every post gets a unique auto-generated SVG hero image. No action needed — it just works!</p></div>
+  </div>
+</div>
+</div>
+<script>
+var easyMDE=new EasyMDE({element:document.getElementById("editorBody"),spellChecker:false,placeholder:"Write your post here...\\n\\nUse \\\\\`\\\\\`\\\\\`mermaid for flow diagrams\\nUse \\\\\`\\\\\`\\\\\`steps for step-by-step guides\\nUse ::: tip, ::: warning, ::: info for callout blocks",toolbar:[["bold","italic","heading","|","quote","unordered-list","ordered-list","|","link","image","table","horizontal-rule","|","preview","side-by-side","fullscreen","|","guide"]],status:false,unorderedListStyle:"-"});
+function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"").slice(0,70)}
+function editorSave(){
+  var d={title:document.getElementById("editorTitle").value,category:document.getElementById("editorCategory").value,keywords:document.getElementById("editorKeywords").value,body:easyMDE.value(),ts:Date.now()};
+  localStorage.setItem("aia-draft",JSON.stringify(d));
+  document.getElementById("editorStatus").textContent="Draft saved at "+new Date().toLocaleTimeString();
+}
+function editorDownload(){
+  var title=document.getElementById("editorTitle").value||"untitled-post";
+  var cat=document.getElementById("editorCategory").value||"guides";
+  var kw=document.getElementById("editorKeywords").value||"";
+  var kwArr=kw.split(",").map(function(s){return s.trim()}).filter(Boolean);
+  var slug=slugify(title);
+  var date=new Date().toISOString().slice(0,10);
+  var fm=["---",'title: "'+title.replace(/"/g,"'"+'"')+'"',  'description: ""','slug: "'+slug+'"','category: "'+cat+'"','date: "'+date+'"','keywords: ['+kwArr.map(function(k){return '"'+k+'"'}).join(", ")+']',"---"].join("\\n");
+  var full=fm+"\\n\\n"+easyMDE.value();
+  var blob=new Blob([full],{type:"text/markdown"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=slug+".md";a.click();
+  document.getElementById("editorStatus").textContent="Downloaded "+slug+".md";
+}
+function editorClear(){
+  if(!confirm("Start a new post? Unsaved changes will be lost."))return;
+  document.getElementById("editorTitle").value="";
+  document.getElementById("editorCategory").selectedIndex=0;
+  document.getElementById("editorKeywords").value="";
+  easyMDE.value("");
+  localStorage.removeItem("aia-draft");
+  document.getElementById("editorStatus").textContent="";
+}
+(function(){
+  var saved=localStorage.getItem("aia-draft");
+  if(saved){try{var d=JSON.parse(saved);document.getElementById("editorTitle").value=d.title||"";document.getElementById("editorCategory").value=d.category||"guides";document.getElementById("editorKeywords").value=d.keywords||"";easyMDE.value(d.body||"");document.getElementById("editorStatus").textContent="Draft restored from "+new Date(d.ts).toLocaleTimeString()}catch{}}
+})();
+</script>`,
+    jsonld: pageBreadcrumbJsonLd("Post Editor", editorUrl),
   }));
 
   // ── Resources page ──
@@ -767,7 +958,9 @@ ${p.keywords.map((k) => `<meta property="article:tag" content="${escapeHtml(k)}"
     { loc: `${site.url}/about/`, lastmod: isoDate(latestDate), changefreq: "monthly", priority: "0.5", image: "" },
     { loc: `${site.url}/contact/`, lastmod: isoDate(latestDate), changefreq: "monthly", priority: "0.4", image: "" },
     { loc: `${site.url}/privacy/`, lastmod: isoDate(latestDate), changefreq: "yearly", priority: "0.3", image: "" },
+    { loc: `${site.url}/terms/`, lastmod: isoDate(latestDate), changefreq: "yearly", priority: "0.3", image: "" },
     { loc: `${site.url}/404.html`, lastmod: isoDate(latestDate), changefreq: "yearly", priority: "0.1", image: "" },
+    { loc: `${site.url}/editor/`, lastmod: isoDate(latestDate), changefreq: "monthly", priority: "0.3", image: "" },
     { loc: `${site.url}/rss.xml`, lastmod: isoDate(latestDate), changefreq: "daily", priority: "0.3", image: "" },
     ...posts.map((p) => ({ loc: p.url, lastmod: isoDate(p.date), changefreq: "monthly", priority: "0.7", image: coverImage(p) })),
   ];
@@ -837,6 +1030,17 @@ ${rssItems}
 </channel>
 </rss>`);
   write("site.webmanifest", JSON.stringify({ name: site.name, short_name: site.logoText, start_url: b("/"), display: "standalone", background_color: site.themeColor, theme_color: site.themeColor }, null, 2));
+
+  // ── IndexNow ──
+  const indexnowPath = path.join(root, "data", "indexnow.json");
+  let indexnowKey = "";
+  try { const d = JSON.parse(fs.readFileSync(indexnowPath, "utf8")); indexnowKey = d.indexnow_key || ""; } catch {}
+  if (!indexnowKey) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    indexnowKey = Array.from({ length: 32 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    fs.writeFileSync(indexnowPath, JSON.stringify({ indexnow_key: indexnowKey }, null, 2));
+  }
+  write(indexnowKey + ".txt", indexnowKey);
 
   console.log(`✓ Built ${posts.length} posts, ${cats.length} categories → ${path.relative(root, OUT)}/`);
 }
@@ -1010,6 +1214,64 @@ Stay updated with new AI income guides:
 
 - X / Twitter: [@kanavy9ah](https://x.com/kanavy9ah)`;
 
+const TERMS_MD = `**Last updated: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}**
+
+## 1. Acceptance of Terms
+
+By accessing and using ${site.name} (the "Website"), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Website.
+
+## 2. Use of the Website
+
+You may use the Website for lawful purposes only. You agree not to:
+
+- Use the Website in any way that violates any applicable law or regulation
+- Attempt to gain unauthorized access to any portion of the Website
+- Use automated systems to access or collect data from the Website without our written permission
+- Interfere with or disrupt the Website or servers
+
+## 3. Content
+
+### Our Content
+
+All content on this Website, including articles, guides, images, and graphics, is owned by or licensed to ${site.name}. You may not reproduce, distribute, or create derivative works without our written permission.
+
+### User-Generated Content
+
+If you submit comments or other content, you grant us a non-exclusive, royalty-free, perpetual, irrevocable, and fully sublicensable right to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute, and display such content.
+
+## 4. Accuracy of Information
+
+We strive to provide accurate and up-to-date information, but we make no warranties or representations about the accuracy, reliability, completeness, or timeliness of the content. The information on this Website is provided for general informational purposes only.
+
+## 5. Affiliate Disclosure
+
+This Website contains affiliate links. If you purchase through these links, we may earn a commission at no additional cost to you. See our [Privacy Policy](/privacy/) for more details on our affiliate relationships.
+
+## 6. Limitation of Liability
+
+To the fullest extent permitted by law, ${site.name} shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from:
+
+- Your use of or inability to use the Website
+- Any unauthorized access to or use of our servers
+- Any interruption or cessation of transmission
+- Any bugs, viruses, or other harmful code
+
+## 7. Indemnification
+
+You agree to indemnify, defend, and hold harmless ${site.name}, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses arising out of your use of the Website or violation of these Terms.
+
+## 8. Changes to Terms
+
+We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting on this page. Your continued use of the Website after any changes constitutes acceptance of the new Terms.
+
+## 9. Governing Law
+
+These Terms are governed by and construed in accordance with applicable laws, without regard to conflict of law principles.
+
+## 10. Contact
+
+If you have questions about these Terms, please contact us at [itsoftsloutions@gmail.com](mailto:itsoftsloutions@gmail.com).`;
+
 // ── Premium CSS ───────────────────────────────────────────────────────────────
 const PREMIUM_CSS = `
 /* ─── Design tokens — Light (default) ─── */
@@ -1049,7 +1311,7 @@ const PREMIUM_CSS = `
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background var(--transition),color var(--transition)}
 a{color:var(--accent);text-decoration:none;transition:color var(--transition)}
 a:hover{color:#79c0ff}
 img{max-width:100%;height:auto;display:block}
@@ -1265,6 +1527,45 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .contact-form input,.contact-form select,.contact-form textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:10px 14px;font-size:14px;font-family:var(--font-sans);outline:none;transition:border-color var(--transition)}
 .contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(9,105,218,.1)}
 [data-theme="dark"] .contact-form input:focus,[data-theme="dark"] .contact-form textarea:focus{box-shadow:0 0 0 3px rgba(88,166,255,.15)}
+[data-theme="dark"] .step-guide li{background:var(--surface);border-color:var(--border)}
+[data-theme="dark"] .step-guide li:hover{border-color:var(--accent)}
+[data-theme="dark"] .callout{background:var(--surface);border-color:var(--border)}
+[data-theme="dark"] .callout-tip{background:rgba(63,185,80,.08);border-left-color:var(--accent2)}
+[data-theme="dark"] .callout-warning{background:rgba(210,153,34,.08)}
+[data-theme="dark"] .callout-info{background:rgba(88,166,255,.08);border-left-color:var(--accent)}
+[data-theme="dark"] .mermaid{background:var(--surface);border-color:var(--border)}
+
+/* ─── Rich Text Editor ─── */
+.editor-meta{display:grid;grid-template-columns:1fr 200px 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:768px){.editor-meta{grid-template-columns:1fr}}
+.editor-label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.editor-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:10px 14px;font-size:14px;font-family:var(--font-sans);outline:none;transition:border-color var(--transition)}
+.editor-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(9,105,218,.1)}
+[data-theme="dark"] .editor-input:focus{box-shadow:0 0 0 3px rgba(88,166,255,.15)}
+.editor-frontmatter-hint{font-size:12px;color:var(--muted);margin-bottom:16px}
+.editor-actions{display:flex;gap:10px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.editor-btn{border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font-sans);transition:opacity var(--transition)}
+.editor-btn:hover{opacity:.85}
+.editor-btn-save{background:var(--accent);color:#fff}
+.editor-btn-download{background:var(--accent2);color:#fff}
+.editor-btn-clear{background:var(--surface2);color:var(--ink);border:1px solid var(--border)}
+.editor-status{font-size:13px;color:var(--muted);margin-left:auto}
+.editor-help{margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
+.editor-help h3{font-family:var(--font-serif);font-size:22px;margin-bottom:20px}
+.editor-help-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.editor-help-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.editor-help-item strong{display:block;margin-bottom:8px;color:var(--accent)}
+.editor-help-item p{font-size:14px;color:var(--muted);margin:0}
+.editor-code{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:12px;font-family:'JetBrains Mono',Consolas,monospace;margin:0;white-space:pre-wrap;color:var(--ink)}
+.EasyMDEContainer{--bg:var(--surface);--border:var(--border)}
+.EasyMDEContainer .editor-toolbar{background:var(--surface2);border:1px solid var(--border);border-radius:8px 8px 0 0}
+.EasyMDEContainer .editor-toolbar button{color:var(--ink)}
+.EasyMDEContainer .CodeMirror{background:var(--surface);color:var(--ink);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;font-family:'JetBrains Mono',Consolas,monospace;font-size:14px}
+.EasyMDEContainer .CodeMirror-cursor{border-left-color:var(--accent)}
+.EasyMDEContainer .editor-preview{background:var(--surface);padding:20px;border:1px solid var(--border);border-top:none}
+.EasyMDEContainer .editor-preview-side{border-left:1px solid var(--border)}
+[data-theme="dark"] .EasyMDEContainer .editor-toolbar{background:var(--surface2)}
+[data-theme="dark"] .EasyMDEContainer .CodeMirror{background:var(--surface);color:var(--ink)}
 .contact-form textarea{resize:vertical}
 .contact-submit{background:var(--accent);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;align-self:flex-start;transition:opacity var(--transition)}
 .contact-submit:hover{opacity:.88}
@@ -1308,6 +1609,34 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .footer-legal{margin-top:8px;font-size:12px}
 .footer-legal a{color:var(--muted)}
 .footer-legal a:hover{color:var(--accent)}
+
+/* ─── Mermaid flow diagrams ─── */
+.mermaid{margin:24px 0;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:auto;text-align:center}
+.mermaid svg{max-width:100%;height:auto}
+
+/* ─── Step-by-step guides ─── */
+.step-guide{counter-reset:step;list-style:none;padding:0;margin:28px 0}
+.step-guide li{counter-increment:step;position:relative;padding:16px 20px 16px 56px;margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-size:15px;line-height:1.7;transition:border-color var(--transition),box-shadow var(--transition)}
+.step-guide li::before{content:counter(step);position:absolute;left:0;top:0;bottom:0;width:40px;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-weight:800;font-size:16px;border-radius:var(--radius) 0 0 var(--radius)}
+.step-guide li:hover{border-color:var(--accent);box-shadow:var(--shadow-card)}
+.step-guide li strong{color:var(--accent)}
+
+/* ─── Callout blocks (::: tip, ::: warning, etc.) ─── */
+.callout{display:flex;gap:14px;padding:18px 20px;margin:24px 0;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
+.callout-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.callout-body{flex:1;min-width:0}
+.callout-body p{margin:6px 0}
+.callout-tip{border-left:4px solid var(--accent2);background:rgba(63,185,80,.06)}
+.callout-warning{border-left:4px solid #d29922;background:rgba(210,153,34,.06)}
+.callout-info{border-left:4px solid var(--accent);background:rgba(9,105,218,.06)}
+.callout-danger{border-left:4px solid #cf222e;background:rgba(207,34,46,.06)}
+.callout-note{border-left:4px solid var(--muted);background:var(--surface2)}
+
+/* ─── SVG hero images ─── */
+.post-hero-svg{min-height:340px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.post-hero-svg img{width:100%;height:340px;object-fit:cover;border-radius:0}
+.post-hero-svg .post-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,17,23,.92) 0%,rgba(13,17,23,.45) 100%);display:flex;align-items:flex-end}
+.post-hero-svg .post-hero-overlay>div{padding-bottom:36px;width:100%}
 `;
 
 

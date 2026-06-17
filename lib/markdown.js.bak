@@ -46,38 +46,13 @@ export function markdownToHtml(md) {
 
     if (/^```/.test(line)) {
       flushPara();
-      const lang = line.replace(/^```/, "").trim().toLowerCase();
+      const lang = line.replace(/^```/, "").trim();
       const buf = [];
       i++;
       while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
-      i++;
-      if (lang === "mermaid") {
-        html.push(`<div class="mermaid">${buf.join("\n")}</div>`);
-      } else if (lang === "steps") {
-        const items = buf.join("\n").split("\n").filter((l) => l.trim());
-        const lis = items.map((l) => {
-          const m = l.match(/^\d+\.\s+(.*)/);
-          const text = m ? m[1] : l.replace(/^[-*]\s+/, "");
-          return `<li>${inline(text)}</li>`;
-        }).join("");
-        html.push(`<ol class="step-guide">${lis}</ol>`);
-      } else {
-        const cls = lang ? ` class="language-${lang}"` : "";
-        html.push(`<pre><code${cls}>${escapeHtml(buf.join("\n"))}</code></pre>`);
-      }
-      continue;
-    }
-
-    if (/^:::\s*(\w+)/.test(line)) {
-      flushPara();
-      const type = line.match(/^:::\s*(\w+)/)[1].toLowerCase();
-      const buf = [];
-      i++;
-      while (i < lines.length && !/^:::\s*$/.test(lines[i])) buf.push(lines[i++]);
-      i++;
-      const icons = { tip: "💡", warning: "⚠️", info: "ℹ️", danger: "🚫", note: "📝" };
-      const icon = icons[type] || "📌";
-      html.push(`<div class="callout callout-${type}"><span class="callout-icon">${icon}</span><div class="callout-body">${markdownToHtml(buf.join("\n"))}</div></div>`);
+      i++; // closing fence
+      const cls = lang ? ` class="language-${lang}"` : "";
+      html.push(`<pre><code${cls}>${escapeHtml(buf.join("\n"))}</code></pre>`);
       continue;
     }
 

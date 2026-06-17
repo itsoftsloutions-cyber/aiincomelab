@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1562577309-4932fdd64cd1?w=800&q=80"
 title: "SEO for Beginners: How to Rank Your First Blog Post on Google"
 description: "A plain-English SEO guide for complete beginners — the exact steps to pick a keyword, write the post, and get it on Google's first page."
 slug: "seo-for-beginners-how-to-rank-your-first-blog-post-on-google"

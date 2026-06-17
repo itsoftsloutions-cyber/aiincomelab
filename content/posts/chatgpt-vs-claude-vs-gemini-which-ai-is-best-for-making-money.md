@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1684163761883-8cba5e000e12?w=800&q=80"
 title: "ChatGPT vs Claude vs Gemini: Which AI Is Best for Making Money"
 description: "A practical comparison of ChatGPT, Claude, and Gemini for content creation, automation, and online income — with clear recommendations by use case."
 slug: "chatgpt-vs-claude-vs-gemini-which-ai-is-best-for-making-money"
@@ -11,6 +12,24 @@ keywords: ["chatgpt vs claude vs gemini", "best ai for making money", "chatgpt f
 If you want to use AI to earn money online, you will quickly face the same question: ChatGPT, Claude, or Gemini? All three can write, summarize, and automate. But they are meaningfully different in the tasks they do best — and paying for the wrong one is an easy mistake to make.
 
 This is a practical comparison based on what each model does well for blogging, affiliate content, freelancing, and automation income.
+
+## How to choose at a glance
+
+If you only remember one thing, remember this decision flow — pick by your primary income method:
+
+```mermaid
+flowchart TD
+    A[What is your main method] --> B[Content and writing]
+    A --> C[Coding and automation]
+    A --> D[Research or budget]
+    B --> E[Use Claude]
+    C --> F[Use ChatGPT]
+    D --> G[Use Gemini]
+```
+
+::: info
+There is no universal winner. The right model is the one that matches the work you actually do most days, not the one with the longest feature list.
+:::
 
 ## The honest overview (in one table)
 
@@ -84,6 +103,10 @@ Start on free tiers. All three have free tiers capable enough to validate a blog
 - You are hitting rate limits and it is slowing your publishing schedule.
 - You have made at least $100 from the content the AI helped create.
 - You need a specific feature only available on paid tiers (Claude's extended context, ChatGPT's image generation, Gemini's workspace integration).
+
+::: warning
+Paying $20/month before you have any revenue is the most common early mistake. All three free tiers are enough to draft 5-10 posts and validate your niche first.
+:::
 
 **You almost never need two paid AI subscriptions at once.** Pick the tool that matches your primary income method and go deep with it.
 

@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80"
 title: "Midjourney for Beginners: Create and Sell AI Art"
 description: "A beginner's guide to Midjourney — how to create stunning AI images and turn them into income through print-on-demand, stock sites, and digital products."
 slug: "midjourney-for-beginners-create-and-sell-ai-art"
@@ -8,13 +9,40 @@ keywords: ["midjourney for beginners", "sell ai art", "make money with ai images
 ---
 Here is what I wish someone had told me about **midjourney for beginners** when I started: it is simpler than the internet makes it seem, but harder than a five-step list suggests. The difference between success and frustration comes down to a few specific decisions.
 
+## The AI art workflow at a glance
+
+Here is the path from a blank prompt to actual income, the way the rest of this guide works through it:
+
+```mermaid
+flowchart TD
+    A[Generate in Midjourney] --> B[Build niche portfolio]
+    B --> C[Print on demand]
+    B --> D[Digital downloads]
+    B --> E[Stock photography]
+    C --> F[Royalty income]
+    D --> F
+    E --> F
+```
+
 ## Getting started with Midjourney
 
 Access Midjourney through Discord — no prior design experience is needed since you communicate with the AI entirely through text prompts rather than drawing or design software.
 
 The free trial gives you approximately 25 image generations, which is enough to understand whether Midjourney fits your creative style and workflow before you commit to a paid subscription.
 
-Learn the five most important prompt parameters first: aspect ratio for sizing, style reference for consistency, chaos for variation, stop for completion level, and image weight for reference image influence.
+::: info
+The free trial is roughly 25 generations — use it to confirm Midjourney fits your creative style before paying for a subscription.
+:::
+
+Learn the five most important prompt parameters first, in this order:
+
+```steps
+1. Set the **aspect ratio** for sizing
+2. Add a **style reference** for consistency across images
+3. Adjust **chaos** to control how much variation you get
+4. Use **stop** to control the completion level of the render
+5. Tune **image weight** to set how strongly a reference image influences the result
+```
 
 ## Creating sellable art
 
@@ -23,6 +51,10 @@ Niche-specific designs consistently outsell generic, broad-appeal artwork becaus
 Developing a consistent visual style across your portfolio builds a recognizable brand that customers come back to, rather than looking like a random collection of unrelated images.
 
 High-contrast, simple designs with clear subjects and bold colors sell best on physical products like t-shirts and mugs where the design needs to be readable from a distance.
+
+::: tip
+Niche-specific designs consistently outsell generic artwork. Pick a specific theme and build a recognizable style around it rather than scattering across unrelated images.
+:::
 
 ## Print-on-demand income
 

@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80"
 title: "Best Free AI Tools You Can Use Today (2026 Edition)"
 description: "A curated list of genuinely free AI tools for writing, images, audio, and automation, with honest limits of each free tier."
 slug: "best-free-ai-tools-you-can-use-today"
@@ -11,6 +12,24 @@ keywords: ["free ai tools", "best free ai 2026", "ai tools no cost"]
 Paid AI tools get all the attention, but the free tiers available in 2026 are genuinely powerful — powerful enough to run a content business, launch digital products, and automate your workflow without spending a dollar until you have revenue to justify it.
 
 This is a curated list of what's actually free (not "free trial" or "free with credit card"), what each tool does well, and where the free tier runs out.
+
+---
+
+## The free-tool workflow at a glance
+
+The trick with free tiers is stacking them so each covers a different stage of the work:
+
+```mermaid
+flowchart LR
+    A[Claude for writing] --> B[Firefly for images]
+    B --> C[CapCut for video]
+    C --> D[Make for automation]
+    D --> E[Published content]
+```
+
+::: info
+No single free tier does everything well. The leverage comes from chaining specialized free tools, not from finding one tool that covers the whole pipeline.
+:::
 
 ---
 
@@ -71,7 +90,14 @@ This is a curated list of what's actually free (not "free trial" or "free with c
 
 **Best for:** Transcribing voice notes into blog content, summarizing meetings.
 
-**A workflow that works well:** Record yourself talking through your ideas for 10 minutes, transcribe with Otter, then clean up the transcript with Claude. The result often sounds more authentic than a pure AI draft because the raw ideas are yours.
+**A workflow that works well:**
+
+```steps
+1. Record yourself talking through your ideas for **10 minutes**.
+2. Transcribe the recording with `Otter`.
+3. Clean up the transcript with `Claude`.
+4. Publish — the result sounds more authentic because the raw ideas are yours.
+```
 
 ### CapCut (free)
 **What you get:** AI auto-captions, background removal, and video editing — fully free.
@@ -110,6 +136,10 @@ This is a curated list of what's actually free (not "free trial" or "free with c
 **Know your daily allowances.** Most free tiers reset daily or monthly. Plan your work around resets — do image generation at the start of the day before you burn through credits.
 
 **Upgrade surgically.** Once a specific tool becomes your bottleneck — you are hitting limits every day — that is when upgrading it pays off. Do not upgrade everything at once.
+
+::: warning
+Free tiers reset on different schedules — some daily, some monthly. Burning Firefly's 25 monthly credits in one afternoon means waiting until next month, so spread heavy generation across the cycle.
+:::
 
 ---
 

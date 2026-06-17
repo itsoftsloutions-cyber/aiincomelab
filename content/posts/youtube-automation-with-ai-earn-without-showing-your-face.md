@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80"
 title: "YouTube Automation with AI: Earn Without Showing Your Face"
 description: "How to build a monetized faceless YouTube channel using AI for scripts, voiceovers, and video creation — with real income expectations."
 slug: "youtube-automation-with-ai-earn-without-showing-your-face"

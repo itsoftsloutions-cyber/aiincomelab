@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&q=80"
 title: "AI Affiliate Marketing: A Beginner's Playbook"
 description: "Step-by-step beginner playbook for using AI to research, create, and scale an affiliate marketing site the right way."
 slug: "ai-affiliate-marketing-a-beginner-s-playbook"
@@ -11,6 +12,21 @@ keywords: ["ai affiliate marketing", "affiliate marketing 2026", "passive income
 Affiliate marketing has a reputation for being either dead or a get-rich-quick scheme, depending on who you ask. Neither is accurate. **Done right, it is one of the most durable passive income models available** — and AI has made it meaningfully more accessible for beginners, mostly by removing the content production bottleneck.
 
 This playbook covers what actually works in 2026: honest product recommendations, search-optimized content, and a sustainable publishing pace.
+
+---
+
+## The affiliate workflow at a glance
+
+Here is how the pieces fit together, from picking a niche to earning commissions.
+
+```mermaid
+flowchart TD
+    A[Pick a niche] --> B[Join 2 programs]
+    B --> C[Test the product]
+    C --> D[AI drafts content]
+    D --> E[Add experience and disclose]
+    E --> F[Rank and earn commissions]
+```
 
 ---
 
@@ -62,10 +78,16 @@ The content types that drive affiliate revenue are comparison posts, tutorials, 
 
 AI is excellent at structure and first drafts. It is bad at first-hand experience. The winning workflow:
 
-1. **You test the product.** Even a free trial gives you real observations AI cannot fabricate.
-2. **You write bullet notes** on what you observed — pros, cons, quirks, who it suits.
-3. **AI turns your notes into a structured draft** — introduction, feature breakdown, comparison table, verdict.
-4. **You add screenshots, specific numbers, and your opinion** to make it useful rather than generic.
+```steps
+1. **Test the product** yourself — even a free trial gives you real observations AI cannot fabricate
+2. **Write bullet notes** on what you observed — pros, cons, quirks, who it suits
+3. **Have AI turn your notes into a structured draft** — intro, feature breakdown, comparison table, verdict
+4. **Add screenshots, specific numbers, and your opinion** to make it useful rather than generic
+```
+
+::: tip
+The order matters. Testing the product *before* you prompt AI is what separates content that ranks from content Google flags as thin. Your first-hand notes are the one thing a competitor cannot copy.
+:::
 
 **Templates worth using:**
 
@@ -96,6 +118,10 @@ Affiliate content lives or dies by whether it matches what searchers actually wa
 ## Step 5: Disclose and stay compliant
 
 Affiliate disclosures are legally required in most countries and morally required everywhere. They also do not hurt conversions — readers respect transparency.
+
+::: warning
+Disclosure is not optional. In most countries an undisclosed affiliate relationship can expose you to legal liability, and a single deceptive post can unravel an audience you spent years building. Disclose at the top of every post that contains affiliate links.
+:::
 
 **What to do:**
 - Add a brief disclosure at the top of every post that contains affiliate links: *"This post contains affiliate links. If you buy through a link, I may earn a commission at no extra cost to you."*

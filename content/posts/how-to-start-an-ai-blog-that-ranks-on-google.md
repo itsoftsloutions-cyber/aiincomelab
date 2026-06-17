@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80"
 title: "How to Start an AI Blog That Ranks on Google"
 description: "A practical, no-hype guide to launching an AI blog and earning organic Google traffic with solid on-page SEO."
 slug: "how-to-start-an-ai-blog-that-ranks-on-google"

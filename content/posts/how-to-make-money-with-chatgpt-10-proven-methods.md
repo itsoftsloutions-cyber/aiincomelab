@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1684391314387-8c6d8b3b8b6f?w=800&q=80"
 title: "How to Make Money with ChatGPT: 10 Proven Methods"
 description: "Ten concrete, proven ways to earn real income using ChatGPT — from freelance writing to building micro-SaaS tools."
 slug: "how-to-make-money-with-chatgpt-10-proven-methods"

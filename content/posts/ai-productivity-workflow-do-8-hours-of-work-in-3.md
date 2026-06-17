@@ -1,4 +1,5 @@
 ---
+image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80"
 title: "AI Productivity Workflow: Do 8 Hours of Work in 3"
 description: "A repeatable AI-assisted workflow that compresses planning, drafting, and review so you ship more in less time."
 slug: "ai-productivity-workflow-do-8-hours-of-work-in-3"
