@@ -11,6 +11,11 @@ const POSTS_DIR = path.join(root, "content", "posts");
 const site = JSON.parse(fs.readFileSync(path.join(root, "data", "site.json"), "utf8"));
 const money = site.monetization || {};
 
+// Base path for GitHub Pages subpath hosting (e.g. "/aiincomelab")
+const BASE = (() => { try { return new URL(site.url).pathname.replace(/\/$/, ""); } catch { return ""; } })();
+// Prepend BASE to any root-relative internal path
+function b(p) { return BASE + p; }
+
 // ── helpers ────────────────────────────────────────────────────────────────
 function rmrf(dir) { fs.rmSync(dir, { recursive: true, force: true }); }
 function ensure(dir) { fs.mkdirSync(dir, { recursive: true }); }
@@ -106,6 +111,22 @@ function supportWidget() {
   if (!links.length) return "";
   return `<aside class="widget widget-support"><h4>Support this site</h4>${links.join(" · ")}</aside>`;
 }
+function consultingWidget() {
+  if (!money.consultingCta || !money.consultingUrl) return "";
+  return `<aside class="widget widget-consult">
+  <h4>1-on-1 Consulting</h4>
+  <p class="consult-text">${escapeHtml(money.consultingCta)}</p>
+  <a class="consult-btn" href="${money.consultingUrl}" target="_blank" rel="noopener">Book a session →</a>
+</aside>`;
+}
+function sponsoredBanner() {
+  if (!money.sponsoredPostRate) return "";
+  return `<aside class="widget widget-sponsored">
+  <h4>Advertise Here</h4>
+  <p class="consult-text">Sponsored posts from <strong>${money.sponsoredPostRate}</strong>. Reach AI-focused readers interested in tools &amp; income.</p>
+  <a class="consult-btn" href="mailto:ads@aiincomelab.com?subject=Sponsorship">Get in touch →</a>
+</aside>`;
+}
 function affiliateBannerInline() {
   const banners = (money.topAffiliateBanners || []).slice(0, 2);
   if (!banners.length) return "";
@@ -117,7 +138,7 @@ function affiliateBannerInline() {
 function sidebar(posts) {
   const recent = posts.slice(0, 5);
   const recentHtml = recent.map((p) => `
-  <a class="sidebar-post" href="/posts/${p.slug}/">
+  <a class="sidebar-post" href="${b('/posts/' + p.slug + '/')}">
     <img src="${coverImage(p)}" alt="${escapeHtml(p.title)}" loading="lazy">
     <span>${escapeHtml(p.title)}</span>
   </a>`).join("");
@@ -126,7 +147,9 @@ function sidebar(posts) {
   ${affiliateSidebarWidget()}
   <div class="widget"><h4>Recent Posts</h4>${recentHtml}</div>
   ${emailCaptureWidget(true)}
+  ${consultingWidget()}
   ${supportWidget()}
+  ${sponsoredBanner()}
 </aside>`;
 }
 
@@ -156,7 +179,7 @@ function layout({ title, description, canonical, head = "", body, jsonld = "", f
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="${b('/assets/style.css')}">
 ${adScriptTag()}
 ${analyticsTag()}
 ${jsonld}
@@ -176,38 +199,38 @@ ${footer()}
 function topBar() {
   return `<div class="top-bar">
   <div class="wrap-wide">
-    <span>🔥 New AI income guide every 2 hours — <a href="/category/make-money/">start here</a></span>
+    <span>🔥 New AI income guide every 2 hours — <a href="${b('/category/make-money/')}">start here</a></span>
     ${money.emailCapture ? `<a class="top-bar-cta" href="${money.emailProvider || '#'}">Get free tips →</a>` : ""}
   </div>
 </div>`;
 }
 
 function header() {
-  const navLinks = (site.nav || []).map((n) => `<a href="${n.href}">${escapeHtml(n.label)}</a>`).join("");
+  const navLinks = (site.nav || []).map((n) => `<a href="${b(n.href)}">${escapeHtml(n.label)}</a>`).join("");
   return `<header class="site-header">
   <div class="wrap-wide header-inner">
-    <a class="brand" href="/">
+    <a class="brand" href="${b('/')}">
       <span class="brand-icon">🤖</span>
       <span class="brand-text">${escapeHtml(site.logoText)}</span>
     </a>
     <nav class="site-nav">${navLinks}</nav>
-    <a class="header-cta" href="/category/make-money/">Make Money →</a>
+    <a class="header-cta" href="${b('/category/make-money/')}">Make Money →</a>
     <button class="nav-toggle" aria-label="Menu">☰</button>
   </div>
 </header>
 <nav class="mobile-nav" id="mobileNav">
-  ${(site.nav || []).map((n) => `<a href="${n.href}">${escapeHtml(n.label)}</a>`).join("")}
+  ${(site.nav || []).map((n) => `<a href="${b(n.href)}">${escapeHtml(n.label)}</a>`).join("")}
 </nav>`;
 }
 
 function footer() {
-  const cats = (site.nav || []).map((n) => `<a href="${n.href}">${escapeHtml(n.label)}</a>`).join(" · ");
+  const cats = (site.nav || []).map((n) => `<a href="${b(n.href)}">${escapeHtml(n.label)}</a>`).join(" · ");
   const socials = Object.entries(site.social || {}).map(([k, v]) => `<a href="${v}" target="_blank" rel="noopener">${k.charAt(0).toUpperCase() + k.slice(1)}</a>`).join(" · ");
   return `<footer class="site-footer">
   <div class="wrap-wide">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="/"><span class="brand-icon">🤖</span><span class="brand-text">${escapeHtml(site.logoText)}</span></a>
+        <a class="brand" href="${b('/')}"><span class="brand-icon">🤖</span><span class="brand-text">${escapeHtml(site.logoText)}</span></a>
         <p>${escapeHtml(site.tagline)}</p>
         <div class="footer-socials">${socials}</div>
       </div>
@@ -217,7 +240,7 @@ function footer() {
       </div>
       <div class="footer-links">
         <h5>Site</h5>
-        <nav><a href="/about/">About</a> · <a href="/privacy/">Privacy &amp; Disclosure</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="/rss.xml">RSS</a></nav>
+        <nav><a href="${b('/about/')}">About</a> · <a href="${b('/privacy/')}">Privacy &amp; Disclosure</a> · <a href="${b('/sitemap.xml')}">Sitemap</a> · <a href="${b('/rss.xml')}">RSS</a></nav>
       </div>
       <div class="footer-email">${emailCaptureWidget(true)}</div>
     </div>
@@ -295,18 +318,19 @@ function breadcrumbJsonLd(post) {
 
 function postCard(p, featured = false) {
   const img = coverImage(p);
+  const postHref = b('/posts/' + p.slug + '/');
   return `<article class="card${featured ? " card-featured" : ""}">
-  <a class="card-img-link" href="/posts/${p.slug}/">
+  <a class="card-img-link" href="${postHref}">
     <img src="${img}" alt="${escapeHtml(p.title)}" loading="lazy" class="card-img">
     <span class="card-cat">${catEmoji(p.category)} ${escapeHtml(catLabel(p.category))}</span>
   </a>
   <div class="card-body">
-    <h2 class="card-title"><a href="/posts/${p.slug}/">${escapeHtml(p.title)}</a></h2>
+    <h2 class="card-title"><a href="${postHref}">${escapeHtml(p.title)}</a></h2>
     <p class="card-desc">${escapeHtml(p.description)}</p>
     <div class="card-meta">
       <span>${fmtDate(p.date)}</span>
       <span>${p.readMin} min read</span>
-      <a class="card-read" href="/posts/${p.slug}/">Read →</a>
+      <a class="card-read" href="${postHref}">Read →</a>
     </div>
   </div>
 </article>`;
@@ -328,7 +352,7 @@ function build() {
     `<div class="stat"><span class="stat-val">${escapeHtml(s.value)}</span><span class="stat-lbl">${escapeHtml(s.label)}</span></div>`
   ).join("");
   const featCatsHtml = (site.featuredCategories || []).map((c) =>
-    `<a class="fcat" href="/category/${c.slug}/">
+    `<a class="fcat" href="${b('/category/' + c.slug + '/')}">
       <span class="fcat-icon">${c.icon}</span>
       <span class="fcat-title">${escapeHtml(c.title)}</span>
       <span class="fcat-desc">${escapeHtml(c.desc)}</span>
@@ -381,7 +405,7 @@ function build() {
 <div class="post-hero" style="background-image:url('${coverImage(p)}')">
   <div class="post-hero-overlay">
     <div class="wrap-wide">
-      <nav class="crumbs"><a href="/">Home</a> › <a href="/category/${p.category}/">${escapeHtml(catLabel(p.category))}</a></nav>
+      <nav class="crumbs"><a href="${b('/')}">Home</a> › <a href="${b('/category/' + p.category + '/')}">${escapeHtml(catLabel(p.category))}</a></nav>
       <h1>${escapeHtml(p.title)}</h1>
       <div class="post-meta-hero">
         <span>By ${escapeHtml(p.author)}</span>
@@ -448,7 +472,37 @@ function build() {
   }));
   write("404.html", layout({
     title: "Not Found", description: "Page not found.", canonical: `${site.url}/404.html`,
-    body: `<div class="wrap-wide" style="padding:80px 0 120px;text-align:center"><h1 style="font-size:80px;margin:0">404</h1><p style="font-size:20px;color:var(--muted)">That page doesn't exist. <a href="/">Go home →</a></p></div>`,
+    body: `<div class="wrap-wide" style="padding:80px 0 120px;text-align:center"><h1 style="font-size:80px;margin:0">404</h1><p style="font-size:20px;color:var(--muted)">That page doesn't exist. <a href="${b('/')}">Go home →</a></p></div>`,
+  }));
+
+  // ── Resources page ──
+  const affRows = (money.topAffiliateBanners || []).map((af) =>
+    `<div class="resource-card"><a href="${af.href}" target="_blank" rel="noopener nofollow">${af.badge ? `<span class="res-badge">${escapeHtml(af.badge)}</span>` : ""}<strong>${escapeHtml(af.label)}</strong></a></div>`
+  ).join("");
+  const resourceBody = `<div class="wrap-wide"><article class="post-content static-page">
+<h1>Best AI Tools &amp; Resources</h1>
+<p class="res-intro">Everything I actually use to run this blog and earn online. Tested and updated regularly. Some links are affiliate — I only list tools I recommend.</p>
+<h2>Writing &amp; SEO Tools</h2><div class="resource-grid">${affRows}</div>
+<h2>Earn From Your Blog</h2>
+<div class="resource-grid">
+  <div class="resource-card"><a href="https://adsense.google.com" target="_blank" rel="noopener"><span class="res-badge">Free</span><strong>Google AdSense — display ads</strong></a></div>
+  <div class="resource-card"><a href="https://ezoic.com" target="_blank" rel="noopener"><span class="res-badge">Higher RPM</span><strong>Ezoic — AI ad optimization</strong></a></div>
+  <div class="resource-card"><a href="https://www.mediavine.com" target="_blank" rel="noopener"><span class="res-badge">Premium</span><strong>Mediavine — 50k sessions+</strong></a></div>
+  <div class="resource-card"><a href="https://app.convertkit.com" target="_blank" rel="noopener"><span class="res-badge">Free Plan</span><strong>ConvertKit — email newsletter</strong></a></div>
+  <div class="resource-card"><a href="${money.gumroad || 'https://gumroad.com'}" target="_blank" rel="noopener"><span class="res-badge">0% fee</span><strong>Gumroad — sell digital products</strong></a></div>
+  <div class="resource-card"><a href="https://www.amazon.com/associates" target="_blank" rel="noopener"><span class="res-badge">Affiliate</span><strong>Amazon Associates — product links</strong></a></div>
+</div>
+<h2>Start Your Own Blog</h2>
+<div class="resource-grid">
+  <div class="resource-card"><a href="https://www.hostinger.com/web-hosting?ref=aiincomelab" target="_blank" rel="noopener nofollow"><span class="res-badge">$2.99/mo</span><strong>Hostinger — cheapest reliable hosting</strong></a></div>
+  <div class="resource-card"><a href="https://github.com/pages" target="_blank" rel="noopener"><span class="res-badge">Free</span><strong>GitHub Pages — free static hosting</strong></a></div>
+</div>
+${money.consultingCta ? `<div class="consult-banner"><h3>Want a custom strategy?</h3><p>${escapeHtml(money.consultingCta)}</p><a href="${money.consultingUrl}" target="_blank" class="consult-btn">Book a free call →</a></div>` : ""}
+</article></div>`;
+  write("resources/index.html", layout({
+    title: "Best AI Tools & Resources", description: `Tested tools and resources for AI blogging, SEO, and online income — ${site.name}.`,
+    canonical: `${site.url}/resources/`,
+    body: resourceBody,
   }));
 
   // ── SEO files ──
@@ -458,7 +512,7 @@ function build() {
   write("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
   if (ad.enabled) write("ads.txt", `google.com, ${ad.client.replace(/^ca-/, "")}, DIRECT, f08c47fec0942fa0\n`);
   write("rss.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>\n  <title>${escapeHtml(site.name)}</title>\n  <link>${site.url}/</link>\n  <description>${escapeHtml(site.description)}</description>\n  <language>${site.lang}</language>\n${posts.slice(0, 20).map((p) => `  <item>\n    <title>${escapeHtml(p.title)}</title>\n    <link>${p.url}</link>\n    <guid>${p.url}</guid>\n    <pubDate>${new Date(p.date).toUTCString()}</pubDate>\n    <description>${escapeHtml(p.description)}</description>\n  </item>`).join("\n")}\n</channel></rss>`);
-  write("site.webmanifest", JSON.stringify({ name: site.name, short_name: site.logoText, start_url: "/", display: "standalone", background_color: site.themeColor, theme_color: site.themeColor }, null, 2));
+  write("site.webmanifest", JSON.stringify({ name: site.name, short_name: site.logoText, start_url: b("/"), display: "standalone", background_color: site.themeColor, theme_color: site.themeColor }, null, 2));
 
   console.log(`✓ Built ${posts.length} posts, ${cats.length} categories → ${path.relative(root, OUT)}/`);
 }
@@ -688,6 +742,25 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .footer-links nav{display:flex;flex-direction:column;gap:6px}
 .footer-links nav a{color:var(--muted);font-size:13px}
 .footer-fine{font-size:12px;color:var(--muted);padding:20px 0;text-align:center}
+
+/* ─── Consulting + Sponsored widgets ─── */
+.widget-consult,.widget-sponsored{background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--accent);border-radius:var(--radius-lg);padding:20px}
+.consult-text{font-size:13px;color:var(--muted);margin:8px 0 12px!important}
+.consult-btn{display:inline-block;background:var(--accent);color:#0d1117!important;padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;transition:background var(--transition)}
+.consult-btn:hover{background:#79c0ff;text-decoration:none}
+.consult-banner{background:linear-gradient(135deg,#1a3a5c,#162032);border:1px solid rgba(88,166,255,.3);border-radius:var(--radius-lg);padding:28px;text-align:center;margin:32px 0}
+.consult-banner h3{font-family:var(--font-serif);font-size:22px;margin-bottom:8px}
+.consult-banner p{color:var(--muted);margin-bottom:16px}
+
+/* ─── Resources page ─── */
+.res-intro{color:var(--muted);font-size:16px;margin-bottom:32px!important}
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:16px 0 32px}
+.resource-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;transition:border-color var(--transition)}
+.resource-card:hover{border-color:var(--accent)}
+.resource-card a{display:flex;flex-direction:column;gap:4px;color:var(--ink)!important}
+.resource-card strong{font-size:14px;line-height:1.3}
+.res-badge{background:rgba(88,166,255,.15);color:var(--accent);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;width:fit-content}
 `;
+
 
 build();

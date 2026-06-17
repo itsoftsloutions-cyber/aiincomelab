@@ -31,21 +31,46 @@
     "gumroad": "https://aiincomelab.gumroad.com",
     "topAffiliateBanners": [
       {
-        "label": "Try Jasper AI — best AI writer",
+        "label": "Jasper AI — best AI writer for blogs",
         "href": "https://jasper.ai?ref=aiincomelab",
         "badge": "Popular"
       },
       {
-        "label": "Hostinger — best cheap hosting",
-        "href": "https://hostinger.com?ref=aiincomelab",
-        "badge": "Recommended"
+        "label": "Hostinger — $2.99/mo web hosting",
+        "href": "https://www.hostinger.com/web-hosting?ref=aiincomelab",
+        "badge": "Best Deal"
       },
       {
-        "label": "Canva Pro — free design tool",
-        "href": "https://canva.com",
-        "badge": "Free"
+        "label": "Canva Pro — design without skills",
+        "href": "https://partner.canva.com/aiincomelab",
+        "badge": "Free Trial"
+      },
+      {
+        "label": "SEMrush — #1 SEO tool for bloggers",
+        "href": "https://semrush.com?ref=aiincomelab",
+        "badge": "Try Free"
+      },
+      {
+        "label": "Surfer SEO — rank faster with AI",
+        "href": "https://surferseo.com?ref=aiincomelab",
+        "badge": "Recommended"
       }
-    ]
+    ],
+    "amazonProducts": [
+      {
+        "label": "Blue Yeti USB Mic (for YouTube/podcasts)",
+        "asin": "B00N1YPXW2",
+        "badge": "#1 Best Seller"
+      },
+      {
+        "label": "Logitech C920 Webcam",
+        "asin": "B006JH8T3S",
+        "badge": "Top Pick"
+      }
+    ],
+    "sponsoredPostRate": "$150",
+    "consultingCta": "Need a custom AI income strategy? Book a 1-on-1 session.",
+    "consultingUrl": "https://calendly.com/aiincomelab"
   },
   "social": {
     "twitter": "https://twitter.com/aiincomelab",
@@ -56,7 +81,8 @@
     { "label": "AI Tools", "href": "/category/ai-tools/" },
     { "label": "Make Money", "href": "/category/make-money/" },
     { "label": "Productivity", "href": "/category/productivity/" },
-    { "label": "Guides", "href": "/category/guides/" }
+    { "label": "Guides", "href": "/category/guides/" },
+    { "label": "Resources", "href": "/resources/" }
   ],
   "heroStats": [
     { "value": "11+", "label": "In-depth guides" },
