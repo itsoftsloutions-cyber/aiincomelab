@@ -536,8 +536,40 @@ function build() {
     body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Privacy Policy &amp; Disclosure</h1><div class="content">${markdownToHtml(PRIVACY_MD)}</div></article></div>`,
   }));
   write("contact/index.html", layout({
-    title: "Contact", description: `Contact the ${site.name} team — questions, sponsorships, corrections, or press enquiries.`, canonical: `${site.url}/contact/`,
-    body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Contact Us</h1><div class="content">${markdownToHtml(CONTACT_MD)}</div></article></div>`,
+    title: "Contact Us", description: `Contact the ${site.name} team — questions, sponsorships, content corrections, or advertising enquiries.`, canonical: `${site.url}/contact/`,
+    body: `<div class="wrap-wide"><article class="post-content static-page">
+<h1>Contact Us</h1>
+<div class="contact-grid">
+  <div class="contact-info">
+    <div class="contact-card"><span class="contact-icon">✉️</span><div><strong>Email</strong><p>contact@aiincomelab.com</p></div></div>
+    <div class="contact-card"><span class="contact-icon">📣</span><div><strong>Sponsorships &amp; Advertising</strong><p>Starting from $150 per sponsored post. Email with subject "Sponsorship".</p></div></div>
+    <div class="contact-card"><span class="contact-icon">🔗</span><div><strong>Social Media</strong><p>
+      <a href="https://twitter.com/aiincomelab" target="_blank" rel="noopener">Twitter / X →</a><br>
+      <a href="https://youtube.com/@aiincomelab" target="_blank" rel="noopener">YouTube →</a>
+    </p></div></div>
+    <div class="contact-card"><span class="contact-icon">⏱️</span><div><strong>Response Time</strong><p>We reply within 2 business days.</p></div></div>
+  </div>
+  <div class="contact-form-wrap">
+    <h2>Send us a message</h2>
+    <form class="contact-form" action="mailto:contact@aiincomelab.com" method="get" enctype="text/plain">
+      <label>Your name<input type="text" name="name" placeholder="Jane Smith" required></label>
+      <label>Your email<input type="email" name="from" placeholder="you@example.com" required></label>
+      <label>Subject
+        <select name="subject">
+          <option value="General question">General question</option>
+          <option value="Sponsorship enquiry">Sponsorship enquiry</option>
+          <option value="Press / media">Press / media</option>
+          <option value="Content correction">Content correction</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+      <label>Message<textarea name="body" rows="5" placeholder="Tell us how we can help…" required></textarea></label>
+      <button type="submit" class="contact-submit">Send message →</button>
+    </form>
+  </div>
+</div>
+<div class="content" style="margin-top:40px">${markdownToHtml(CONTACT_MD)}</div>
+</article></div>`,
   }));
   write("404.html", layout({
     title: "Not Found", description: "Page not found.", canonical: `${site.url}/404.html`,
@@ -898,6 +930,23 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .resource-card a{display:flex;flex-direction:column;gap:4px;color:var(--ink)!important}
 .resource-card strong{font-size:14px;line-height:1.3}
 .res-badge{background:rgba(88,166,255,.15);color:var(--accent);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;width:fit-content}
+
+/* ─── Contact page ─── */
+.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:40px;margin:32px 0}
+@media(max-width:768px){.contact-grid{grid-template-columns:1fr}}
+.contact-card{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+.contact-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.contact-card strong{display:block;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.contact-card p{margin:0;font-size:14px;color:var(--ink)}
+.contact-card a{color:var(--accent)}
+.contact-form-wrap h2{font-family:var(--font-serif);font-size:22px;margin-bottom:20px}
+.contact-form{display:flex;flex-direction:column;gap:14px}
+.contact-form label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.contact-form input,.contact-form select,.contact-form textarea{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:10px 14px;font-size:14px;font-family:var(--font-sans);outline:none;transition:border-color var(--transition)}
+.contact-form input:focus,.contact-form select,.contact-form textarea:focus{border-color:var(--accent)}
+.contact-form textarea{resize:vertical}
+.contact-submit{background:var(--accent);color:#0d1117;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;align-self:flex-start;transition:background var(--transition)}
+.contact-submit:hover{background:#79c0ff}
 
 /* ─── Cookie banner ─── */
 .cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--surface);border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
