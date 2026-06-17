@@ -351,7 +351,7 @@ function articleJsonLd(post) {
       image: { "@type": "ImageObject", url: coverImage(post), width: 800, height: 450 },
       datePublished: post.date + "T08:00:00+00:00",
       dateModified: post.date + "T08:00:00+00:00",
-      author: { "@type": "Organization", name: post.author, url: site.url + "/" },
+      author: { "@type": "Person", name: post.author || site.author, url: site.url + "/about/" },
       publisher: { "@type": "Organization", name: site.name, url: site.url + "/",
         logo: { "@type": "ImageObject", url: site.url + "/assets/logo.png", width: 200, height: 60 } },
       mainEntityOfPage: { "@type": "WebPage", "@id": post.url },
