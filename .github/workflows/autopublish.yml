@@ -43,6 +43,28 @@ jobs:
           git commit -m "auto: publish next queued post" || echo "nothing to commit"
           git push || echo "nothing to push"
 
+      # Share the newly published post to all social platforms. No-ops cleanly
+      # for any platform whose secrets are not configured, and never fails the build.
+      - name: Distribute to social media
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: |
+          node scripts/social-distribute.js
+          git add data/social-log.json || true
+          git commit -m "auto: log social distribution" || echo "nothing to commit"
+          git push || echo "nothing to push"
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public

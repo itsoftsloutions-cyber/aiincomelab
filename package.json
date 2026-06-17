@@ -8,6 +8,7 @@
     "build": "node build.js",
     "new": "node new-post.js",
     "autopublish": "node new-post.js && node build.js",
+    "social": "node scripts/social-distribute.js",
     "serve": "node serve.js"
   },
   "license": "MIT"

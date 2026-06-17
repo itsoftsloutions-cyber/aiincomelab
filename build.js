@@ -49,6 +49,12 @@ function coverImage(post) {
   if (post.image) return post.image;
   return UNSPLASH_COVERS[post.category] || UNSPLASH_COVERS["guides"];
 }
+// Absolute URL form for crawlers/structured data (og, JSON-LD, sitemap).
+const SITE_ORIGIN = (() => { try { return new URL(site.url).origin; } catch { return ""; } })();
+function coverImageAbs(post) {
+  const u = coverImage(post);
+  return u && u.startsWith("/") ? SITE_ORIGIN + u : u;
+}
 
 // ── Deterministic SVG hero generator ────────────────────────────────────────
 // Creates a unique, visually distinct SVG per post slug — no external images,
@@ -263,7 +269,9 @@ function orgSchema() {
 function layout({ title, description, canonical, head = "", body, jsonld = "", fullWidth = false, isArticle = false, articleDate = "", articleImage = "", noAds = false }) {
   const fullTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
   const ogType = isArticle ? "article" : "website";
-  const ogImage = articleImage || `${site.url}/assets/og-default.png`;
+  const ogOrigin = (() => { try { return new URL(site.url).origin; } catch { return ""; } })();
+  const absImg = (u) => (u && u.startsWith("/") ? ogOrigin + u : u);
+  const ogImage = absImg(articleImage) || `${site.url}/assets/og-default.png`;
   return `<!doctype html>
 <html lang="${site.lang}">
 <head>
@@ -302,7 +310,6 @@ ${site.social && site.social.twitter ? `<link rel="me" href="${site.social.twitt
 <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-<link rel="dns-prefetch" href="https://images.unsplash.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${b('/assets/style.css')}">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -486,7 +493,7 @@ function articleJsonLd(post) {
     {
       "@context": "https://schema.org", "@type": "Article",
       headline: post.title, description: post.description,
-      image: { "@type": "ImageObject", url: coverImage(post), width: 800, height: 450 },
+      image: { "@type": "ImageObject", url: coverImageAbs(post), width: 800, height: 450 },
       datePublished: post.date + "T08:00:00+00:00",
       dateModified: post.date + "T08:00:00+00:00",
       author: { "@type": "Person", name: post.author || site.author, url: site.url + "/about/" },
@@ -962,7 +969,7 @@ function editorClear(){
     { loc: `${site.url}/404.html`, lastmod: isoDate(latestDate), changefreq: "yearly", priority: "0.1", image: "" },
     { loc: `${site.url}/editor/`, lastmod: isoDate(latestDate), changefreq: "monthly", priority: "0.3", image: "" },
     { loc: `${site.url}/rss.xml`, lastmod: isoDate(latestDate), changefreq: "daily", priority: "0.3", image: "" },
-    ...posts.map((p) => ({ loc: p.url, lastmod: isoDate(p.date), changefreq: "monthly", priority: "0.7", image: coverImage(p) })),
+    ...posts.map((p) => ({ loc: p.url, lastmod: isoDate(p.date), changefreq: "monthly", priority: "0.7", image: coverImageAbs(p) })),
   ];
   write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
@@ -992,7 +999,8 @@ Sitemap: ${site.url}/sitemap.xml
     const cats = p.keywords.length
       ? p.keywords.map((k) => `    <category>${escapeHtml(k)}</category>`).join("\n") + "\n"
       : "";
-    const img = coverImage(p);
+    const img = coverImageAbs(p);
+    const imgType = img.endsWith(".svg") ? "image/svg+xml" : "image/jpeg";
     const htmlBody = renderPostBodyToHtml(p);
     const isoStr = new Date(p.date).toISOString();
     return `  <item>
@@ -1003,9 +1011,8 @@ Sitemap: ${site.url}/sitemap.xml
     <dc:creator><![CDATA[${escapeHtml(p.author || site.author)}]]></dc:creator>
     <description>${escapeHtml(p.description)}</description>
     <content:encoded><![CDATA[${htmlBody}]]></content:encoded>
-    <media:content url="${img}" width="800" height="450" medium="image" type="image/jpeg"></media:content>
+    <media:content url="${img}" width="800" height="450" medium="image" type="${imgType}"></media:content>
     <media:thumbnail url="${img}" width="800" height="450"/>
-    <media:credit role="photographer" scheme="urn:unsplash">Unsplash</media:credit>
 ${cats}\
   </item>`;
   }).join("\n");
