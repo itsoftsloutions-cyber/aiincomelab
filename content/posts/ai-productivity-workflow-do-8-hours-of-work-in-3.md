@@ -15,6 +15,20 @@ The core insight: **AI does not save time when you use it randomly**. It saves t
 
 ---
 
+## The three-layer workflow at a glance
+
+Here is how the day flows through the three layers, from planning to a finished draft.
+
+```mermaid
+flowchart TD
+    A[Daily brief] --> B[Plan in 30 min]
+    B --> C[Draft in 60 min]
+    C --> D[Review in 30 min]
+    D --> E[Done by 1030]
+```
+
+---
+
 ## Layer 1: Planning (30 minutes instead of 90)
 
 Most people waste the first 90 minutes of their day deciding what to do. AI eliminates this.
@@ -43,9 +57,15 @@ The hardest part of any knowledge work is starting. AI eliminates the blank page
 
 **The correct drafting approach:**
 
+```steps
 1. **You** write a 3-5 bullet outline — the actual ideas you want to say
 2. **AI** expands those bullets into a complete first draft
 3. **You** rewrite it in your voice, add examples from your experience, cut anything generic
+```
+
+::: info
+The sequence is the whole point. Giving AI your raw thinking first is what turns it into a force multiplier rather than a generic text generator.
+:::
 
 The mistake most people make: asking AI to write something from scratch with no input. The output is hollow because AI has no idea what you actually think. Give it your raw thinking and it becomes a force multiplier.
 
@@ -94,6 +114,10 @@ Three hours of real output versus eight hours of scattered effort. The differenc
 **Never publish an AI first draft directly.** AI drafts are starting points. They tend to be grammatically correct and substantively hollow. Your job is to inject the specific, the concrete, and the true.
 
 **Fact-check numbers and claims.** AI will confidently state statistics it invented. Any number you did not personally verify should be checked before publishing.
+
+::: warning
+AI will confidently state statistics it invented. Never publish an AI first draft directly, and check any number you did not personally verify before it goes live.
+:::
 
 **Keep a swipe file of good prompts.** When you find a prompt that works well, save it. Good prompts compound — you refine them over weeks until they produce reliably useful output.
 

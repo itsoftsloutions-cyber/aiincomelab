@@ -11,6 +11,20 @@ keywords: ["seo for beginners", "rank blog post google", "first page google 2026
 
 SEO for beginners does not have to be complicated. There are about eight things that actually determine whether your post ranks or sits invisible on page 10 — and six of them you can do in the hour you spend writing. This guide walks through all of them in order.
 
+## The ranking workflow at a glance
+
+Before the detailed steps, here is the whole process in order:
+
+```mermaid
+flowchart TD
+    A[Pick the right keyword] --> B[Write to match intent]
+    B --> C[Structure for Google]
+    C --> D[Add an FAQ section]
+    D --> E[Add internal links]
+    E --> F[Publish and request indexing]
+    F --> G[Wait 3-6 months]
+```
+
 ## Step 1: Pick the right keyword before you write a single word
 
 Keyword selection is the highest-leverage decision in SEO. A post targeting the wrong keyword will fail no matter how good it is.
@@ -38,6 +52,10 @@ Once you have your keyword, structure the post to match what someone typing that
 - In the meta description
 
 **Where NOT to stuff it:** everywhere else. "Keyword density" is not a ranking factor. Write for the reader. One natural mention per section is plenty.
+
+::: warning
+Do not keyword-stuff. "Keyword density" is not a ranking factor, and a post that repeats the phrase 20 times but ignores search intent will still not rank.
+:::
 
 **Intent matching example:** If someone searches "best AI tools for writing," they want a list with recommendations. Publishing a post that is purely definitional ("AI writing tools are software programs that...") will not rank for that query — even if the keyword appears 20 times.
 
@@ -78,9 +96,11 @@ For a broader view of the SEO foundation your whole blog needs: [How to start an
 
 ## Step 7: After you publish — the first 48 hours
 
-- Submit the exact URL in Google Search Console → URL Inspection → "Request indexing." This asks Google to crawl it immediately instead of waiting for the next scheduled pass (which can take weeks for a new site).
-- Share the post on one social channel. Social shares do not directly boost rankings, but they bring initial traffic that signals to Google this page is real and visited.
-- Add 2–3 internal links from your older posts to this new one (see Step 5).
+```steps
+1. Submit the exact URL in **Google Search Console → URL Inspection → "Request indexing"** so Google crawls it immediately instead of waiting weeks
+2. Share the post on **one social channel** to bring initial traffic that signals the page is real and visited
+3. Add **2–3 internal links** from your older posts to this new one (see Step 5)
+```
 
 ## Step 8: Timeline and what to realistically expect
 
@@ -89,6 +109,10 @@ For a broader view of the SEO foundation your whole blog needs: [How to start an
 - **When to update:** if a post has been indexed for 3+ months and is not appearing on pages 1–3 for any related phrase, update it with more depth, add FAQ items, and strengthen internal links. Then re-request indexing.
 
 The trap most beginners fall into is abandoning a post after two weeks because it has no traffic. SEO results compound on a 3–6 month lag. Stay consistent.
+
+::: note
+New sites typically wait 3–6 months for meaningful Google traffic, and first rankings usually come from long-tail variants rather than your exact target keyword. This lag is normal — do not abandon a post early.
+:::
 
 ## Frequently asked questions
 

@@ -12,6 +12,25 @@ I have been testing ChatGPT for income since GPT-3.5, and here is what I found: 
 
 > Quick note before we dive in: every serious earner I know runs 3–5 streams simultaneously. Not one. If you only pick one method, pick the one that plays to your existing skills — then add a second when the first is running on autopilot.
 
+## How to choose your first method at a glance
+
+Not sure where to begin? This decision flow maps your starting skill to the fastest method for you.
+
+```mermaid
+flowchart TD
+    A[Where do you start] --> B{Can write well}
+    B -->|Yes| C[Freelance writing]
+    B -->|No| D{Have coding skills}
+    D -->|Yes| E[Micro-SaaS tools]
+    D -->|No| F{Have niche expertise}
+    F -->|Yes| G[Digital products]
+    F -->|No| H[Sell prompt packs]
+```
+
+::: tip
+Pick the one method that plays to your existing skills today, then add a second stream once the first runs on autopilot. Momentum beats optimization.
+:::
+
 ## 1. Freelance writing — the fastest path to cash
 
 This is the one I recommend to anyone who can string together a decent sentence. Companies are hiring writers who know how to use AI tools, not replacing writers with AI. I have seen beginners go from zero to their first $500 month in about 6 weeks doing this.
@@ -25,6 +44,10 @@ Where to start: Upwork, LinkedIn, or cold emailing agencies that serve your nich
 There is a real market for well-tested prompts. Businesses and creators know AI saves time, but most of them are terrible at writing prompts. They will pay $10–$50 for a pack of 20 prompts that actually work.
 
 I have seen prompt packs on PromptBase, Gumroad, and Etsy. The ones that sell best are niche-specific — "50 ChatGPT prompts for real estate agents" does better than "100 general productivity prompts." The trick is testing each prompt yourself before you bundle it. One broken prompt in a paid pack will get you refund requests.
+
+::: warning
+Test every prompt yourself before you bundle it. One broken prompt in a paid pack will get you refund requests and tank your reviews.
+:::
 
 ## 3. YouTube scriptwriting
 
@@ -73,6 +96,18 @@ The key is finding a pain point you have experienced yourself. I built a simple 
 Create and sell a course teaching others how to use AI in a specific field. The market for "AI for X" courses is exploding because everyone is anxious about being left behind. A 5-module video course priced at $49–$149 sells well if it solves a real problem.
 
 Use ChatGPT to outline the curriculum, draft the script for each module, and create quiz questions. Film yourself (or use screen recording) walking through actual workflows. The courses that sell best are practical, not theoretical — show someone exactly what buttons to click.
+
+## Quick-start checklist
+
+If you only do one thing after reading this, do this — pick a method and take the first concrete action today.
+
+```steps
+1. **Pick one method** from the ten above that plays to your existing skills.
+2. **Set up your free tools** — a ChatGPT account, and a Gumroad or Upwork profile if relevant.
+3. **Create one sample** — a writing sample, a prompt pack, or a product mockup to show prospects.
+4. **Reach out or list it** — cold email three prospects or publish your first product.
+5. **Add a second stream** once the first is running on autopilot.
+```
 
 ## Frequently asked questions
 

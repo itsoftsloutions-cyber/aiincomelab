@@ -12,11 +12,27 @@ I have been running faceless YouTube channels using AI tools for about 8 months 
 
 Let me walk you through exactly what I have learned.
 
+## The faceless production pipeline at a glance
+
+Every video I publish moves through the same five stages, which is what makes batching possible:
+
+```mermaid
+flowchart LR
+    A[Script with AI] --> B[Record voiceover]
+    B --> C[Add visuals and b-roll]
+    C --> D[Edit and caption]
+    D --> E[Thumbnail and publish]
+```
+
 ## Why faceless channels actually work
 
 The biggest misconception is that faceless channels are easy because you do not have to be on camera. In some ways they are harder — you have to hold attention without a personality to carry it. But the upside is real: you can scale across multiple niches because you are not the brand, the content is.
 
 I have seen faceless channels in finance, tech explainers, and motivation content earning $2,000–$20,000/month. The common thread is not the niche — it is consistency and production quality. Channels that post 3x a week with solid scripting and good audio win. Channels that post whenever they feel like it do not, regardless of niche.
+
+::: info
+The common thread across earning channels is not the niche — it is consistency and production quality. Posting 3x a week with solid scripting and good audio beats posting whenever you feel like it.
+:::
 
 ## Picking a niche that actually pays
 
@@ -37,6 +53,10 @@ Here is the toolchain I have settled on after months of testing:
 **Scripting:** I use Claude for research and first drafts, then rewrite everything in my own words. The key is feeding it specific sources and angles, not asking it to invent content from scratch. A script that takes me 45 minutes with AI would take 3 hours without it.
 
 **Voiceover:** ElevenLabs is the best AI voice I have found. The key is picking a voice that matches your content style — authoritative for finance, warm and conversational for self-improvement. I always listen to the full voiceover before publishing because AI voices still mess up emphasis and pacing.
+
+::: warning
+Always listen to the full AI voiceover before publishing. AI voices still mess up emphasis and pacing, and a single mispronounced word can break viewer trust.
+:::
 
 **Visuals:** I use a mix of stock footage (Pexels, Pixabay), screen recordings, and AI-generated b-roll from tools like Canva or Adobe Firefly. The mistake beginners make is using generic stock footage that looks like a corporate training video. Spend time finding clips that actually match the script.
 
@@ -68,7 +88,14 @@ Basic familiarity helps but is not required. CapCut is intuitive enough that you
 
 **How much time per video should I budget?**
 
-Plan for 4–6 hours per 10-minute video once you have your workflow dialed in. That breaks down to: 1 hour scripting, 1 hour voiceover, 2 hours visuals and editing, 1 hour thumbnail and metadata.
+Plan for 4–6 hours per 10-minute video once you have your workflow dialed in. That breaks down to:
+
+```steps
+1. **1 hour scripting** — research and first draft with AI, then rewrite in your own words
+2. **1 hour voiceover** — generate and review the full ElevenLabs audio
+3. **2 hours visuals and editing** — stock footage, b-roll, captions, and transitions in CapCut
+4. **1 hour thumbnail and metadata** — title, description, tags, and thumbnail
+```
 
 **Can I use AI for the entire video?**
 

@@ -122,11 +122,14 @@ function main() {
   const fm = [
     "---",
     `title: "${title.replace(/"/g, "'")}"`,
-    `description: "${(topic.description || "").replace(/"/g, "'")}"`,
+
+    `image: "/images/placeholder.svg"`,
+    `description: "${(topic.description || "").replace(/"/g, '"')}"`,
+    `svgImage: true`,
     `slug: "${slug}"`,
     `category: "${topic.category}"`,
     `date: "${dateISO}"`,
-    `keywords: [${(topic.keywords || []).map((k) => `"${k}"`).join(", ")}]`,
+    `keywords: "${topic.keywords[0] || ""}"`,
     "---",
     "",
   ].join("\n");
