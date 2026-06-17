@@ -185,6 +185,7 @@ function layout({ title, description, canonical, head = "", body, jsonld = "", f
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');</script>
 <title>${escapeHtml(fullTitle)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
@@ -232,6 +233,21 @@ ${body}
 ${footer()}
 <script>
 (function(){
+  // ── Theme ──
+  var saved=localStorage.getItem('theme')||'light';
+  var html=document.documentElement;
+  var tog=document.getElementById('themeToggle');
+  function applyTheme(t){
+    if(t==='dark'){html.setAttribute('data-theme','dark');if(tog)tog.textContent='🌙';}
+    else{html.removeAttribute('data-theme');if(tog)tog.textContent='☀️';}
+  }
+  applyTheme(saved);
+  if(tog)tog.addEventListener('click',function(){
+    var next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+    localStorage.setItem('theme',next);
+    applyTheme(next);
+  });
+  // ── Read progress ──
   var bar=document.getElementById('read-progress');
   var btn=document.getElementById('back-top');
   function upd(){
@@ -241,10 +257,11 @@ ${footer()}
     if(btn){if(s.scrollTop>400)btn.classList.add('visible');else btn.classList.remove('visible');}
   }
   window.addEventListener('scroll',upd,{passive:true});
+  // ── Mobile nav ──
+  document.querySelector('.nav-toggle')?.addEventListener('click',function(){
+    document.getElementById('mobileNav').classList.toggle('open');
+  });
 })();
-document.querySelector('.nav-toggle')?.addEventListener('click',function(){
-  document.getElementById('mobileNav').classList.toggle('open');
-});
 </script>
 </body>
 </html>`;
@@ -269,6 +286,7 @@ function header() {
     </a>
     <nav class="site-nav">${navLinks}</nav>
     <a class="header-cta" href="${b('/category/make-money/')}">Make Money →</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Switch light/dark">☀️</button>
     <button class="nav-toggle" aria-label="Menu">☰</button>
   </div>
 </header>
@@ -681,7 +699,6 @@ This site earns revenue through:
 
 - **Display advertising** (Google AdSense) — ads shown alongside content
 - **Affiliate links** — we link to tools we use and recommend; if you buy, we may earn a small commission at no extra cost to you
-- **Digital products** — ebooks and guides sold through Gumroad
 - **Sponsored content** — clearly labelled posts from brands we vet
 
 Our commercial relationships never influence editorial recommendations. We only link to tools we have personally tested.
@@ -692,45 +709,117 @@ We update articles when tools change. We correct errors quickly. We do not publi
 
 const PRIVACY_MD = `**Last updated: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}**
 
-## 1. Information we collect
+This Privacy Policy explains how AIIncomeLab ("we", "us", "our") collects, uses, and protects information when you visit **${site.url}/**. We are committed to protecting your privacy and complying with applicable data protection laws including GDPR and CCPA.
 
-We collect non-personal analytics data (pages viewed, time on site, general location) via Google Analytics. We do not collect names, email addresses, or any personal data unless you voluntarily submit them via our newsletter signup.
+## 1. Information We Collect
 
-If you subscribe to our newsletter, your email is stored with ConvertKit. You can unsubscribe at any time using the link in any email.
+### 1a. Information you provide voluntarily
 
-## 2. Cookies
+- **Contact form**: When you contact us via our contact form, we receive your name, email address, and message. This data is sent directly to itsoftsloutions@gmail.com via Formsubmit.co and is used solely to respond to your enquiry.
+- **Newsletter signup**: If you subscribe to our newsletter, we receive your email address. We use this to send you AI income guides and updates. You can unsubscribe at any time using the link in any email.
 
-This site uses cookies for:
+### 1b. Information collected automatically
 
-- **Advertising** — Google AdSense uses cookies to serve relevant ads based on your browsing. You can opt out at [Google Ads Settings](https://www.google.com/settings/ads) or [aboutads.info](https://optout.aboutads.info/).
-- **Analytics** — Google Analytics uses cookies to understand traffic patterns. No personally identifiable information is stored.
-- **Preferences** — we store your cookie consent choice in your browser's localStorage.
+- **Analytics data**: We use Google Analytics 4 to collect aggregated, non-personally-identifiable data including pages visited, time on site, device type, and general geographic location (country/city level). No personally identifiable information is stored.
+- **Log data**: Our hosting provider (GitHub Pages) may collect standard server log data including your IP address, browser type, and the pages you request. This data is held by GitHub and governed by [GitHub's Privacy Policy](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
 
-## 3. Affiliate disclosure
+## 2. Cookies and Tracking Technologies
 
-Some links on this site are affiliate links. If you click and buy, we earn a small commission at no extra cost to you. We only recommend products we have tested. All affiliate links are marked with \`rel="nofollow"\`.
+This website uses cookies for the following purposes:
 
-## 4. Third-party services
+### Strictly necessary cookies
+- **Cookie consent** — we store your cookie consent choice in your browser's localStorage. No data is sent to a server.
+- **Theme preference** — we store your light/dark mode choice locally in your browser.
 
-We use:
+### Advertising cookies (Google AdSense)
+This site uses **Google AdSense** to display advertisements. Google AdSense uses cookies, web beacons, and similar tracking technologies to:
+- Serve ads based on your prior visits to this website and other websites
+- Measure ad performance and prevent fraud
 
-- **Google AdSense** — advertising (Google Privacy Policy: google.com/policies/privacy)
-- **Google Analytics** — site analytics
-- **ConvertKit** — email newsletter
-- **Gumroad** — digital product sales
-- **Unsplash** — stock photos (unsplash.com/license)
+Google's use of advertising cookies enables it and its partners to serve ads based on your visits to our site and other sites on the Internet. You may opt out of personalised advertising by visiting:
+- [Google Ads Settings](https://www.google.com/settings/ads)
+- [Network Advertising Initiative opt-out](https://optout.networkadvertising.org/)
+- [About Ads opt-out](https://optout.aboutads.info/)
 
-## 5. Your rights
+For more information on how Google uses data, see: [google.com/policies/privacy/partners](https://www.google.com/policies/privacy/partners/)
 
-You may request deletion of any personal data we hold. Contact us at itsoftsloutions@gmail.com. We respond within 30 days.
+### Analytics cookies (Google Analytics)
+We use **Google Analytics 4** to understand how visitors interact with our website. Analytics cookies collect information anonymously. No personally identifiable information is shared with Google Analytics. You may opt out using the [Google Analytics Opt-out Browser Add-on](https://tools.google.com/dlpage/gaoptout).
 
-## 6. Changes
+## 3. Affiliate Disclosure
 
-We may update this policy. The date at the top of this page will reflect the latest revision.
+Some links on this website are **affiliate links**. This means if you click on a link and make a purchase, we may receive a small commission — at no additional cost to you. We only recommend products and services that we have personally tested and believe provide genuine value.
 
-## 7. Contact
+All affiliate links include the attribute \`rel="nofollow"\` or \`rel="noopener nofollow"\` as required. Our editorial recommendations are never influenced by commercial relationships.
 
-Questions about privacy: itsoftsloutions@gmail.com`;
+This affiliate disclosure complies with the [FTC's guidelines on endorsements and testimonials](https://www.ftc.gov/legal-library/browse/rules/guides-use-endorsements-testimonials-advertising).
+
+## 4. How We Use Your Information
+
+We use the information we collect to:
+- Respond to your enquiries and messages
+- Send newsletters you have opted into
+- Understand how our content is being used to improve it
+- Display relevant advertisements via Google AdSense
+- Comply with legal obligations
+
+We do **not** sell, rent, or trade your personal information to any third party.
+
+## 5. Third-Party Services
+
+| Service | Purpose | Privacy Policy |
+|---------|---------|---------------|
+| Google AdSense | Display advertising | [policies.google.com](https://policies.google.com/privacy) |
+| Google Analytics | Site analytics | [policies.google.com](https://policies.google.com/privacy) |
+| Formsubmit.co | Contact form delivery | [formsubmit.co/privacy](https://formsubmit.co/privacy) |
+| GitHub Pages | Website hosting | [docs.github.com](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement) |
+| Unsplash | Stock photography | [unsplash.com/privacy](https://unsplash.com/privacy) |
+
+## 6. Data Retention
+
+- **Contact form submissions**: Retained in our email inbox for up to 2 years, then deleted.
+- **Analytics data**: Google Analytics retains data for 14 months by default.
+- **Cookie consent**: Stored in your browser's localStorage until you clear it.
+
+## 7. Your Rights
+
+Depending on your location, you may have the following rights regarding your personal data:
+
+- **Access**: Request a copy of the personal data we hold about you
+- **Rectification**: Request correction of inaccurate data
+- **Erasure**: Request deletion of your personal data
+- **Objection**: Object to processing of your personal data
+- **Portability**: Request transfer of your data to another service
+- **Withdraw consent**: Withdraw consent at any time where processing is based on consent
+
+To exercise any of these rights, contact us at **itsoftsloutions@gmail.com**. We will respond within **30 days**.
+
+If you are in the EU/EEA and believe we have not handled your data correctly, you have the right to lodge a complaint with your local supervisory authority.
+
+## 8. Children's Privacy
+
+This website is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe a child has provided us with personal information, please contact us immediately at itsoftsloutions@gmail.com.
+
+## 9. Do Not Track
+
+Some browsers send "Do Not Track" signals. We do not currently respond to DNT signals as there is no industry-standard approach to these signals. Third-party services (Google AdSense, Google Analytics) have their own DNT policies.
+
+## 10. Security
+
+We implement reasonable technical and organisational measures to protect your information. However, no method of transmission over the internet is 100% secure. We cannot guarantee absolute security.
+
+## 11. Changes to This Policy
+
+We may update this Privacy Policy periodically. We will notify users by updating the "Last updated" date at the top of this page. We recommend reviewing this page periodically. Continued use of the site after changes constitutes acceptance of the updated policy.
+
+## 12. Contact Us
+
+If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact:
+
+**Kanav Sharma**
+**Email**: [itsoftsloutions@gmail.com](mailto:itsoftsloutions@gmail.com)
+**Website**: ${site.url}/
+**Response time**: Within 2 business days`;
 
 const CONTACT_MD = `Have a question, correction, or want to work together? We read every message.
 
@@ -766,8 +855,28 @@ Stay updated with new AI income guides:
 
 // ── Premium CSS ───────────────────────────────────────────────────────────────
 const PREMIUM_CSS = `
-/* ─── Design tokens ─── */
+/* ─── Design tokens — Light (default) ─── */
 :root{
+  --bg:#f6f8fa;
+  --surface:#ffffff;
+  --surface2:#f0f2f5;
+  --border:#d0d7de;
+  --ink:#1a1f2e;
+  --muted:#636e7b;
+  --accent:#0969da;
+  --accent2:#1a7f37;
+  --hero-gradient:linear-gradient(135deg,#dff0ff 0%,#f6f8fa 60%,#e8f5e9 100%);
+  --card-hover:#f0f2f5;
+  --radius:12px;
+  --radius-lg:20px;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+  --shadow-card:0 2px 12px rgba(0,0,0,.06);
+  --font-sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --font-serif:'Playfair Display',Georgia,serif;
+  --transition:.18s ease;
+}
+/* ─── Dark theme ─── */
+[data-theme="dark"]{
   --bg:#0d1117;
   --surface:#161b22;
   --surface2:#1c2330;
@@ -776,16 +885,10 @@ const PREMIUM_CSS = `
   --muted:#8b949e;
   --accent:#58a6ff;
   --accent2:#3fb950;
-  --gradient:linear-gradient(135deg,#1a3a5c 0%,#0d1117 100%);
   --hero-gradient:linear-gradient(135deg,#0d1117 0%,#162032 50%,#0d1117 100%);
   --card-hover:#1c2330;
-  --radius:12px;
-  --radius-lg:20px;
   --shadow:0 4px 24px rgba(0,0,0,.4);
   --shadow-card:0 2px 12px rgba(0,0,0,.3);
-  --font-sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --font-serif:'Playfair Display',Georgia,serif;
-  --transition:.18s ease;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -803,23 +906,24 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .section-title{font-family:var(--font-serif);font-size:26px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid var(--border)}
 
 /* ─── Top bar ─── */
-.top-bar{background:linear-gradient(90deg,#1f2d40,#1a3a5c);border-bottom:1px solid var(--border);padding:8px 0;font-size:13px;color:var(--muted)}
+.top-bar{background:var(--accent);border-bottom:1px solid var(--border);padding:8px 0;font-size:13px;color:#fff}
 .top-bar .wrap-wide{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.top-bar a{color:var(--accent)}
-.top-bar-cta{background:var(--accent);color:#0d1117!important;padding:3px 12px;border-radius:20px;font-weight:600;font-size:12px}
+.top-bar a{color:#fff;font-weight:600}
+.top-bar-cta{background:rgba(255,255,255,.2);color:#fff!important;padding:3px 12px;border-radius:20px;font-weight:700;font-size:12px;border:1px solid rgba(255,255,255,.4)}
 
 /* ─── Header ─── */
-.site-header{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.site-header{position:sticky;top:0;z-index:100;background:rgba(246,248,250,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+[data-theme="dark"] .site-header{background:rgba(13,17,23,.95)}
 .header-inner{display:flex;align-items:center;gap:20px;padding-top:14px;padding-bottom:14px}
 .brand{display:flex;align-items:center;gap:8px;color:var(--ink)!important;font-weight:800;font-size:20px}
 .brand-icon{font-size:22px}
 .site-nav{display:flex;gap:4px;margin-left:auto}
 .site-nav a{color:var(--muted);font-size:14px;font-weight:500;padding:6px 10px;border-radius:6px;transition:background var(--transition),color var(--transition)}
 .site-nav a:hover{color:var(--ink);background:var(--surface2)}
-.header-cta{background:var(--accent);color:#0d1117!important;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap}
-.header-cta:hover{background:#79c0ff;text-decoration:none}
+.header-cta{background:var(--accent);color:#fff!important;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap}
+.header-cta:hover{opacity:.88;text-decoration:none}
 .nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--ink);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:18px}
-.mobile-nav{display:none;flex-direction:column;background:var(--surface);border-bottom:1px solid var(--border)}
+.mobile-nav{display:none;flex-direction:column;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
 .mobile-nav.open{display:flex}
 .mobile-nav a{padding:14px 24px;border-bottom:1px solid var(--border);color:var(--ink);font-weight:500}
 @media(max-width:768px){.site-nav,.header-cta{display:none}.nav-toggle{display:block}}
@@ -829,7 +933,7 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .hero-inner{display:grid;grid-template-columns:1fr 420px;gap:48px;align-items:center}
 @media(max-width:900px){.hero-inner{grid-template-columns:1fr}}
 .hero-badge{display:inline-block;background:rgba(63,185,80,.15);color:var(--accent2);border:1px solid rgba(63,185,80,.3);padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:16px}
-.hero h1{font-family:var(--font-serif);font-size:clamp(30px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:16px;background:linear-gradient(135deg,#e6edf3,#58a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1{font-family:var(--font-serif);font-size:clamp(30px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:16px;background:linear-gradient(135deg,var(--ink),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero>div>p,.hero-text>p{color:var(--muted);font-size:18px;margin-bottom:28px}
 .hero-stats{display:flex;gap:32px;margin-bottom:28px}
 .stat{display:flex;flex-direction:column}
@@ -878,16 +982,17 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .post-content{min-width:0;padding:36px 0}
 .static-page{max-width:720px;padding:48px 0 80px}
 .content h2{font-family:var(--font-serif);font-size:26px;margin:40px 0 14px;padding-top:32px;border-top:1px solid var(--border)}
-.content h3{font-size:20px;margin:28px 0 10px;color:#79c0ff}
-.content p{margin:16px 0;color:#c9d1d9;line-height:1.8}
-.content a{color:var(--accent);border-bottom:1px solid rgba(88,166,255,.3)}
+.content h3{font-size:20px;margin:28px 0 10px;color:var(--accent)}
+.content p{margin:16px 0;color:var(--ink);line-height:1.8;opacity:.88}
+.content a{color:var(--accent);border-bottom:1px solid rgba(9,105,218,.25)}
+[data-theme="dark"] .content a{border-bottom-color:rgba(88,166,255,.3)}
 .content a:hover{border-color:var(--accent)}
-.content ul,.content ol{margin:16px 0;padding-left:24px;color:#c9d1d9}
+.content ul,.content ol{margin:16px 0;padding-left:24px;color:var(--ink);opacity:.88}
 .content li{margin:8px 0}
-.content blockquote{margin:24px 0;padding:16px 20px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;color:var(--muted)}
-.content blockquote p{margin:0;color:var(--muted)}
-.content pre{background:#090d13;border:1px solid var(--border);border-radius:var(--radius);padding:18px;overflow:auto;margin:20px 0}
-.content code{background:#161b22;border:1px solid var(--border);border-radius:5px;padding:2px 6px;font-size:13px;font-family:'JetBrains Mono',Consolas,monospace}
+.content blockquote{margin:24px 0;padding:16px 20px;border-left:3px solid var(--accent);background:var(--surface2);border-radius:0 var(--radius) var(--radius) 0}
+.content blockquote p{margin:0;color:var(--muted);opacity:1}
+.content pre{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;overflow:auto;margin:20px 0}
+.content code{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 6px;font-size:13px;font-family:'JetBrains Mono',Consolas,monospace}
 .content pre code{border:0;padding:0;background:transparent}
 .content img{border-radius:var(--radius-lg);margin:20px 0;box-shadow:var(--shadow)}
 .content table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;overflow:hidden;border-radius:var(--radius);border:1px solid var(--border)}
@@ -928,16 +1033,22 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .inline-aff span{background:var(--accent);color:#0d1117;padding:1px 6px;border-radius:10px;font-size:11px}
 
 /* ─── Email capture ─── */
-.email-box{background:linear-gradient(135deg,#1a3a5c,#162032);border:1px solid rgba(88,166,255,.3);border-radius:var(--radius-lg);padding:28px;text-align:center;margin:32px 0}
+.email-box{background:linear-gradient(135deg,var(--accent),#0d47a1);border:none;border-radius:var(--radius-lg);padding:28px;text-align:center;margin:32px 0;color:#fff}
+.email-box h3,.email-box p{color:#fff!important}
+[data-theme="dark"] .email-box{background:linear-gradient(135deg,#1a3a5c,#162032);border:1px solid rgba(88,166,255,.3)}
 .email-icon{font-size:36px;margin-bottom:10px}
 .email-box h3{font-family:var(--font-serif);font-size:22px;margin-bottom:8px}
 .email-box p{color:var(--muted);margin-bottom:16px}
 .email-form,.email-form-inline{display:flex;gap:8px;flex-wrap:wrap}
 .email-form{flex-direction:column}
-.email-form input,.email-form-inline input{flex:1;min-width:0;background:#0d1117;border:1px solid var(--border);color:var(--ink);padding:10px 14px;border-radius:8px;font-size:14px;outline:none}
-.email-form input:focus,.email-form-inline input:focus{border-color:var(--accent)}
-.email-form button,.email-form-inline button{background:var(--accent);color:#0d1117;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
-.email-form button:hover,.email-form-inline button:hover{background:#79c0ff}
+.email-form input,.email-form-inline input{flex:1;min-width:0;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;padding:10px 14px;border-radius:8px;font-size:14px;outline:none}
+.email-form input::placeholder,.email-form-inline input::placeholder{color:rgba(255,255,255,.7)}
+.email-form input:focus,.email-form-inline input:focus{border-color:#fff;background:rgba(255,255,255,.2)}
+.email-compact .email-form-inline input{background:var(--surface2);border:1px solid var(--border);color:var(--ink)}
+.email-compact .email-form-inline input::placeholder{color:var(--muted)}
+.email-form button,.email-form-inline button{background:#fff;color:var(--accent);border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.email-form button:hover,.email-form-inline button:hover{background:#f0f2f5}
+.email-compact .email-form-inline button{background:var(--accent);color:#fff}
 .email-fine{font-size:12px;color:var(--muted);margin-top:8px!important}
 .email-compact{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
 .email-compact p{font-size:13px;color:var(--muted);margin-bottom:10px}
@@ -946,7 +1057,7 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .widget-support a{display:inline-block;font-size:13px;color:var(--accent);margin:4px 0}
 
 /* ─── Ads ─── */
-.ad-wrap{margin:24px 0;background:rgba(88,166,255,.04);border:1px dashed var(--border);border-radius:var(--radius);padding:12px;min-height:90px}
+.ad-wrap{margin:24px 0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;min-height:90px}
 .ad-label{font-size:10px;color:var(--muted);text-align:center;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
 
 /* ─── Footer ─── */
@@ -966,9 +1077,11 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 /* ─── Consulting + Sponsored widgets ─── */
 .widget-consult,.widget-sponsored{background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--accent);border-radius:var(--radius-lg);padding:20px}
 .consult-text{font-size:13px;color:var(--muted);margin:8px 0 12px!important}
-.consult-btn{display:inline-block;background:var(--accent);color:#0d1117!important;padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;transition:background var(--transition)}
-.consult-btn:hover{background:#79c0ff;text-decoration:none}
-.consult-banner{background:linear-gradient(135deg,#1a3a5c,#162032);border:1px solid rgba(88,166,255,.3);border-radius:var(--radius-lg);padding:28px;text-align:center;margin:32px 0}
+.consult-btn{display:inline-block;background:#fff;color:var(--accent)!important;padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;transition:background var(--transition)}
+.consult-btn:hover{background:#f0f2f5;text-decoration:none}
+.consult-banner{background:linear-gradient(135deg,var(--accent),#0d47a1);border:none;border-radius:var(--radius-lg);padding:28px;text-align:center;margin:32px 0;color:#fff}
+.consult-banner h3,.consult-banner p{color:#fff!important}
+[data-theme="dark"] .consult-banner{background:linear-gradient(135deg,#1a3a5c,#162032);border:1px solid rgba(88,166,255,.3)}
 .consult-banner h3{font-family:var(--font-serif);font-size:22px;margin-bottom:8px}
 .consult-banner p{color:var(--muted);margin-bottom:16px}
 
@@ -992,18 +1105,23 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .contact-form-wrap h2{font-family:var(--font-serif);font-size:22px;margin-bottom:20px}
 .contact-form{display:flex;flex-direction:column;gap:14px}
 .contact-form label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.contact-form input,.contact-form select,.contact-form textarea{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:10px 14px;font-size:14px;font-family:var(--font-sans);outline:none;transition:border-color var(--transition)}
-.contact-form input:focus,.contact-form select,.contact-form textarea:focus{border-color:var(--accent)}
+.contact-form input,.contact-form select,.contact-form textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--ink);padding:10px 14px;font-size:14px;font-family:var(--font-sans);outline:none;transition:border-color var(--transition)}
+.contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(9,105,218,.1)}
+[data-theme="dark"] .contact-form input:focus,[data-theme="dark"] .contact-form textarea:focus{box-shadow:0 0 0 3px rgba(88,166,255,.15)}
 .contact-form textarea{resize:vertical}
-.contact-submit{background:var(--accent);color:#0d1117;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;align-self:flex-start;transition:background var(--transition)}
-.contact-submit:hover{background:#79c0ff}
+.contact-submit{background:var(--accent);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;align-self:flex-start;transition:opacity var(--transition)}
+.contact-submit:hover{opacity:.88}
+
+/* ─── Theme toggle button ─── */
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--ink);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:border-color var(--transition),background var(--transition);flex-shrink:0}
+.theme-toggle:hover{background:var(--surface2);border-color:var(--accent)}
 
 /* ─── Reading progress bar ─── */
 #read-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#58a6ff,#3fb950);z-index:9999;transition:width .1s linear;border-radius:0 2px 2px 0}
 
 /* ─── Back to top ─── */
-#back-top{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--accent);color:#0d1117;border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(88,166,255,.4);transition:background var(--transition),transform var(--transition)}
-#back-top:hover{background:#79c0ff;transform:translateY(-2px)}
+#back-top{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(9,105,218,.25);transition:opacity var(--transition),transform var(--transition)}
+#back-top:hover{opacity:.88;transform:translateY(-2px)}
 #back-top.visible{display:flex}
 
 /* ─── Cookie banner ─── */
@@ -1011,8 +1129,8 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .cookie-banner p{margin:0;font-size:13px;color:var(--muted);flex:1}
 .cookie-banner p a{color:var(--accent)}
 .cookie-btns{display:flex;gap:10px;align-items:center;flex-shrink:0}
-.cookie-accept{background:var(--accent);color:#0d1117;border:none;padding:7px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer}
-.cookie-accept:hover{background:#79c0ff}
+.cookie-accept{background:var(--accent);color:#fff;border:none;padding:7px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer}
+.cookie-accept:hover{opacity:.88}
 .cookie-more{font-size:12px;color:var(--muted)}
 
 /* ─── Footer improvements ─── */
