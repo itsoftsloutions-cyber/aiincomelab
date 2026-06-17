@@ -7,7 +7,7 @@
   "locale": "en_US",
   "author": "AIIncomeLab Editorial",
   "twitter": "@aiincomelab",
-  "themeColor": "#0b1020",
+  "themeColor": "#0d1117",
   "logoText": "AIIncomeLab",
   "adsense": {
     "enabled": true,
@@ -15,20 +15,58 @@
     "slots": {
       "header": "0000000001",
       "inArticle": "0000000002",
-      "footer": "0000000003"
+      "footer": "0000000003",
+      "sidebar": "0000000004"
     }
   },
   "analytics": {
     "ga4": "G-XXXXXXXXXX"
   },
+  "monetization": {
+    "affiliateDisclosure": true,
+    "emailCapture": true,
+    "emailProvider": "https://app.convertkit.com/landing_pages/YOUR_FORM_ID",
+    "newsletterText": "Get weekly AI tool picks & income strategies — free.",
+    "buyMeACoffee": "https://buymeacoffee.com/aiincomelab",
+    "gumroad": "https://aiincomelab.gumroad.com",
+    "topAffiliateBanners": [
+      {
+        "label": "Try Jasper AI — best AI writer",
+        "href": "https://jasper.ai?ref=aiincomelab",
+        "badge": "Popular"
+      },
+      {
+        "label": "Hostinger — best cheap hosting",
+        "href": "https://hostinger.com?ref=aiincomelab",
+        "badge": "Recommended"
+      },
+      {
+        "label": "Canva Pro — free design tool",
+        "href": "https://canva.com",
+        "badge": "Free"
+      }
+    ]
+  },
   "social": {
     "twitter": "https://twitter.com/aiincomelab",
-    "youtube": "https://youtube.com/@aiincomelab"
+    "youtube": "https://youtube.com/@aiincomelab",
+    "pinterest": "https://pinterest.com/aiincomelab"
   },
   "nav": [
     { "label": "AI Tools", "href": "/category/ai-tools/" },
     { "label": "Make Money", "href": "/category/make-money/" },
     { "label": "Productivity", "href": "/category/productivity/" },
     { "label": "Guides", "href": "/category/guides/" }
+  ],
+  "heroStats": [
+    { "value": "11+", "label": "In-depth guides" },
+    { "value": "4", "label": "Earning methods" },
+    { "value": "2h", "label": "New post cycle" }
+  ],
+  "featuredCategories": [
+    { "slug": "make-money", "icon": "💰", "title": "Make Money", "desc": "Proven AI income strategies" },
+    { "slug": "ai-tools", "icon": "🤖", "title": "AI Tools", "desc": "Top tools, tested & ranked" },
+    { "slug": "productivity", "icon": "⚡", "title": "Productivity", "desc": "Do more in less time" },
+    { "slug": "guides", "icon": "📚", "title": "Guides", "desc": "Step-by-step tutorials" }
   ]
 }

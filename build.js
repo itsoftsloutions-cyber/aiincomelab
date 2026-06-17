@@ -9,7 +9,9 @@ const OUT = path.join(root, "public");
 const POSTS_DIR = path.join(root, "content", "posts");
 
 const site = JSON.parse(fs.readFileSync(path.join(root, "data", "site.json"), "utf8"));
+const money = site.monetization || {};
 
+// ── helpers ────────────────────────────────────────────────────────────────
 function rmrf(dir) { fs.rmSync(dir, { recursive: true, force: true }); }
 function ensure(dir) { fs.mkdirSync(dir, { recursive: true }); }
 function write(rel, content) {
@@ -17,38 +19,46 @@ function write(rel, content) {
   ensure(path.dirname(file));
   fs.writeFileSync(file, content);
 }
-
-function readingTime(text) {
-  const words = text.trim().split(/\s+/).length;
-  return Math.max(1, Math.round(words / 200));
-}
-
+function readingTime(text) { return Math.max(1, Math.round(text.trim().split(/\s+/).length / 200)); }
 function fmtDate(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
-
 function catLabel(slug) {
   const found = (site.nav || []).find((n) => n.href === `/category/${slug}/`);
-  if (found) return found.label;
-  return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return found ? found.label : slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+function catEmoji(slug) {
+  const map = { "make-money": "💰", "ai-tools": "🤖", productivity: "⚡", guides: "📚" };
+  return map[slug] || "📌";
 }
 
-// ---- AdSense helpers ----
+// ── Unsplash cover images (curated free, no API key needed for display) ────
+const UNSPLASH_COVERS = {
+  "make-money":  "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&q=80",
+  "ai-tools":    "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
+  productivity:  "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=80",
+  guides:        "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80",
+};
+function coverImage(post) {
+  if (post.image) return post.image;
+  return UNSPLASH_COVERS[post.category] || UNSPLASH_COVERS["guides"];
+}
+
+// ── AdSense ─────────────────────────────────────────────────────────────────
 const ad = site.adsense || {};
 function adScriptTag() {
   if (!ad.enabled) return "";
   return `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ad.client}" crossorigin="anonymous"></script>`;
 }
-function adUnit(slotKey) {
+function adUnit(slotKey, format = "auto") {
   if (!ad.enabled) return "";
   const slot = (ad.slots || {})[slotKey] || "";
-  return `<div class="ad ad-${slotKey}">
-  <ins class="adsbygoogle" style="display:block" data-ad-client="${ad.client}" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  return `<div class="ad-wrap ad-${slotKey}">
+  <p class="ad-label">Advertisement</p>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="${ad.client}" data-ad-slot="${slot}" data-ad-format="${format}" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
 </div>`;
 }
-
 function analyticsTag() {
   const id = site.analytics && site.analytics.ga4;
   if (!id || /X{4,}/.test(id)) return "";
@@ -56,14 +66,78 @@ function analyticsTag() {
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');</script>`;
 }
 
-// ---- Layout ----
-function layout({ title, description, canonical, head = "", body, jsonld = "" }) {
+// ── Revenue widgets ──────────────────────────────────────────────────────────
+function affiliateSidebarWidget() {
+  const banners = (money.topAffiliateBanners || []);
+  if (!banners.length) return "";
+  const items = banners.map((b) => `
+  <a class="aff-item" href="${b.href}" target="_blank" rel="noopener nofollow">
+    ${b.badge ? `<span class="aff-badge">${escapeHtml(b.badge)}</span>` : ""}
+    <span class="aff-label">${escapeHtml(b.label)}</span>
+    <span class="aff-arrow">→</span>
+  </a>`).join("");
+  return `<aside class="widget widget-aff"><h4>Top Picks</h4>${items}</aside>`;
+}
+function emailCaptureWidget(compact = false) {
+  if (!money.emailCapture) return "";
+  const action = money.emailProvider || "#";
+  if (compact) return `<div class="email-compact">
+  <p>${escapeHtml(money.newsletterText || "Get free AI income tips weekly.")}</p>
+  <form action="${action}" method="get" target="_blank" class="email-form-inline">
+    <input type="email" name="email_address" placeholder="Your email" required>
+    <button type="submit">Subscribe →</button>
+  </form>
+</div>`;
+  return `<div class="email-box">
+  <div class="email-icon">✉️</div>
+  <h3>Free weekly AI income tips</h3>
+  <p>${escapeHtml(money.newsletterText || "Get weekly AI tool picks & income strategies — free.")}</p>
+  <form action="${action}" method="get" target="_blank" class="email-form">
+    <input type="email" name="email_address" placeholder="Your best email" required>
+    <button type="submit">Subscribe free →</button>
+  </form>
+  <p class="email-fine">No spam, unsubscribe any time.</p>
+</div>`;
+}
+function supportWidget() {
+  const links = [];
+  if (money.buyMeACoffee) links.push(`<a href="${money.buyMeACoffee}" target="_blank" rel="noopener">☕ Buy me a coffee</a>`);
+  if (money.gumroad) links.push(`<a href="${money.gumroad}" target="_blank" rel="noopener">🛒 Digital products</a>`);
+  if (!links.length) return "";
+  return `<aside class="widget widget-support"><h4>Support this site</h4>${links.join(" · ")}</aside>`;
+}
+function affiliateBannerInline() {
+  const banners = (money.topAffiliateBanners || []).slice(0, 2);
+  if (!banners.length) return "";
+  const items = banners.map((b) => `<a class="inline-aff" href="${b.href}" target="_blank" rel="noopener nofollow">${b.badge ? `<span>${escapeHtml(b.badge)}</span>` : ""}${escapeHtml(b.label)} →</a>`).join("");
+  return `<div class="aff-inline-row">${items}</div>`;
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────────────────
+function sidebar(posts) {
+  const recent = posts.slice(0, 5);
+  const recentHtml = recent.map((p) => `
+  <a class="sidebar-post" href="/posts/${p.slug}/">
+    <img src="${coverImage(p)}" alt="${escapeHtml(p.title)}" loading="lazy">
+    <span>${escapeHtml(p.title)}</span>
+  </a>`).join("");
+  return `<aside class="sidebar">
+  ${adUnit("sidebar", "rectangle")}
+  ${affiliateSidebarWidget()}
+  <div class="widget"><h4>Recent Posts</h4>${recentHtml}</div>
+  ${emailCaptureWidget(true)}
+  ${supportWidget()}
+</aside>`;
+}
+
+// ── Layout ───────────────────────────────────────────────────────────────────
+function layout({ title, description, canonical, head = "", body, jsonld = "", fullWidth = false }) {
   const fullTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
   return `<!doctype html>
 <html lang="${site.lang}">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(fullTitle)}</title>
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
@@ -79,6 +153,9 @@ function layout({ title, description, canonical, head = "", body, jsonld = "" })
 <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
 <meta name="twitter:description" content="${escapeHtml(description)}">
 <link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.name)} RSS" href="${site.url}/rss.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
 ${adScriptTag()}
 ${analyticsTag()}
@@ -86,29 +163,76 @@ ${jsonld}
 ${head}
 </head>
 <body>
-<header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="/">${escapeHtml(site.logoText)}</a>
-    <nav>${(site.nav || []).map((n) => `<a href="${n.href}">${escapeHtml(n.label)}</a>`).join("")}</nav>
-  </div>
-</header>
-<div class="wrap">${adUnit("header")}</div>
-<main class="wrap">
+${topBar()}
+${header()}
+<main class="site-main${fullWidth ? " full-width" : ""}">
 ${body}
 </main>
-<footer class="site-footer">
-  <div class="wrap">
-    ${adUnit("footer")}
-    <p><strong>${escapeHtml(site.name)}</strong> — ${escapeHtml(site.tagline)}</p>
-    <p><a href="/about/">About</a> · <a href="/privacy/">Privacy &amp; Disclosure</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="/rss.xml">RSS</a></p>
-    <p class="muted">Some links are affiliate links. We only recommend tools we have tested. &copy; ${new Date().getFullYear()} ${escapeHtml(site.name)}.</p>
-  </div>
-</footer>
+${footer()}
 </body>
 </html>`;
 }
 
-// ---- Load posts ----
+function topBar() {
+  return `<div class="top-bar">
+  <div class="wrap-wide">
+    <span>🔥 New AI income guide every 2 hours — <a href="/category/make-money/">start here</a></span>
+    ${money.emailCapture ? `<a class="top-bar-cta" href="${money.emailProvider || '#'}">Get free tips →</a>` : ""}
+  </div>
+</div>`;
+}
+
+function header() {
+  const navLinks = (site.nav || []).map((n) => `<a href="${n.href}">${escapeHtml(n.label)}</a>`).join("");
+  return `<header class="site-header">
+  <div class="wrap-wide header-inner">
+    <a class="brand" href="/">
+      <span class="brand-icon">🤖</span>
+      <span class="brand-text">${escapeHtml(site.logoText)}</span>
+    </a>
+    <nav class="site-nav">${navLinks}</nav>
+    <a class="header-cta" href="/category/make-money/">Make Money →</a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobileNav">
+  ${(site.nav || []).map((n) => `<a href="${n.href}">${escapeHtml(n.label)}</a>`).join("")}
+</nav>`;
+}
+
+function footer() {
+  const cats = (site.nav || []).map((n) => `<a href="${n.href}">${escapeHtml(n.label)}</a>`).join(" · ");
+  const socials = Object.entries(site.social || {}).map(([k, v]) => `<a href="${v}" target="_blank" rel="noopener">${k.charAt(0).toUpperCase() + k.slice(1)}</a>`).join(" · ");
+  return `<footer class="site-footer">
+  <div class="wrap-wide">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/"><span class="brand-icon">🤖</span><span class="brand-text">${escapeHtml(site.logoText)}</span></a>
+        <p>${escapeHtml(site.tagline)}</p>
+        <div class="footer-socials">${socials}</div>
+      </div>
+      <div class="footer-links">
+        <h5>Categories</h5>
+        <nav>${cats}</nav>
+      </div>
+      <div class="footer-links">
+        <h5>Site</h5>
+        <nav><a href="/about/">About</a> · <a href="/privacy/">Privacy &amp; Disclosure</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="/rss.xml">RSS</a></nav>
+      </div>
+      <div class="footer-email">${emailCaptureWidget(true)}</div>
+    </div>
+    ${adUnit("footer")}
+    <p class="footer-fine">Some links on this site are affiliate links — we earn a small commission at no extra cost to you, and only recommend tools we have tested. &copy; ${new Date().getFullYear()} ${escapeHtml(site.name)}.</p>
+  </div>
+</footer>
+<script>
+document.querySelector('.nav-toggle')?.addEventListener('click',()=>{
+  document.getElementById('mobileNav').classList.toggle('open');
+});
+</script>`;
+}
+
+// ── Post rendering ───────────────────────────────────────────────────────────
 function loadPosts() {
   if (!fs.existsSync(POSTS_DIR)) return [];
   const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md"));
@@ -134,76 +258,112 @@ function loadPosts() {
   return posts;
 }
 
-// ---- Render article body with mid-article ad ----
-function renderArticleHtml(post) {
+function renderArticleBody(post) {
   let html = markdownToHtml(post.body);
-  // inject an in-article ad after the second </p>
   let count = 0;
   html = html.replace(/<\/p>/g, (m) => {
     count++;
-    return count === 2 ? `</p>\n${adUnit("inArticle")}\n` : m;
+    if (count === 2) return `</p>\n${adUnit("inArticle")}\n${affiliateBannerInline()}`;
+    if (count === 6) return `</p>\n${emailCaptureWidget(false)}\n`;
+    return m;
   });
   return html;
 }
 
 function articleJsonLd(post) {
-  const data = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    dateModified: post.date,
+  return `<script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org", "@type": "Article",
+    headline: post.title, description: post.description,
+    image: coverImage(post),
+    datePublished: post.date, dateModified: post.date,
     author: { "@type": "Organization", name: post.author },
     publisher: { "@type": "Organization", name: site.name },
     mainEntityOfPage: { "@type": "WebPage", "@id": post.url },
     keywords: post.keywords.join(", "),
-  };
-  return `<script type="application/ld+json">${JSON.stringify(data)}</script>`;
+  })}</script>`;
 }
-
 function breadcrumbJsonLd(post) {
-  const data = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
+  return `<script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org", "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: site.url + "/" },
       { "@type": "ListItem", position: 2, name: catLabel(post.category), item: `${site.url}/category/${post.category}/` },
       { "@type": "ListItem", position: 3, name: post.title, item: post.url },
     ],
-  };
-  return `<script type="application/ld+json">${JSON.stringify(data)}</script>`;
+  })}</script>`;
 }
 
-function postCard(p) {
-  return `<article class="card">
-  <span class="tag"><a href="/category/${p.category}/">${escapeHtml(catLabel(p.category))}</a></span>
-  <h2><a href="/posts/${p.slug}/">${escapeHtml(p.title)}</a></h2>
-  <p>${escapeHtml(p.description)}</p>
-  <p class="meta">${fmtDate(p.date)} · ${p.readMin} min read</p>
+function postCard(p, featured = false) {
+  const img = coverImage(p);
+  return `<article class="card${featured ? " card-featured" : ""}">
+  <a class="card-img-link" href="/posts/${p.slug}/">
+    <img src="${img}" alt="${escapeHtml(p.title)}" loading="lazy" class="card-img">
+    <span class="card-cat">${catEmoji(p.category)} ${escapeHtml(catLabel(p.category))}</span>
+  </a>
+  <div class="card-body">
+    <h2 class="card-title"><a href="/posts/${p.slug}/">${escapeHtml(p.title)}</a></h2>
+    <p class="card-desc">${escapeHtml(p.description)}</p>
+    <div class="card-meta">
+      <span>${fmtDate(p.date)}</span>
+      <span>${p.readMin} min read</span>
+      <a class="card-read" href="/posts/${p.slug}/">Read →</a>
+    </div>
+  </div>
 </article>`;
 }
 
-// ---- Build ----
+// ── Build ────────────────────────────────────────────────────────────────────
 function build() {
   rmrf(OUT);
   ensure(OUT);
 
   const posts = loadPosts();
 
-  // assets
-  write("assets/style.css", CSS);
+  write("assets/style.css", PREMIUM_CSS);
 
-  // home
-  const homeBody = `<section class="hero">
-  <h1>${escapeHtml(site.tagline)}</h1>
-  <p>${escapeHtml(site.description)}</p>
+  // ── Homepage ──
+  const featured = posts[0];
+  const rest = posts.slice(1);
+  const statsHtml = (site.heroStats || []).map((s) =>
+    `<div class="stat"><span class="stat-val">${escapeHtml(s.value)}</span><span class="stat-lbl">${escapeHtml(s.label)}</span></div>`
+  ).join("");
+  const featCatsHtml = (site.featuredCategories || []).map((c) =>
+    `<a class="fcat" href="/category/${c.slug}/">
+      <span class="fcat-icon">${c.icon}</span>
+      <span class="fcat-title">${escapeHtml(c.title)}</span>
+      <span class="fcat-desc">${escapeHtml(c.desc)}</span>
+    </a>`
+  ).join("");
+
+  const homeBody = `
+<section class="hero">
+  <div class="wrap-wide hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">🔥 Updated every 2 hours</div>
+      <h1>${escapeHtml(site.tagline)}</h1>
+      <p>${escapeHtml(site.description)}</p>
+      <div class="hero-stats">${statsHtml}</div>
+      ${emailCaptureWidget(false)}
+    </div>
+    ${featured ? `<div class="hero-post">${postCard(featured, true)}</div>` : ""}
+  </div>
 </section>
-<section class="grid">${posts.map(postCard).join("\n")}</section>`;
+
+<div class="wrap-wide">
+  ${adUnit("header")}
+  <section class="fcat-grid">${featCatsHtml}</section>
+
+  <div class="content-sidebar-wrap">
+    <div class="content-main">
+      <h2 class="section-title">Latest Articles</h2>
+      <div class="grid">${rest.map((p) => postCard(p)).join("\n")}</div>
+    </div>
+    ${sidebar(posts)}
+  </div>
+</div>`;
+
   write("index.html", layout({
-    title: site.name,
-    description: site.description,
-    canonical: site.url + "/",
+    title: site.name, description: site.description, canonical: site.url + "/",
     body: homeBody,
     jsonld: `<script type="application/ld+json">${JSON.stringify({
       "@context": "https://schema.org", "@type": "WebSite", name: site.name, url: site.url + "/",
@@ -211,174 +371,323 @@ function build() {
     })}</script>`,
   }));
 
-  // posts
+  // ── Post pages ──
   for (const p of posts) {
     const related = posts.filter((o) => o.category === p.category && o.slug !== p.slug).slice(0, 3);
     const relatedHtml = related.length
-      ? `<aside class="related"><h3>Related reading</h3><ul>${related.map((r) => `<li><a href="/posts/${r.slug}/">${escapeHtml(r.title)}</a></li>`).join("")}</ul></aside>`
+      ? `<section class="related"><h3>Related Articles</h3><div class="grid grid-sm">${related.map((r) => postCard(r)).join("")}</div></section>`
       : "";
-    const body = `<article class="post">
-  <nav class="crumbs"><a href="/">Home</a> › <a href="/category/${p.category}/">${escapeHtml(catLabel(p.category))}</a></nav>
-  <h1>${escapeHtml(p.title)}</h1>
-  <p class="meta">By ${escapeHtml(p.author)} · ${fmtDate(p.date)} · ${p.readMin} min read</p>
-  <div class="content">${renderArticleHtml(p)}</div>
-  ${relatedHtml}
-</article>`;
+    const body = `
+<div class="post-hero" style="background-image:url('${coverImage(p)}')">
+  <div class="post-hero-overlay">
+    <div class="wrap-wide">
+      <nav class="crumbs"><a href="/">Home</a> › <a href="/category/${p.category}/">${escapeHtml(catLabel(p.category))}</a></nav>
+      <h1>${escapeHtml(p.title)}</h1>
+      <div class="post-meta-hero">
+        <span>By ${escapeHtml(p.author)}</span>
+        <span>${fmtDate(p.date)}</span>
+        <span>${p.readMin} min read</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="wrap-wide content-sidebar-wrap post-wrap">
+  <article class="post-content">
+    <div class="content">${renderArticleBody(p)}</div>
+    ${relatedHtml}
+  </article>
+  ${sidebar(posts)}
+</div>`;
     write(`posts/${p.slug}/index.html`, layout({
-      title: p.title,
-      description: p.description,
-      canonical: p.url,
-      head: p.keywords.length ? `<meta name="keywords" content="${escapeHtml(p.keywords.join(", "))}">` : "",
+      title: p.title, description: p.description, canonical: p.url,
+      head: [
+        p.keywords.length ? `<meta name="keywords" content="${escapeHtml(p.keywords.join(", "))}">` : "",
+        `<meta property="og:image" content="${coverImage(p)}">`,
+        `<meta name="twitter:image" content="${coverImage(p)}">`,
+      ].join(""),
       body,
       jsonld: articleJsonLd(p) + breadcrumbJsonLd(p),
     }));
   }
 
-  // categories
+  // ── Category pages ──
   const cats = [...new Set(posts.map((p) => p.category))];
   for (const c of cats) {
     const list = posts.filter((p) => p.category === c);
-    const body = `<section class="hero"><h1>${escapeHtml(catLabel(c))}</h1><p>${list.length} article${list.length === 1 ? "" : "s"}</p></section>
-<section class="grid">${list.map(postCard).join("\n")}</section>`;
+    const info = (site.featuredCategories || []).find((fc) => fc.slug === c) || {};
+    const body = `
+<div class="cat-hero">
+  <div class="wrap-wide">
+    <span class="cat-hero-icon">${info.icon || catEmoji(c)}</span>
+    <h1>${escapeHtml(catLabel(c))}</h1>
+    <p>${escapeHtml(info.desc || "")} · ${list.length} article${list.length !== 1 ? "s" : ""}</p>
+  </div>
+</div>
+<div class="wrap-wide content-sidebar-wrap">
+  <div class="content-main">
+    <div class="grid">${list.map((p) => postCard(p)).join("\n")}</div>
+  </div>
+  ${sidebar(posts)}
+</div>`;
     write(`category/${c}/index.html`, layout({
       title: catLabel(c),
-      description: `${catLabel(c)} articles on ${site.name}: ${site.tagline}.`,
+      description: `${catLabel(c)} articles — ${site.name}: ${site.tagline}.`,
       canonical: `${site.url}/category/${c}/`,
       body,
     }));
   }
 
-  // static pages
+  // ── Static pages ──
   write("about/index.html", layout({
     title: "About", description: `About ${site.name}.`, canonical: `${site.url}/about/`,
-    body: `<article class="post"><h1>About ${escapeHtml(site.name)}</h1><div class="content">${markdownToHtml(ABOUT_MD)}</div></article>`,
+    body: `<div class="wrap-wide"><article class="post-content static-page"><h1>About ${escapeHtml(site.name)}</h1><div class="content">${markdownToHtml(ABOUT_MD)}</div></article></div>`,
   }));
   write("privacy/index.html", layout({
-    title: "Privacy & Disclosure", description: `Privacy policy and affiliate/ads disclosure for ${site.name}.`,
-    canonical: `${site.url}/privacy/`,
-    body: `<article class="post"><h1>Privacy &amp; Disclosure</h1><div class="content">${markdownToHtml(PRIVACY_MD)}</div></article>`,
+    title: "Privacy & Disclosure", description: `Privacy policy and disclosure for ${site.name}.`, canonical: `${site.url}/privacy/`,
+    body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Privacy &amp; Disclosure</h1><div class="content">${markdownToHtml(PRIVACY_MD)}</div></article></div>`,
   }));
-
-  // 404
   write("404.html", layout({
     title: "Not Found", description: "Page not found.", canonical: `${site.url}/404.html`,
-    body: `<section class="hero"><h1>404 — Not found</h1><p>That page moved or never existed. <a href="/">Go home</a>.</p></section>`,
+    body: `<div class="wrap-wide" style="padding:80px 0 120px;text-align:center"><h1 style="font-size:80px;margin:0">404</h1><p style="font-size:20px;color:var(--muted)">That page doesn't exist. <a href="/">Go home →</a></p></div>`,
   }));
 
-  // sitemap
-  const urls = [
-    site.url + "/",
-    ...cats.map((c) => `${site.url}/category/${c}/`),
-    `${site.url}/about/`, `${site.url}/privacy/`,
-    ...posts.map((p) => p.url),
-  ];
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}
-</urlset>`;
-  write("sitemap.xml", sitemap);
-
-  // robots
+  // ── SEO files ──
+  const urls = [site.url + "/", ...cats.map((c) => `${site.url}/category/${c}/`),
+    `${site.url}/about/`, `${site.url}/privacy/`, ...posts.map((p) => p.url)];
+  write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>`);
   write("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
+  if (ad.enabled) write("ads.txt", `google.com, ${ad.client.replace(/^ca-/, "")}, DIRECT, f08c47fec0942fa0\n`);
+  write("rss.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>\n  <title>${escapeHtml(site.name)}</title>\n  <link>${site.url}/</link>\n  <description>${escapeHtml(site.description)}</description>\n  <language>${site.lang}</language>\n${posts.slice(0, 20).map((p) => `  <item>\n    <title>${escapeHtml(p.title)}</title>\n    <link>${p.url}</link>\n    <guid>${p.url}</guid>\n    <pubDate>${new Date(p.date).toUTCString()}</pubDate>\n    <description>${escapeHtml(p.description)}</description>\n  </item>`).join("\n")}\n</channel></rss>`);
+  write("site.webmanifest", JSON.stringify({ name: site.name, short_name: site.logoText, start_url: "/", display: "standalone", background_color: site.themeColor, theme_color: site.themeColor }, null, 2));
 
-  // ads.txt (required for AdSense)
-  if (ad.enabled) {
-    write("ads.txt", `google.com, ${ad.client.replace(/^ca-/, "")}, DIRECT, f08c47fec0942fa0\n`);
-  }
-
-  // rss
-  const rssItems = posts.slice(0, 20).map((p) => `  <item>
-    <title>${escapeHtml(p.title)}</title>
-    <link>${p.url}</link>
-    <guid>${p.url}</guid>
-    <pubDate>${new Date(p.date).toUTCString()}</pubDate>
-    <description>${escapeHtml(p.description)}</description>
-  </item>`).join("\n");
-  write("rss.xml", `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0"><channel>
-  <title>${escapeHtml(site.name)}</title>
-  <link>${site.url}/</link>
-  <description>${escapeHtml(site.description)}</description>
-  <language>${site.lang}</language>
-${rssItems}
-</channel></rss>`);
-
-  // manifest
-  write("site.webmanifest", JSON.stringify({
-    name: site.name, short_name: site.logoText, start_url: "/",
-    display: "standalone", background_color: site.themeColor, theme_color: site.themeColor,
-  }, null, 2));
-
-  console.log(`Built ${posts.length} posts, ${cats.length} categories -> ${path.relative(root, OUT)}/`);
-  return { posts: posts.length, cats: cats.length };
+  console.log(`✓ Built ${posts.length} posts, ${cats.length} categories → ${path.relative(root, OUT)}/`);
 }
 
+// ── Static content ────────────────────────────────────────────────────────────
 const ABOUT_MD = `${site.name} publishes hands-on guides about AI tools, productivity, and earning income online.
 
-Every article is written to be useful first. We test tools before recommending them and we update posts as the landscape changes.
+Every article is written to be useful first. We test tools before recommending them and update posts as the landscape changes.
 
-This site is monetized with display ads and a small number of affiliate links. That never changes our recommendations.`;
+This site is monetized through display ads, affiliate links, and digital products. That never changes our recommendations.`;
 
 const PRIVACY_MD = `## Advertising
 
-We use Google AdSense to display ads. Third-party vendors, including Google, use cookies to serve ads based on prior visits. You can opt out of personalized advertising via Google Ads Settings.
+We use Google AdSense to display ads. Google and third-party vendors use cookies to serve ads based on prior visits. You can opt out at [Google Ads Settings](https://www.google.com/settings/ads).
 
 ## Affiliate disclosure
 
-Some outbound links are affiliate links. If you buy through them we may earn a commission at no extra cost to you. We only link to tools we have tested.
+Some links on this site are affiliate links. If you buy through them we may earn a commission at no extra cost to you. We only link to products we have tested and recommend.
 
 ## Analytics
 
-We use privacy-respecting analytics to understand which content is useful. We do not sell personal data.
+We use Google Analytics to understand which content is helpful. We do not sell personal data.
+
+## Email
+
+If you subscribe to our newsletter, your email is stored securely and never sold. You can unsubscribe at any time.
 
 ## Contact
 
-Questions about this policy can be sent through the channels listed in the footer.`;
+Questions about this policy can be sent through social channels listed in the footer.`;
 
-const CSS = `:root{--bg:#0b1020;--card:#141b2e;--ink:#e8ecf6;--muted:#9aa6c2;--accent:#6ea8fe;--line:#243049}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:880px;margin:0 auto;padding:0 20px}
-.site-header{border-bottom:1px solid var(--line);background:rgba(11,16,32,.85);position:sticky;top:0;backdrop-filter:blur(8px);z-index:10}
-.site-header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:14px;padding-bottom:14px}
-.brand{font-weight:800;font-size:20px;color:var(--ink)}
-.site-header nav{display:flex;gap:16px;flex-wrap:wrap}
-.site-header nav a{color:var(--muted);font-size:14px}
-.hero{padding:40px 0 8px}
-.hero h1{font-size:34px;line-height:1.2;margin:0 0 10px}
-.hero p{color:var(--muted);font-size:18px;margin:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:24px 0 48px}
-@media(max-width:680px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-.card h2{font-size:20px;margin:8px 0}
-.card p{color:var(--muted);margin:6px 0}
-.card .meta,.post .meta{color:var(--muted);font-size:13px}
-.tag a{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
-.post{padding:32px 0 56px;max-width:720px;margin:0 auto}
-.post h1{font-size:32px;line-height:1.2;margin:6px 0 10px}
-.crumbs{color:var(--muted);font-size:13px;margin-bottom:8px}
-.content h2{font-size:24px;margin:32px 0 10px;border-top:1px solid var(--line);padding-top:24px}
-.content h3{font-size:19px;margin:24px 0 8px}
-.content p{margin:14px 0}
-.content ul,.content ol{margin:14px 0;padding-left:22px}
-.content li{margin:6px 0}
-.content blockquote{margin:18px 0;padding:8px 16px;border-left:3px solid var(--accent);color:var(--muted);background:var(--card);border-radius:0 8px 8px 0}
-.content pre{background:#0a0f1d;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
-.content code{background:#0a0f1d;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:14px}
-.content pre code{border:0;padding:0}
-.content img{max-width:100%;border-radius:10px}
-.content table{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}
-.content th,.content td{border:1px solid var(--line);padding:8px 10px;text-align:left}
-.content th{background:var(--card)}
-.related{margin-top:40px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
-.related h3{margin:0 0 8px}
-.ad{margin:22px 0;min-height:90px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:12px;background:rgba(110,168,254,.04)}
-.ad:empty::before,.ad ins:empty{content:"Advertisement"}
-.site-footer{border-top:1px solid var(--line);margin-top:40px;padding:28px 0;color:var(--muted)}
-.site-footer p{margin:6px 0}
-.muted{font-size:13px;color:var(--muted)}
+// ── Premium CSS ───────────────────────────────────────────────────────────────
+const PREMIUM_CSS = `
+/* ─── Design tokens ─── */
+:root{
+  --bg:#0d1117;
+  --surface:#161b22;
+  --surface2:#1c2330;
+  --border:#30363d;
+  --ink:#e6edf3;
+  --muted:#8b949e;
+  --accent:#58a6ff;
+  --accent2:#3fb950;
+  --gradient:linear-gradient(135deg,#1a3a5c 0%,#0d1117 100%);
+  --hero-gradient:linear-gradient(135deg,#0d1117 0%,#162032 50%,#0d1117 100%);
+  --card-hover:#1c2330;
+  --radius:12px;
+  --radius-lg:20px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --shadow-card:0 2px 12px rgba(0,0,0,.3);
+  --font-sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --font-serif:'Playfair Display',Georgia,serif;
+  --transition:.18s ease;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none;transition:color var(--transition)}
+a:hover{color:#79c0ff}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
+
+/* ─── Layout ─── */
+.wrap-wide{max-width:1180px;margin:0 auto;padding:0 24px}
+.content-sidebar-wrap{display:grid;grid-template-columns:1fr 340px;gap:40px;padding:40px 0 80px}
+@media(max-width:900px){.content-sidebar-wrap{grid-template-columns:1fr}}
+.content-main{min-width:0}
+.section-title{font-family:var(--font-serif);font-size:26px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+
+/* ─── Top bar ─── */
+.top-bar{background:linear-gradient(90deg,#1f2d40,#1a3a5c);border-bottom:1px solid var(--border);padding:8px 0;font-size:13px;color:var(--muted)}
+.top-bar .wrap-wide{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.top-bar a{color:var(--accent)}
+.top-bar-cta{background:var(--accent);color:#0d1117!important;padding:3px 12px;border-radius:20px;font-weight:600;font-size:12px}
+
+/* ─── Header ─── */
+.site-header{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.header-inner{display:flex;align-items:center;gap:20px;padding-top:14px;padding-bottom:14px}
+.brand{display:flex;align-items:center;gap:8px;color:var(--ink)!important;font-weight:800;font-size:20px}
+.brand-icon{font-size:22px}
+.site-nav{display:flex;gap:4px;margin-left:auto}
+.site-nav a{color:var(--muted);font-size:14px;font-weight:500;padding:6px 10px;border-radius:6px;transition:background var(--transition),color var(--transition)}
+.site-nav a:hover{color:var(--ink);background:var(--surface2)}
+.header-cta{background:var(--accent);color:#0d1117!important;padding:7px 16px;border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap}
+.header-cta:hover{background:#79c0ff;text-decoration:none}
+.nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--ink);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:18px}
+.mobile-nav{display:none;flex-direction:column;background:var(--surface);border-bottom:1px solid var(--border)}
+.mobile-nav.open{display:flex}
+.mobile-nav a{padding:14px 24px;border-bottom:1px solid var(--border);color:var(--ink);font-weight:500}
+@media(max-width:768px){.site-nav,.header-cta{display:none}.nav-toggle{display:block}}
+
+/* ─── Hero ─── */
+.hero{background:var(--hero-gradient);border-bottom:1px solid var(--border);padding:60px 0}
+.hero-inner{display:grid;grid-template-columns:1fr 420px;gap:48px;align-items:center}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr}}
+.hero-badge{display:inline-block;background:rgba(63,185,80,.15);color:var(--accent2);border:1px solid rgba(63,185,80,.3);padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:16px}
+.hero h1{font-family:var(--font-serif);font-size:clamp(30px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:16px;background:linear-gradient(135deg,#e6edf3,#58a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero>div>p,.hero-text>p{color:var(--muted);font-size:18px;margin-bottom:28px}
+.hero-stats{display:flex;gap:32px;margin-bottom:28px}
+.stat{display:flex;flex-direction:column}
+.stat-val{font-size:28px;font-weight:800;color:var(--accent)}
+.stat-lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+/* ─── Featured categories ─── */
+.fcat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:32px 0}
+@media(max-width:768px){.fcat-grid{grid-template-columns:repeat(2,1fr)}}
+.fcat{display:flex;flex-direction:column;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color var(--transition),transform var(--transition)}
+.fcat:hover{border-color:var(--accent);transform:translateY(-2px)}
+.fcat-icon{font-size:28px;margin-bottom:4px}
+.fcat-title{font-weight:700;color:var(--ink)}
+.fcat-desc{font-size:13px;color:var(--muted)}
+
+/* ─── Post cards ─── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.grid-sm{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:transform var(--transition),box-shadow var(--transition);display:flex;flex-direction:column}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.card-featured{border-color:var(--accent)}
+.card-img-link{position:relative;display:block;overflow:hidden;height:200px}
+.card-featured .card-img-link{height:260px}
+.card-img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
+.card:hover .card-img{transform:scale(1.04)}
+.card-cat{position:absolute;bottom:10px;left:10px;background:rgba(13,17,23,.85);backdrop-filter:blur(4px);color:var(--accent);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase}
+.card-body{padding:18px;display:flex;flex-direction:column;flex:1;gap:8px}
+.card-title{font-size:17px;font-weight:700;line-height:1.3}
+.card-title a{color:var(--ink)}
+.card-title a:hover{color:var(--accent)}
+.card-desc{color:var(--muted);font-size:14px;flex:1}
+.card-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin-top:auto}
+.card-read{margin-left:auto;color:var(--accent);font-weight:600;font-size:13px}
+
+/* ─── Post hero ─── */
+.post-hero{min-height:340px;background-size:cover;background-position:center;position:relative}
+.post-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,17,23,.95) 0%,rgba(13,17,23,.5) 100%);display:flex;align-items:flex-end}
+.post-hero-overlay>div{padding-bottom:36px;width:100%}
+.post-hero h1{font-family:var(--font-serif);font-size:clamp(22px,3.5vw,40px);max-width:760px;color:#fff;margin:8px 0 12px}
+.post-meta-hero{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.65)}
+.crumbs{font-size:13px;color:rgba(255,255,255,.5)}
+.crumbs a{color:rgba(255,255,255,.6)}
+
+/* ─── Post content ─── */
+.post-wrap{align-items:start}
+.post-content{min-width:0;padding:36px 0}
+.static-page{max-width:720px;padding:48px 0 80px}
+.content h2{font-family:var(--font-serif);font-size:26px;margin:40px 0 14px;padding-top:32px;border-top:1px solid var(--border)}
+.content h3{font-size:20px;margin:28px 0 10px;color:#79c0ff}
+.content p{margin:16px 0;color:#c9d1d9;line-height:1.8}
+.content a{color:var(--accent);border-bottom:1px solid rgba(88,166,255,.3)}
+.content a:hover{border-color:var(--accent)}
+.content ul,.content ol{margin:16px 0;padding-left:24px;color:#c9d1d9}
+.content li{margin:8px 0}
+.content blockquote{margin:24px 0;padding:16px 20px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;color:var(--muted)}
+.content blockquote p{margin:0;color:var(--muted)}
+.content pre{background:#090d13;border:1px solid var(--border);border-radius:var(--radius);padding:18px;overflow:auto;margin:20px 0}
+.content code{background:#161b22;border:1px solid var(--border);border-radius:5px;padding:2px 6px;font-size:13px;font-family:'JetBrains Mono',Consolas,monospace}
+.content pre code{border:0;padding:0;background:transparent}
+.content img{border-radius:var(--radius-lg);margin:20px 0;box-shadow:var(--shadow)}
+.content table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;overflow:hidden;border-radius:var(--radius);border:1px solid var(--border)}
+.content th,.content td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.content th{background:var(--surface2);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.content tr:last-child td{border-bottom:0}
+.content tr:hover td{background:var(--surface2)}
+.content hr{border:0;border-top:1px solid var(--border);margin:32px 0}
+
+/* ─── Related ─── */
+.related{margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
+.related h3{font-family:var(--font-serif);font-size:22px;margin-bottom:20px}
+
+/* ─── Category hero ─── */
+.cat-hero{background:var(--hero-gradient);border-bottom:1px solid var(--border);padding:48px 0;text-align:center}
+.cat-hero-icon{font-size:52px;display:block;margin-bottom:12px}
+.cat-hero h1{font-family:var(--font-serif);font-size:36px;margin-bottom:8px}
+.cat-hero p{color:var(--muted);font-size:16px}
+
+/* ─── Sidebar ─── */
+.sidebar{display:flex;flex-direction:column;gap:20px;padding-top:36px}
+.widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+.widget h4{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:14px}
+.sidebar-post{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);color:var(--ink)!important;font-size:13px;line-height:1.4}
+.sidebar-post:last-child{border-bottom:0}
+.sidebar-post img{width:56px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0}
+
+/* ─── Affiliate widget ─── */
+.widget-aff .aff-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);color:var(--ink)!important;font-size:13px;font-weight:500}
+.widget-aff .aff-item:last-child{border-bottom:0}
+.aff-badge{background:rgba(88,166,255,.15);color:var(--accent);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;flex-shrink:0}
+.aff-arrow{margin-left:auto;color:var(--accent);opacity:.6}
+
+/* ─── Inline affiliate ─── */
+.aff-inline-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.inline-aff{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;color:var(--ink)!important;transition:border-color var(--transition)}
+.inline-aff:hover{border-color:var(--accent);text-decoration:none}
+.inline-aff span{background:var(--accent);color:#0d1117;padding:1px 6px;border-radius:10px;font-size:11px}
+
+/* ─── Email capture ─── */
+.email-box{background:linear-gradient(135deg,#1a3a5c,#162032);border:1px solid rgba(88,166,255,.3);border-radius:var(--radius-lg);padding:28px;text-align:center;margin:32px 0}
+.email-icon{font-size:36px;margin-bottom:10px}
+.email-box h3{font-family:var(--font-serif);font-size:22px;margin-bottom:8px}
+.email-box p{color:var(--muted);margin-bottom:16px}
+.email-form,.email-form-inline{display:flex;gap:8px;flex-wrap:wrap}
+.email-form{flex-direction:column}
+.email-form input,.email-form-inline input{flex:1;min-width:0;background:#0d1117;border:1px solid var(--border);color:var(--ink);padding:10px 14px;border-radius:8px;font-size:14px;outline:none}
+.email-form input:focus,.email-form-inline input:focus{border-color:var(--accent)}
+.email-form button,.email-form-inline button{background:var(--accent);color:#0d1117;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.email-form button:hover,.email-form-inline button:hover{background:#79c0ff}
+.email-fine{font-size:12px;color:var(--muted);margin-top:8px!important}
+.email-compact{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.email-compact p{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+/* ─── Support widget ─── */
+.widget-support a{display:inline-block;font-size:13px;color:var(--accent);margin:4px 0}
+
+/* ─── Ads ─── */
+.ad-wrap{margin:24px 0;background:rgba(88,166,255,.04);border:1px dashed var(--border);border-radius:var(--radius);padding:12px;min-height:90px}
+.ad-label{font-size:10px;color:var(--muted);text-align:center;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+
+/* ─── Footer ─── */
+.site-footer{background:var(--surface);border-top:1px solid var(--border);margin-top:0;padding:48px 0 0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:40px;padding-bottom:40px;border-bottom:1px solid var(--border)}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1/-1}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr}.footer-brand{grid-column:1}}
+.footer-brand .brand{margin-bottom:12px}
+.footer-brand p{color:var(--muted);font-size:14px;margin-bottom:12px}
+.footer-socials{display:flex;gap:12px}
+.footer-socials a{color:var(--muted);font-size:13px}
+.footer-links h5{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.footer-links nav{display:flex;flex-direction:column;gap:6px}
+.footer-links nav a{color:var(--muted);font-size:13px}
+.footer-fine{font-size:12px;color:var(--muted);padding:20px 0;text-align:center}
 `;
 
 build();
