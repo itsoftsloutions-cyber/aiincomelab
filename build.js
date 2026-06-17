@@ -111,20 +111,13 @@ function supportWidget() {
   if (!links.length) return "";
   return `<aside class="widget widget-support"><h4>Support this site</h4>${links.join(" · ")}</aside>`;
 }
-function consultingWidget() {
-  if (!money.consultingCta || !money.consultingUrl) return "";
-  return `<aside class="widget widget-consult">
-  <h4>1-on-1 Consulting</h4>
-  <p class="consult-text">${escapeHtml(money.consultingCta)}</p>
-  <a class="consult-btn" href="${money.consultingUrl}" target="_blank" rel="noopener">Book a session →</a>
-</aside>`;
-}
+function consultingWidget() { return ""; }
 function sponsoredBanner() {
   if (!money.sponsoredPostRate) return "";
   return `<aside class="widget widget-sponsored">
   <h4>Advertise Here</h4>
   <p class="consult-text">Sponsored posts from <strong>${money.sponsoredPostRate}</strong>. Reach AI-focused readers interested in tools &amp; income.</p>
-  <a class="consult-btn" href="mailto:ads@aiincomelab.com?subject=Sponsorship">Get in touch →</a>
+  <a class="consult-btn" href="mailto:contact@aiincomelab.com?subject=Sponsorship%20Enquiry">Get in touch →</a>
 </aside>`;
 }
 function affiliateBannerInline() {
@@ -154,8 +147,21 @@ function sidebar(posts) {
 }
 
 // ── Layout ───────────────────────────────────────────────────────────────────
-function layout({ title, description, canonical, head = "", body, jsonld = "", fullWidth = false }) {
+function cookieBanner() {
+  return `<div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookie consent">
+  <p>We use cookies and ads to keep this site free. By continuing you agree to our <a href="${b('/privacy/')}">Privacy Policy</a>.</p>
+  <div class="cookie-btns">
+    <button class="cookie-accept" onclick="document.getElementById('cookieBanner').style.display='none';localStorage.setItem('cc','1')">Accept</button>
+    <a href="${b('/privacy/')}" class="cookie-more">Learn more</a>
+  </div>
+</div>
+<script>if(localStorage.getItem('cc'))document.getElementById('cookieBanner').style.display='none';</script>`;
+}
+
+function layout({ title, description, canonical, head = "", body, jsonld = "", fullWidth = false, isArticle = false, articleDate = "", articleImage = "" }) {
   const fullTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
+  const ogType = isArticle ? "article" : "website";
+  const ogImage = articleImage || `${site.url}/assets/og-default.png`;
   return `<!doctype html>
 <html lang="${site.lang}">
 <head>
@@ -165,16 +171,24 @@ function layout({ title, description, canonical, head = "", body, jsonld = "", f
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
 <meta name="theme-color" content="${site.themeColor}">
-<meta property="og:type" content="website">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta property="og:type" content="${ogType}">
 <meta property="og:site_name" content="${escapeHtml(site.name)}">
 <meta property="og:title" content="${escapeHtml(fullTitle)}">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:url" content="${canonical}">
+<meta property="og:image" content="${ogImage}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:locale" content="${site.locale}">
+${isArticle && articleDate ? `<meta property="article:published_time" content="${articleDate}">
+<meta property="article:author" content="${escapeHtml(site.author)}">
+<meta property="article:publisher" content="${site.social.twitter || ''}">` : ""}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="${site.twitter}">
 <meta name="twitter:title" content="${escapeHtml(fullTitle)}">
 <meta name="twitter:description" content="${escapeHtml(description)}">
+<meta name="twitter:image" content="${ogImage}">
 <link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.name)} RSS" href="${site.url}/rss.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -187,6 +201,7 @@ ${jsonld}
 ${head}
 </head>
 <body>
+${cookieBanner()}
 ${topBar()}
 ${header()}
 <main class="site-main${fullWidth ? " full-width" : ""}">
@@ -225,28 +240,45 @@ function header() {
 }
 
 function footer() {
-  const cats = (site.nav || []).map((n) => `<a href="${b(n.href)}">${escapeHtml(n.label)}</a>`).join(" · ");
+  const cats = (site.nav || []).filter(n => !n.href.includes('/contact')).map((n) => `<a href="${b(n.href)}">${escapeHtml(n.label)}</a>`).join("\n");
   const socials = Object.entries(site.social || {}).map(([k, v]) => `<a href="${v}" target="_blank" rel="noopener">${k.charAt(0).toUpperCase() + k.slice(1)}</a>`).join(" · ");
+  const year = new Date().getFullYear();
   return `<footer class="site-footer">
   <div class="wrap-wide">
     <div class="footer-grid">
       <div class="footer-brand">
         <a class="brand" href="${b('/')}"><span class="brand-icon">🤖</span><span class="brand-text">${escapeHtml(site.logoText)}</span></a>
         <p>${escapeHtml(site.tagline)}</p>
+        <p class="footer-desc">${escapeHtml(site.description)}</p>
         <div class="footer-socials">${socials}</div>
       </div>
       <div class="footer-links">
         <h5>Categories</h5>
-        <nav>${cats}</nav>
+        <nav class="footer-nav-col">${cats}</nav>
       </div>
       <div class="footer-links">
-        <h5>Site</h5>
-        <nav><a href="${b('/about/')}">About</a> · <a href="${b('/privacy/')}">Privacy &amp; Disclosure</a> · <a href="${b('/sitemap.xml')}">Sitemap</a> · <a href="${b('/rss.xml')}">RSS</a></nav>
+        <h5>Quick Links</h5>
+        <nav class="footer-nav-col">
+          <a href="${b('/about/')}">About Us</a>
+          <a href="${b('/privacy/')}">Privacy &amp; Disclosure</a>
+          <a href="${b('/contact/')}">Contact</a>
+          <a href="${b('/resources/')}">Resources</a>
+          <a href="${b('/sitemap.xml')}">Sitemap</a>
+          <a href="${b('/rss.xml')}">RSS Feed</a>
+        </nav>
       </div>
-      <div class="footer-email">${emailCaptureWidget(true)}</div>
+      <div class="footer-email">
+        <h5>Free Weekly Tips</h5>
+        ${emailCaptureWidget(true)}
+        ${supportWidget()}
+      </div>
     </div>
     ${adUnit("footer")}
-    <p class="footer-fine">Some links on this site are affiliate links — we earn a small commission at no extra cost to you, and only recommend tools we have tested. &copy; ${new Date().getFullYear()} ${escapeHtml(site.name)}.</p>
+    <div class="footer-bottom">
+      <p class="footer-fine">&copy; ${year} ${escapeHtml(site.name)} — AI Tools, Productivity &amp; Online Income.</p>
+      <p class="footer-fine">Affiliate disclosure: some links earn us a commission at no extra cost to you. We only recommend tools we have personally tested.</p>
+      <nav class="footer-legal"><a href="${b('/privacy/')}">Privacy Policy</a> · <a href="${b('/about/')}">About</a> · <a href="${b('/contact/')}">Contact</a></nav>
+    </div>
   </div>
 </footer>
 <script>
@@ -295,16 +327,51 @@ function renderArticleBody(post) {
 }
 
 function articleJsonLd(post) {
-  return `<script type="application/ld+json">${JSON.stringify({
-    "@context": "https://schema.org", "@type": "Article",
-    headline: post.title, description: post.description,
-    image: coverImage(post),
-    datePublished: post.date, dateModified: post.date,
-    author: { "@type": "Organization", name: post.author },
-    publisher: { "@type": "Organization", name: site.name },
-    mainEntityOfPage: { "@type": "WebPage", "@id": post.url },
-    keywords: post.keywords.join(", "),
-  })}</script>`;
+  const faqPairs = extractFaqPairs(post.body);
+  const schemas = [
+    {
+      "@context": "https://schema.org", "@type": "Article",
+      headline: post.title, description: post.description,
+      image: { "@type": "ImageObject", url: coverImage(post), width: 800, height: 450 },
+      datePublished: post.date + "T08:00:00+00:00",
+      dateModified: post.date + "T08:00:00+00:00",
+      author: { "@type": "Organization", name: post.author, url: site.url + "/" },
+      publisher: { "@type": "Organization", name: site.name, url: site.url + "/",
+        logo: { "@type": "ImageObject", url: site.url + "/assets/logo.png", width: 200, height: 60 } },
+      mainEntityOfPage: { "@type": "WebPage", "@id": post.url },
+      keywords: post.keywords.join(", "),
+    }
+  ];
+  if (faqPairs.length) {
+    schemas.push({
+      "@context": "https://schema.org", "@type": "FAQPage",
+      mainEntity: faqPairs.map(([q, a]) => ({
+        "@type": "Question", name: q,
+        acceptedAnswer: { "@type": "Answer", text: a }
+      }))
+    });
+  }
+  return schemas.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join("\n");
+}
+
+function extractFaqPairs(body) {
+  const pairs = [];
+  const lines = body.split("\n");
+  let inFaq = false, curQ = "", curA = [];
+  for (const line of lines) {
+    if (/^#{1,3}\s*(faq|frequently asked)/i.test(line)) { inFaq = true; continue; }
+    if (inFaq) {
+      const qMatch = line.match(/^#{3,4}\s+(.+)/);
+      if (qMatch) {
+        if (curQ && curA.length) pairs.push([curQ, curA.join(" ").trim()]);
+        curQ = qMatch[1].replace(/\*\*/g, ""); curA = [];
+      } else if (curQ && line.trim()) {
+        curA.push(line.replace(/[*_`#]/g, "").trim());
+      }
+    }
+  }
+  if (curQ && curA.length) pairs.push([curQ, curA.join(" ").trim()]);
+  return pairs.slice(0, 5);
 }
 function breadcrumbJsonLd(post) {
   return `<script type="application/ld+json">${JSON.stringify({
@@ -425,11 +492,8 @@ function build() {
 </div>`;
     write(`posts/${p.slug}/index.html`, layout({
       title: p.title, description: p.description, canonical: p.url,
-      head: [
-        p.keywords.length ? `<meta name="keywords" content="${escapeHtml(p.keywords.join(", "))}">` : "",
-        `<meta property="og:image" content="${coverImage(p)}">`,
-        `<meta name="twitter:image" content="${coverImage(p)}">`,
-      ].join(""),
+      isArticle: true, articleDate: p.date, articleImage: coverImage(p),
+      head: p.keywords.length ? `<meta name="keywords" content="${escapeHtml(p.keywords.join(", "))}">` : "",
       body,
       jsonld: articleJsonLd(p) + breadcrumbJsonLd(p),
     }));
@@ -464,12 +528,16 @@ function build() {
 
   // ── Static pages ──
   write("about/index.html", layout({
-    title: "About", description: `About ${site.name}.`, canonical: `${site.url}/about/`,
+    title: "About", description: `About ${site.name} — hands-on AI tools guides, productivity tips, and proven ways to earn money online.`, canonical: `${site.url}/about/`,
     body: `<div class="wrap-wide"><article class="post-content static-page"><h1>About ${escapeHtml(site.name)}</h1><div class="content">${markdownToHtml(ABOUT_MD)}</div></article></div>`,
   }));
   write("privacy/index.html", layout({
-    title: "Privacy & Disclosure", description: `Privacy policy and disclosure for ${site.name}.`, canonical: `${site.url}/privacy/`,
-    body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Privacy &amp; Disclosure</h1><div class="content">${markdownToHtml(PRIVACY_MD)}</div></article></div>`,
+    title: "Privacy Policy & Affiliate Disclosure", description: `Privacy policy, cookie policy, and affiliate disclosure for ${site.name}.`, canonical: `${site.url}/privacy/`,
+    body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Privacy Policy &amp; Disclosure</h1><div class="content">${markdownToHtml(PRIVACY_MD)}</div></article></div>`,
+  }));
+  write("contact/index.html", layout({
+    title: "Contact", description: `Contact the ${site.name} team — questions, sponsorships, corrections, or press enquiries.`, canonical: `${site.url}/contact/`,
+    body: `<div class="wrap-wide"><article class="post-content static-page"><h1>Contact Us</h1><div class="content">${markdownToHtml(CONTACT_MD)}</div></article></div>`,
   }));
   write("404.html", layout({
     title: "Not Found", description: "Page not found.", canonical: `${site.url}/404.html`,
@@ -498,7 +566,7 @@ function build() {
   <div class="resource-card"><a href="https://www.hostinger.com/web-hosting?ref=aiincomelab" target="_blank" rel="noopener nofollow"><span class="res-badge">$2.99/mo</span><strong>Hostinger — cheapest reliable hosting</strong></a></div>
   <div class="resource-card"><a href="https://github.com/pages" target="_blank" rel="noopener"><span class="res-badge">Free</span><strong>GitHub Pages — free static hosting</strong></a></div>
 </div>
-${money.consultingCta ? `<div class="consult-banner"><h3>Want a custom strategy?</h3><p>${escapeHtml(money.consultingCta)}</p><a href="${money.consultingUrl}" target="_blank" class="consult-btn">Book a free call →</a></div>` : ""}
+<div class="consult-banner"><h3>Questions or want to work together?</h3><p>Reach out via our <a href="${b('/contact/')}">contact page</a> — we respond within 2 business days.</p><a href="${b('/contact/')}" class="consult-btn">Contact us →</a></div>
 </article></div>`;
   write("resources/index.html", layout({
     title: "Best AI Tools & Resources", description: `Tested tools and resources for AI blogging, SEO, and online income — ${site.name}.`,
@@ -508,7 +576,7 @@ ${money.consultingCta ? `<div class="consult-banner"><h3>Want a custom strategy?
 
   // ── SEO files ──
   const urls = [site.url + "/", ...cats.map((c) => `${site.url}/category/${c}/`),
-    `${site.url}/about/`, `${site.url}/privacy/`, ...posts.map((p) => p.url)];
+    `${site.url}/about/`, `${site.url}/privacy/`, `${site.url}/contact/`, `${site.url}/resources/`, ...posts.map((p) => p.url)];
   write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>`);
   write("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
   if (ad.enabled) write("ads.txt", `google.com, ${ad.client.replace(/^ca-/, "")}, DIRECT, f08c47fec0942fa0\n`);
@@ -519,31 +587,100 @@ ${money.consultingCta ? `<div class="consult-banner"><h3>Want a custom strategy?
 }
 
 // ── Static content ────────────────────────────────────────────────────────────
-const ABOUT_MD = `${site.name} publishes hands-on guides about AI tools, productivity, and earning income online.
+const ABOUT_MD = `## What is ${site.name}?
 
-Every article is written to be useful first. We test tools before recommending them and update posts as the landscape changes.
+${site.name} publishes practical, hands-on guides about AI tools, automation, productivity, and earning income online. Every article is written to be genuinely useful — we test the tools, run the experiments, and share real results.
 
-This site is monetized through display ads, affiliate links, and digital products. That never changes our recommendations.`;
+## Who writes here?
 
-const PRIVACY_MD = `## Advertising
+Our editorial team researches and writes each guide. We focus on accuracy over speed. Every recommendation comes from hands-on use.
 
-We use Google AdSense to display ads. Google and third-party vendors use cookies to serve ads based on prior visits. You can opt out at [Google Ads Settings](https://www.google.com/settings/ads).
+## How we make money
 
-## Affiliate disclosure
+This site earns revenue through:
 
-Some links on this site are affiliate links. If you buy through them we may earn a commission at no extra cost to you. We only link to products we have tested and recommend.
+- **Display advertising** (Google AdSense) — ads shown alongside content
+- **Affiliate links** — we link to tools we use and recommend; if you buy, we may earn a small commission at no extra cost to you
+- **Digital products** — ebooks and guides sold through Gumroad
+- **Sponsored content** — clearly labelled posts from brands we vet
 
-## Analytics
+Our commercial relationships never influence editorial recommendations. We only link to tools we have personally tested.
 
-We use Google Analytics to understand which content is helpful. We do not sell personal data.
+## Our commitment
 
-## Email
+We update articles when tools change. We correct errors quickly. We do not publish AI-generated content without human review and editing.`;
 
-If you subscribe to our newsletter, your email is stored securely and never sold. You can unsubscribe at any time.
+const PRIVACY_MD = `**Last updated: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}**
 
-## Contact
+## 1. Information we collect
 
-Questions about this policy can be sent through social channels listed in the footer.`;
+We collect non-personal analytics data (pages viewed, time on site, general location) via Google Analytics. We do not collect names, email addresses, or any personal data unless you voluntarily submit them via our newsletter signup.
+
+If you subscribe to our newsletter, your email is stored with ConvertKit. You can unsubscribe at any time using the link in any email.
+
+## 2. Cookies
+
+This site uses cookies for:
+
+- **Advertising** — Google AdSense uses cookies to serve relevant ads based on your browsing. You can opt out at [Google Ads Settings](https://www.google.com/settings/ads) or [aboutads.info](https://optout.aboutads.info/).
+- **Analytics** — Google Analytics uses cookies to understand traffic patterns. No personally identifiable information is stored.
+- **Preferences** — we store your cookie consent choice in your browser's localStorage.
+
+## 3. Affiliate disclosure
+
+Some links on this site are affiliate links. If you click and buy, we earn a small commission at no extra cost to you. We only recommend products we have tested. All affiliate links are marked with \`rel="nofollow"\`.
+
+## 4. Third-party services
+
+We use:
+
+- **Google AdSense** — advertising (Google Privacy Policy: google.com/policies/privacy)
+- **Google Analytics** — site analytics
+- **ConvertKit** — email newsletter
+- **Gumroad** — digital product sales
+- **Unsplash** — stock photos (unsplash.com/license)
+
+## 5. Your rights
+
+You may request deletion of any personal data we hold. Contact us at contact@aiincomelab.com. We respond within 30 days.
+
+## 6. Changes
+
+We may update this policy. The date at the top of this page will reflect the latest revision.
+
+## 7. Contact
+
+Questions about privacy: contact@aiincomelab.com`;
+
+const CONTACT_MD = `Have a question, correction, or want to work together? We read every message.
+
+## General enquiries
+
+Email: **contact@aiincomelab.com**
+
+We aim to respond within 2 business days.
+
+## Sponsored content & partnerships
+
+Interested in reaching our audience of AI-focused readers? Sponsored posts start from $150.
+
+Email: **contact@aiincomelab.com** with subject line "Sponsorship"
+
+## Press & media
+
+For media enquiries, quotes, or interviews, email with subject line "Press".
+
+## Report an error
+
+Found a factual error in an article? We take accuracy seriously. Email the article URL and the correction and we will fix it promptly.
+
+## Social media
+
+Follow us for daily AI income tips:
+
+- Twitter / X: [@aiincomelab](https://twitter.com/aiincomelab)
+- YouTube: [youtube.com/@aiincomelab](https://youtube.com/@aiincomelab)
+- Pinterest: [pinterest.com/aiincomelab](https://pinterest.com/aiincomelab)`;
 
 // ── Premium CSS ───────────────────────────────────────────────────────────────
 const PREMIUM_CSS = `
@@ -761,6 +898,25 @@ h1,h2,h3,h4,h5{line-height:1.2;font-weight:700}
 .resource-card a{display:flex;flex-direction:column;gap:4px;color:var(--ink)!important}
 .resource-card strong{font-size:14px;line-height:1.3}
 .res-badge{background:rgba(88,166,255,.15);color:var(--accent);border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;width:fit-content}
+
+/* ─── Cookie banner ─── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--surface);border-top:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
+.cookie-banner p{margin:0;font-size:13px;color:var(--muted);flex:1}
+.cookie-banner p a{color:var(--accent)}
+.cookie-btns{display:flex;gap:10px;align-items:center;flex-shrink:0}
+.cookie-accept{background:var(--accent);color:#0d1117;border:none;padding:7px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer}
+.cookie-accept:hover{background:#79c0ff}
+.cookie-more{font-size:12px;color:var(--muted)}
+
+/* ─── Footer improvements ─── */
+.footer-desc{font-size:12px;color:var(--muted);margin-top:4px!important;margin-bottom:12px!important;line-height:1.5}
+.footer-nav-col{display:flex;flex-direction:column;gap:8px}
+.footer-nav-col a{color:var(--muted);font-size:13px;transition:color var(--transition)}
+.footer-nav-col a:hover{color:var(--ink)}
+.footer-bottom{border-top:1px solid var(--border);padding:20px 0;text-align:center}
+.footer-legal{margin-top:8px;font-size:12px}
+.footer-legal a{color:var(--muted)}
+.footer-legal a:hover{color:var(--accent)}
 `;
 
 

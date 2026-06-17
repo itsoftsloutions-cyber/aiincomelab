@@ -68,9 +68,7 @@
         "badge": "Top Pick"
       }
     ],
-    "sponsoredPostRate": "$150",
-    "consultingCta": "Need a custom AI income strategy? Book a 1-on-1 session.",
-    "consultingUrl": "https://calendly.com/aiincomelab"
+    "sponsoredPostRate": "$150"
   },
   "social": {
     "twitter": "https://twitter.com/aiincomelab",
@@ -82,7 +80,8 @@
     { "label": "Make Money", "href": "/category/make-money/" },
     { "label": "Productivity", "href": "/category/productivity/" },
     { "label": "Guides", "href": "/category/guides/" },
-    { "label": "Resources", "href": "/resources/" }
+    { "label": "Resources", "href": "/resources/" },
+    { "label": "Contact", "href": "/contact/" }
   ],
   "heroStats": [
     { "value": "11+", "label": "In-depth guides" },
