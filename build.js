@@ -180,6 +180,7 @@ function layout({ title, description, canonical, head = "", body, jsonld = "", f
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${b('/assets/style.css')}">
+${ad.enabled ? `<meta name="google-adsense-account" content="${ad.client}">` : ""}
 ${adScriptTag()}
 ${analyticsTag()}
 ${jsonld}
