@@ -9,17 +9,45 @@ const root = __dirname;
 const POSTS_DIR = path.join(root, "content", "posts");
 const TOPICS = path.join(root, "content", "topics.json");
 const STATE = path.join(root, "data", "state.json");
+const LOG = path.join(root, "data", "publish-log.json");
 
 function slugify(s) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 70);
 }
+function readJson(p, fallback) {
+  try { return JSON.parse(fs.readFileSync(p, "utf8")); }
+  catch { return fallback; }
+}
 function loadState() {
-  try { return JSON.parse(fs.readFileSync(STATE, "utf8")); }
-  catch { return { cursor: 0, published: [] }; }
+  const state = readJson(STATE, { cursor: 0, published: [] });
+  state.cursor = Number.isInteger(state.cursor) ? state.cursor : 0;
+  state.published = Array.isArray(state.published) ? state.published : [];
+  return state;
 }
 function saveState(s) {
   fs.mkdirSync(path.dirname(STATE), { recursive: true });
-  fs.writeFileSync(STATE, JSON.stringify(s, null, 2));
+  fs.writeFileSync(STATE, JSON.stringify(s, null, 2) + "\n");
+}
+function loadLog() {
+  const log = readJson(LOG, { events: [] });
+  log.events = Array.isArray(log.events) ? log.events : [];
+  return log;
+}
+function saveLog(log) {
+  fs.mkdirSync(path.dirname(LOG), { recursive: true });
+  log.events = log.events.slice(-200);
+  fs.writeFileSync(LOG, JSON.stringify(log, null, 2) + "\n");
+}
+function appendLog(event) {
+  const log = loadLog();
+  log.events.push({ at: new Date().toISOString(), ...event });
+  saveLog(log);
+}
+function hasPublished(state, slug) {
+  return state.published.some((p) => p.slug === slug);
+}
+function ensurePublishedEntry(state, slug, title, dateISO) {
+  if (!hasPublished(state, slug)) state.published.push({ slug, title, date: dateISO });
 }
 
 // Natural intro pool — each reads like a person wrote it for this specific topic
@@ -107,6 +135,7 @@ function main() {
   const state = loadState();
   fs.mkdirSync(POSTS_DIR, { recursive: true });
 
+  const dryRun = process.env.POST_DRY_RUN === "1" || process.env.DRY_RUN === "1";
   const dateISO = new Date().toISOString().slice(0, 10);
   const cursorPos = state.cursor;
   const topic = topics[cursorPos % topics.length];
@@ -119,30 +148,57 @@ function main() {
   }
 
   const title = refreshRound > 0 ? `${topic.title}: Updated Guide for ${dateISO.slice(0, 4)}` : topic.title;
+  const file = path.join(POSTS_DIR, `${slug}.md`);
+  const alreadyPublished = hasPublished(state, slug);
+
+  if (fs.existsSync(file)) {
+    let advanced = false;
+    if (alreadyPublished && state.cursor === cursorPos) {
+      state.cursor += 1;
+      advanced = true;
+    }
+    if (!alreadyPublished) {
+      ensurePublishedEntry(state, slug, title, dateISO);
+      state.cursor = Math.max(state.cursor, cursorPos + 1);
+      advanced = true;
+    }
+    if (advanced) saveState(state);
+    appendLog({ event: "skipped_existing", slug, title, date: dateISO, advanced });
+    console.log(`Skipped existing: ${path.relative(root, file)}${advanced ? " (state advanced)" : ""}`);
+    return;
+  }
+
+  if (dryRun) {
+    appendLog({ event: "dry_run", slug, title, date: dateISO, cursor: cursorPos });
+    console.log(`Dry run: would publish ${path.relative(root, file)}`);
+    return;
+  }
+
   const fm = [
     "---",
     `title: "${title.replace(/"/g, "'")}"`,
 
-    `image: "/images/placeholder.svg"`,
-    `description: "${(topic.description || "").replace(/"/g, '"')}"`,
-    `svgImage: true`,
+    `image: "${topic.image || ""}"`,
+    `description: "${(topic.description || "").replace(/"/g, '\\"')}"`,
+    `svgImage: false`,
     `slug: "${slug}"`,
     `category: "${topic.category}"`,
     `date: "${dateISO}"`,
-    `keywords: "${topic.keywords[0] || ""}"`,
+    `author: "${topic.author || "Kanav Sharma"}"`,
+    `keywords: ${JSON.stringify(topic.keywords || [])}`,
     "---",
     "",
   ].join("\n");
 
   const body = renderBody(topic, dateISO, cursorPos);
-  const file = path.join(POSTS_DIR, `${slug}.md`);
   fs.writeFileSync(file, fm + body + "\n");
 
   state.cursor += 1;
-  state.published.push({ slug, title, date: dateISO });
+  ensurePublishedEntry(state, slug, title, dateISO);
   saveState(state);
+  appendLog({ event: "published", slug, title, date: dateISO, cursor: state.cursor });
 
-  console.log(`Published: ${slug}.md  (queue cursor now ${state.cursor})`);
+  console.log(`Published: ${path.relative(root, file)}  (queue cursor now ${state.cursor})`);
 }
 
 main();

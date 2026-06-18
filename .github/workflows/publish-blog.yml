@@ -1,9 +1,18 @@
-name: Publish New Blog Post
+name: Manual Publish New Blog Post
 
 on:
-  schedule:
-    - cron: '0 */2 * * *' # Runs every 2 hours
-  workflow_dispatch: # Allows manual triggering
+  workflow_dispatch:
+    inputs:
+      publish_new_post:
+        description: "Create the next queued post before building"
+        required: true
+        default: false
+        type: boolean
+      dry_run:
+        description: "Print the post that would be created without writing files"
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   publish:
@@ -15,7 +24,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Or your preferred Node.js version
+          node-version: '20'
 
-      - name: Run new-post.js
-        run: npm run autopublish
+      - name: Create next post
+        if: inputs.publish_new_post == true
+        env:
+          POST_DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: node new-post.js
+
+      - name: Build site
+        run: node build.js

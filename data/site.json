@@ -72,10 +72,7 @@
   },
   "social": {
     "twitter": "https://x.com/kanavy9ah",
-    "linkedin": "https://linkedin.com/in/kanav-sharma-aiincomelab/",
-    "github": "https://github.com/itsoftsloutions-cyber/aiincomelab",
-    "facebook": "",
-    "youtube": ""
+    "linkedin": "https://linkedin.com/in/kanav-sharma-aiincomelab/"
   },
   "nav": [
     { "label": "AI Tools", "href": "/category/ai-tools/" },

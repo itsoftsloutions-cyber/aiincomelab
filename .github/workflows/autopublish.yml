@@ -1,12 +1,17 @@
-name: Auto-publish & Deploy
+name: Safe Auto-publish & Deploy
 
-# Publishes a new post every 2 hours and deploys to GitHub Pages — fully free.
+# Scheduled publishing is intentionally gated by the AUTO_PUBLISH_ENABLED repo variable.
+# Keep it false until the CEO/ops owner confirms the content, social, and deploy path.
 on:
   schedule:
-    - cron: "7 */2 * * *"   # every 2 hours, offset 7 min to avoid the :00 rush
-  workflow_dispatch: {}
-  push:
-    branches: [master, main]
+    - cron: "7 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      build_only:
+        description: "Build and deploy without creating a new post"
+        required: true
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -26,27 +31,42 @@ jobs:
         with:
           node-version: "20"
 
-      # Only generate a new post on scheduled runs, then always rebuild.
+      - name: Check autopublish gate
+        id: gate
+        shell: bash
+        env:
+          AUTO_PUBLISH_ENABLED: ${{ vars.AUTO_PUBLISH_ENABLED }}
+        run: |
+          if [ "${AUTO_PUBLISH_ENABLED:-0}" != "true" ]; then
+            echo "Scheduled autopublish is disabled until repo variable AUTO_PUBLISH_ENABLED=true is set."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Only generate a new post when the safety gate is enabled. Manual builds default to build-only.
       - name: Publish next queued topic
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' && steps.gate.outputs.enabled == 'true'
+        env:
+          POST_DRY_RUN: ${{ github.event_name == 'schedule' && vars.AUTO_PUBLISH_DRY_RUN == 'true' && '1' || '0' }}
         run: node new-post.js
 
       - name: Build site
         run: node build.js
 
       - name: Commit new content
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' && steps.gate.outputs.enabled == 'true'
         run: |
           git config user.name  "aiincomelab-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add content/posts data/state.json
+          git add content/posts data/state.json data/publish-log.json
           git commit -m "auto: publish next queued post" || echo "nothing to commit"
           git push || echo "nothing to push"
 
       # Share the newly published post to all social platforms. No-ops cleanly
       # for any platform whose secrets are not configured, and never fails the build.
       - name: Distribute to social media
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' && steps.gate.outputs.enabled == 'true'
         continue-on-error: true
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
@@ -64,6 +84,17 @@ jobs:
           git add data/social-log.json || true
           git commit -m "auto: log social distribution" || echo "nothing to commit"
           git push || echo "nothing to push"
+
+      - name: Upload publish/build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-build-logs
+          path: |
+            data/state.json
+            data/publish-log.json
+            data/social-log.json
+          if-no-files-found: ignore
 
       - uses: actions/upload-pages-artifact@v3
         with:

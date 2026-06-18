@@ -46,8 +46,8 @@ const UNSPLASH_COVERS = {
   guides:        "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80",
 };
 function coverImage(post) {
-  if (post.svgImage) return b(`/assets/post-svg/${post.slug}.svg`);
   if (post.image) return post.image;
+  if (post.svgImage) return b(`/assets/post-svg/${post.slug}.svg`);
   return UNSPLASH_COVERS[post.category] || UNSPLASH_COVERS["guides"];
 }
 // Absolute URL form for crawlers/structured data (og, JSON-LD, sitemap).
@@ -339,7 +339,7 @@ function orgSchema() {
     "@type": "Organization",
     name: site.name,
     url: site.url + "/",
-    logo: { "@type": "ImageObject", url: site.url + "/assets/logo.png", width: 200, height: 60 },
+    logo: { "@type": "ImageObject", url: site.url + "/assets/logo.svg", width: 200, height: 60 },
     description: site.description,
     ...(sameAs.length ? { sameAs } : {}),
   })}</script>`;
@@ -350,7 +350,7 @@ function layout({ title, description, canonical, head = "", body, jsonld = "", f
   const ogType = isArticle ? "article" : "website";
   const ogOrigin = (() => { try { return new URL(site.url).origin; } catch { return ""; } })();
   const absImg = (u) => (u && u.startsWith("/") ? ogOrigin + u : u);
-  const ogImage = absImg(articleImage) || `${site.url}/assets/og-default.png`;
+  const ogImage = absImg(articleImage) || `${site.url}/assets/og-default.svg`;
   return `<!doctype html>
 <html lang="${site.lang}">
 <head>
@@ -518,7 +518,7 @@ function header() {
 
 function footer(noAds = false) {
   const cats = (site.nav || []).filter(n => !n.href.includes('/contact')).map((n) => `<a href="${b(n.href)}">${escapeHtml(n.label)}</a>`).join("\n");
-  const socials = Object.entries(site.social || {}).map(([k, v]) => `<a href="${v}" target="_blank" rel="noopener">${k.charAt(0).toUpperCase() + k.slice(1)}</a>`).join(" · ");
+  const socials = Object.entries(site.social || {}).filter(([, v]) => v && v.trim()).map(([k, v]) => `<a href="${v}" target="_blank" rel="noopener">${k.charAt(0).toUpperCase() + k.slice(1)}</a>`).join(" · ");
   const year = new Date().getFullYear();
   return `<footer class="site-footer">
   <div class="wrap-wide">
@@ -586,17 +586,49 @@ function loadPosts() {
   return posts;
 }
 
-// Auto internal-linking: link the first mention of another post's primary keyword/title
+const INTERNAL_LINK_STOP = new Set([
+  "make money", "ai tools", "best ai", "with ai", "using ai", "for beginners",
+  "how to", "make money with", "best ai tools", "ai tools to", "online 2026",
+]);
+// Function words that make weak/awkward anchor text at a phrase boundary.
+const INTERNAL_LINK_FN = new Set([
+  "a", "an", "the", "with", "for", "and", "or", "of", "to", "in", "on", "your",
+  "my", "this", "that", "how", "what", "why", "is", "are", "best", "use", "using", "no",
+]);
+// Expand a keyword into contiguous 2–3 word sub-phrases so we can link the natural way a
+// phrase appears in prose ("affiliate marketing") rather than only the exact long-tail
+// keyword ("ai affiliate marketing 2026"). Rejects fragments that start/end on a function
+// word or a year, which keeps anchor text descriptive (good for SEO, not spammy).
+function phraseVariants(s) {
+  const words = String(s).toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
+  const out = new Set();
+  for (let n = Math.min(3, words.length); n >= 2; n--) {
+    for (let i = 0; i + n <= words.length; i++) {
+      const seg = words.slice(i, i + n);
+      const first = seg[0], last = seg[seg.length - 1];
+      if (INTERNAL_LINK_FN.has(first) || INTERNAL_LINK_FN.has(last)) continue;
+      if (/^\d{4}$/.test(last)) continue;
+      out.add(seg.join(" "));
+    }
+  }
+  return [...out].filter((p) => p.length >= 12 && !INTERNAL_LINK_STOP.has(p));
+}
+// Auto internal-linking: link the first mention of another post's keyword/title phrase
 // to that post. Only touches plain body text — never inside existing anchors, headings,
 // code/pre, so it can't break markup or double-link. Capped to keep it natural.
 function injectInternalLinks(html, post, allPosts) {
   const candidates = [];
+  const seenPhrase = new Set();
   for (const o of allPosts) {
     if (o.slug === post.slug) continue;
     const url = b(`/posts/${o.slug}/`);
-    const phrases = [];
-    (o.keywords || []).forEach((k) => { if (k && k.length >= 10) phrases.push(k); });
-    for (const ph of phrases) candidates.push({ phrase: ph.toLowerCase(), url, title: o.title });
+    for (const src of (o.keywords || [])) {
+      for (const ph of phraseVariants(src)) {
+        if (seenPhrase.has(ph)) continue; // a given phrase links to one post only
+        seenPhrase.add(ph);
+        candidates.push({ phrase: ph, url, title: o.title });
+      }
+    }
   }
   candidates.sort((a, b) => b.phrase.length - a.phrase.length);
   const usedUrls = new Set(), usedPhrases = new Set();
@@ -657,7 +689,7 @@ function articleJsonLd(post) {
       dateModified: post.date + "T08:00:00+00:00",
       author: { "@type": "Person", name: post.author || site.author, url: site.url + "/about/" },
       publisher: { "@type": "Organization", name: site.name, url: site.url + "/",
-        logo: { "@type": "ImageObject", url: site.url + "/assets/logo.png", width: 200, height: 60 } },
+        logo: { "@type": "ImageObject", url: site.url + "/assets/logo.svg", width: 200, height: 60 } },
       mainEntityOfPage: { "@type": "WebPage", "@id": post.url },
       keywords: post.keywords.join(", "),
     }
@@ -674,23 +706,39 @@ function articleJsonLd(post) {
   return schemas.map(s => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join("\n");
 }
 
+// Pull Q/A pairs out of a post's FAQ section for FAQPage schema. Handles both the
+// heading style (### Question) and the bold-paragraph style (**Question?**) that the
+// auto-publisher actually emits, and stops at the next H2 section so the conclusion
+// never leaks into the last answer.
 function extractFaqPairs(body) {
   const pairs = [];
   const lines = body.split("\n");
   let inFaq = false, curQ = "", curA = [];
+  const flush = () => { if (curQ && curA.length) pairs.push([curQ, curA.join(" ").trim()]); curQ = ""; curA = []; };
   for (const line of lines) {
     if (/^#{1,3}\s*(faq|frequently asked)/i.test(line)) { inFaq = true; continue; }
-    if (inFaq) {
-      const qMatch = line.match(/^#{3,4}\s+(.+)/);
-      if (qMatch) {
-        if (curQ && curA.length) pairs.push([curQ, curA.join(" ").trim()]);
-        curQ = qMatch[1].replace(/\*\*/g, ""); curA = [];
-      } else if (curQ && line.trim()) {
-        curA.push(line.replace(/[*_`#]/g, "").trim());
+    if (!inFaq) continue;
+    // A new H2 (non-FAQ) heading ends the FAQ block (e.g. "## Final thoughts").
+    if (/^#{1,2}\s+\S/.test(line)) { flush(); inFaq = false; continue; }
+    // A horizontal rule ends the FAQ block and never belongs in an answer.
+    if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { flush(); inFaq = false; continue; }
+    const headingQ = line.match(/^#{3,4}\s+(.+)/);
+    // Bold question, optionally with the answer on the same line: **Q?** answer text
+    const boldQ = line.match(/^\*\*(.+?)\*\*\s*(.*)$/);
+    if (headingQ || boldQ) {
+      flush();
+      if (headingQ) {
+        curQ = headingQ[1].replace(/\*\*/g, "").trim();
+      } else {
+        curQ = boldQ[1].replace(/\*\*/g, "").trim();
+        const rest = boldQ[2].trim();
+        if (rest) curA.push(rest.replace(/[*_`#]/g, "").trim());
       }
+    } else if (curQ && line.trim()) {
+      curA.push(line.replace(/[*_`#]/g, "").trim());
     }
   }
-  if (curQ && curA.length) pairs.push([curQ, curA.join(" ").trim()]);
+  flush();
   return pairs.slice(0, 5);
 }
 function postBreadcrumbJsonLd(post) {
@@ -770,11 +818,30 @@ function build() {
 
   const posts = loadPosts();
 
-  // ── Generate unique SVG hero images for every post ──
+  // ── Generate SVG hero images for posts without frontmatter images ──
   for (const p of posts) {
-    p.svgImage = true;
-    write(`assets/post-svg/${p.slug}.svg`, generatePostSvg(p.slug, p.title));
+    if (!p.image) {
+      p.svgImage = true;
+      write(`assets/post-svg/${p.slug}.svg`, generatePostSvg(p.slug, p.title));
+    }
   }
+
+  // ── Generate site branding assets ──
+  write("assets/logo.svg", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <rect width="200" height="60" rx="8" fill="#0969da"/>
+  <text x="100" y="38" text-anchor="middle" fill="white" font-family="Inter,system-ui,sans-serif" font-size="22" font-weight="800">AIIncomeLab</text>
+</svg>`);
+  write("assets/og-default.svg", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="og-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0969da"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#og-bg)"/>
+  <text x="600" y="290" text-anchor="middle" fill="white" font-family="Inter,system-ui,sans-serif" font-size="60" font-weight="800">AIIncomeLab</text>
+  <text x="600" y="350" text-anchor="middle" fill="rgba(255,255,255,.65)" font-family="Inter,system-ui,sans-serif" font-size="24">AI Tools, Productivity &amp; Online Income</text>
+</svg>`);
 
   write("assets/style.css", PREMIUM_CSS);
 
@@ -1186,7 +1253,7 @@ ${cats}\
   <lastBuildDate>${new Date(posts[0] ? posts[0].date : new Date().toISOString().slice(0, 10)).toUTCString()}</lastBuildDate>
   <atom:link href="${site.url}/rss.xml" rel="self" type="application/rss+xml"/>
   <image>
-    <url>${site.url}/assets/logo.png</url>
+    <url>${site.url}/assets/logo.svg</url>
     <title>${escapeHtml(site.name)}</title>
     <link>${site.url}/</link>
     <width>200</width>
