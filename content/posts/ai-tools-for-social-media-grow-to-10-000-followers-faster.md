@@ -1,12 +1,13 @@
 ---
 title: "AI Tools for Social Media: Grow to 10,000 Followers Faster"
-image: "/images/placeholder.svg"
+image: ""
 description: "The best AI tools for social media content and how to grow faster on any platform."
-svgImage: true
+svgImage: false
 slug: "ai-tools-for-social-media-grow-to-10-000-followers-faster"
 category: "ai-tools"
-date: "2026-06-17"
-keywords: "ai social media tools"
+date: "2026-06-18"
+author: "Kanav Sharma"
+keywords: ["ai social media tools","grow instagram with ai","ai content creation social"]
 ---
 Here is what I wish someone had told me about **ai social media tools** when I started: it is simpler than the internet makes it seem, but harder than a five-step list suggests. The difference between success and frustration comes down to a few specific decisions.
 
@@ -68,4 +69,4 @@ AI handles drafting and formatting, but you must provide the unique perspective 
 
 I have grown multiple accounts using AI workflows, and the most important lesson is that AI handles execution while you provide the personality. Pick one platform, post daily for 90 days using AI for drafts and scheduling, then re-evaluate.
 
-*Last updated: 2026-06-17. I review and update this guide regularly to keep it accurate.*
+*Last updated: 2026-06-18. I review and update this guide regularly to keep it accurate.*
