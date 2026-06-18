@@ -94,9 +94,28 @@ The UGC Posts API requires a user access token:
 
 ---
 
-## 3. GitHub Secrets Setup (for CTO)
+## 3. Automated Credential Procurement + Injection (CTO)
 
-Each credential must be set as a GitHub Actions secret in the repository:
+The fastest way to obtain and inject all credentials is the browser automation script:
+
+```bash
+# 1. Install Playwright (one-time)
+npm run procure-creds:setup
+
+# 2. Set env vars and run
+$env:TWITTER_USERNAME = "kanavy9ah"
+$env:TWITTER_PASSWORD = "your-password-here"
+$env:LINKEDIN_EMAIL = "your-email@example.com"
+$env:LINKEDIN_PASSWORD = "your-password-here"
+$env:GH_PAT = "ghp_your-personal-access-token"
+node scripts/auto-procure-credentials.mjs
+```
+
+The script opens a headed browser, auto-fills forms, and waits for you to handle 2FA/CAPTCHA interactively. It then auto-extracts API credentials and injects them as GitHub Secrets via the API. Use `SKIP_TWITTER=1` or `SKIP_LINKEDIN=1` to skip a platform.
+
+## 4. Manual GitHub Secrets Setup (fallback)
+
+If the automation script cannot be used, set credentials directly:
 
 - Repo: `https://github.com/itsoftsloutions-cyber/aiincomelab`
 - Secrets location: Settings → Secrets and variables → Actions → New repository secret
@@ -105,7 +124,7 @@ Use the script at `scripts/set-github-secrets.ps1` to inject all credentials at 
 
 ---
 
-## 4. Verification
+## 5. Verification
 
 After credentials are set, verify the pipeline works:
 

@@ -10,7 +10,12 @@
     "autopublish": "node new-post.js && node build.js",
     "social": "node scripts/social-distribute.js",
     "setup-profiles": "node scripts/setup-profiles.js",
+    "procure-creds": "node scripts/auto-procure-credentials.mjs",
+    "procure-creds:setup": "npm install playwright && npx playwright install chromium",
     "serve": "node serve.js"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.61.0"
+  }
 }

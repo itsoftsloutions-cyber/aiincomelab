@@ -1,6 +1,13 @@
 # Set GitHub Actions secrets for AIIncomeLab social auto-posting pipeline.
 #
-# Usage:
+# PREFERRED: Use the browser automation script instead:
+#   npm run procure-creds:setup   # install Playwright (one-time)
+#   $env:TWITTER_USERNAME = "..."; $env:TWITTER_PASSWORD = "..."
+#   $env:LINKEDIN_EMAIL = "..."; $env:LINKEDIN_PASSWORD = "..."
+#   $env:GH_PAT = "ghp_..."
+#   node scripts/auto-procure-credentials.mjs
+#
+# FALLBACK — manual injection via PowerShell:
 #   1. Create a GitHub Personal Access Token (PAT) with `repo` scope:
 #      GitHub.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens
 #      Repo access: "itsoftsloutions-cyber/aiincomelab" → Contents: Read and write
