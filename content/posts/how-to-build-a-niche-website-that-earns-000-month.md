@@ -1,9 +1,8 @@
 ---
-title: "How to Build a Niche Website That Earns ,000/Month"
-image: "/images/placeholder.svg"
-description: "A step-by-step guide to building a niche website and growing it to ,000/month in passive ad and affiliate income."
-svgImage: true
-slug: "how-to-build-a-niche-website-that-earns-000-month"
+title: "How to Build a Niche Website That Earns $1,000/Month"
+image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80"
+description: "A step-by-step guide to building a niche website and growing it to $1,000/month in passive ad and affiliate income."
+slug: "how-to-build-a-niche-website-that-earns-1-000-month"
 category: "make-money"
 date: "2026-06-18"
 keywords: "niche website income"

@@ -1,8 +1,7 @@
 ---
 title: "Email Marketing with AI: Build a List and Earn $1 Per Subscriber"
-image: "/images/placeholder.svg"
+image: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=800&q=80"
 description: "How to build, grow, and monetize an email list using AI tools — from lead magnets to sponsorship deals worth $1 per subscriber per month."
-svgImage: true
 slug: "email-marketing-with-ai-build-a-list-and-earn-1-per-subscriber"
 category: "make-money"
 date: "2026-06-17"

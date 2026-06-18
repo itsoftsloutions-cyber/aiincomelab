@@ -9,6 +9,7 @@
     "new": "node new-post.js",
     "autopublish": "node new-post.js && node build.js",
     "social": "node scripts/social-distribute.js",
+    "setup-profiles": "node scripts/setup-profiles.js",
     "serve": "node serve.js"
   },
   "license": "MIT"

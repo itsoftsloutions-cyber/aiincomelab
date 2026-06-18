@@ -72,7 +72,7 @@
   },
   "social": {
     "twitter": "https://x.com/kanavy9ah",
-    "linkedin": "https://linkedin.com/in/kanav-sharma-aiincomelab/"
+    "pinterest": "https://www.pinterest.com/aiincomelab/"
   },
   "nav": [
     { "label": "AI Tools", "href": "/category/ai-tools/" },
@@ -84,7 +84,7 @@
   ],
   "heroStats": [
     { "value": "15+", "label": "In-depth guides" },
-    { "value": "6", "label": "Earning methods" },
+    { "value": "7", "label": "Earning methods" },
     { "value": "2h", "label": "New post cycle" }
   ],
   "featuredCategories": [

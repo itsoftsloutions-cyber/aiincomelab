@@ -1,8 +1,7 @@
 ---
 title: "AI Tools for Social Media: Grow to 10,000 Followers Faster"
-image: ""
+image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&q=80"
 description: "The best AI tools for social media content and how to grow faster on any platform."
-svgImage: false
 slug: "ai-tools-for-social-media-grow-to-10-000-followers-faster"
 category: "ai-tools"
 date: "2026-06-18"

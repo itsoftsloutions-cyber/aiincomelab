@@ -1,8 +1,7 @@
 ---
 title: "Google Discovery Traffic: How to Get Millions of Clicks from Google"
-image: "/images/placeholder.svg"
+image: "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=800&q=80"
 description: "A practical guide to optimizing blog content for Google Discovery."
-svgImage: true
 slug: "google-discovery-traffic-how-to-get-millions-of-clicks-from-google"
 category: "guides"
 date: "2026-06-17"
