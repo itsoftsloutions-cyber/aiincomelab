@@ -1,7 +1,7 @@
 name: Safe Auto-publish & Deploy
 
-# Scheduled publishing is intentionally gated by the AUTO_PUBLISH_ENABLED repo variable.
-# Keep it false until the CEO/ops owner confirms the content, social, and deploy path.
+# Scheduled publishing is gated by the .autopublish-enabled file.
+# Delete or rename the file to disable. Create it to enable.
 on:
   schedule:
     - cron: "7 */2 * * *"
@@ -34,21 +34,19 @@ jobs:
       - name: Check autopublish gate
         id: gate
         shell: bash
-        env:
-          AUTO_PUBLISH_ENABLED: ${{ vars.AUTO_PUBLISH_ENABLED }}
         run: |
-          if [ "${AUTO_PUBLISH_ENABLED:-0}" != "true" ]; then
-            echo "Scheduled autopublish is disabled until repo variable AUTO_PUBLISH_ENABLED=true is set."
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-          else
+          if [ -f .autopublish-enabled ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Scheduled autopublish is disabled. Create .autopublish-enabled file to enable."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 
       # Only generate a new post when the safety gate is enabled. Manual builds default to build-only.
       - name: Publish next queued topic
         if: github.event_name == 'schedule' && steps.gate.outputs.enabled == 'true'
         env:
-          POST_DRY_RUN: ${{ github.event_name == 'schedule' && vars.AUTO_PUBLISH_DRY_RUN == 'true' && '1' || '0' }}
+          POST_DRY_RUN: ${{ github.event_name == 'schedule' && hashFiles('.autopublish-dry-run') != '' && '1' || '0' }}
         run: node new-post.js
 
       - name: Build site
