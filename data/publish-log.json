@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T08:27:41.364Z",
-      "event": "dry_run",
-      "slug": "ai-tools-for-social-media-grow-to-10-000-followers-faster",
-      "title": "AI Tools for Social Media: Grow to 10,000 Followers Faster",
-      "date": "2026-06-18",
-      "cursor": 16
-    },
-    {
       "at": "2026-06-18T08:29:02.791Z",
       "event": "published",
       "slug": "ai-tools-for-social-media-grow-to-10-000-followers-faster",
@@ -1599,6 +1591,14 @@
       "title": "AI Business Ideas That Actually Make Money in 2026: Updated Guide for 2026",
       "date": "2026-07-11",
       "cursor": 198
+    },
+    {
+      "at": "2026-07-12T03:50:10.456Z",
+      "event": "published",
+      "slug": "surfer-seo-review-2026-does-it-actually-help-you-rank-2026-07-12",
+      "title": "Surfer SEO Review 2026: Does It Actually Help You Rank?: Updated Guide for 2026",
+      "date": "2026-07-12",
+      "cursor": 199
     }
   ]
 }
