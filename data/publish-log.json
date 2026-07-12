@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T08:29:02.791Z",
-      "event": "published",
-      "slug": "ai-tools-for-social-media-grow-to-10-000-followers-faster",
-      "title": "AI Tools for Social Media: Grow to 10,000 Followers Faster",
-      "date": "2026-06-18",
-      "cursor": 17
-    },
-    {
       "at": "2026-06-18T09:43:10.372Z",
       "event": "published",
       "slug": "best-ai-tools-to-make-money-online-in-2026",
@@ -1599,6 +1591,14 @@
       "title": "Surfer SEO Review 2026: Does It Actually Help You Rank?: Updated Guide for 2026",
       "date": "2026-07-12",
       "cursor": 199
+    },
+    {
+      "at": "2026-07-12T06:44:13.061Z",
+      "event": "published",
+      "slug": "how-to-use-perplexity-ai-for-research-and-content-creation-2026-07-12",
+      "title": "How to Use Perplexity AI for Research and Content Creation: Updated Guide for 2026",
+      "date": "2026-07-12",
+      "cursor": 200
     }
   ]
 }
