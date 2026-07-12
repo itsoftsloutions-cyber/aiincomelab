@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T09:43:11.818Z",
-      "event": "published",
-      "slug": "how-to-make-500-month-with-an-ai-blog-realistic-guide-2026-06-18",
-      "title": "How to Make $500/Month with an AI Blog (Realistic Guide)",
-      "date": "2026-06-18",
-      "cursor": 7
-    },
-    {
       "at": "2026-06-18T09:43:11.959Z",
       "event": "published",
       "slug": "google-adsense-approval-a-complete-beginner-guide-2026-06-18",
@@ -1599,6 +1591,14 @@
       "title": "How to Start an AI Blog That Ranks on Google: Updated Guide for 2026",
       "date": "2026-07-12",
       "cursor": 206
+    },
+    {
+      "at": "2026-07-12T21:02:31.550Z",
+      "event": "published",
+      "slug": "ai-productivity-workflow-do-8-hours-of-work-in-3-2026-07-12",
+      "title": "AI Productivity Workflow: Do 8 Hours of Work in 3: Updated Guide for 2026",
+      "date": "2026-07-12",
+      "cursor": 207
     }
   ]
 }
