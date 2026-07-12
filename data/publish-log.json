@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T09:43:11.539Z",
-      "event": "published",
-      "slug": "ai-affiliate-marketing-a-beginner-s-playbook-2026-06-18",
-      "title": "AI Affiliate Marketing: A Beginner's Playbook",
-      "date": "2026-06-18",
-      "cursor": 5
-    },
-    {
       "at": "2026-06-18T09:43:11.677Z",
       "event": "published",
       "slug": "chatgpt-vs-claude-vs-gemini-which-ai-is-best-for-making-money-2026-06-18",
@@ -1599,6 +1591,14 @@
       "title": "How to Hit $50/Day Minimum Online Income with AI in Your First Month: Updated Guide for 2026",
       "date": "2026-07-12",
       "cursor": 204
+    },
+    {
+      "at": "2026-07-12T17:12:55.773Z",
+      "event": "published",
+      "slug": "best-ai-tools-to-make-money-online-in-2026-2026-07-12",
+      "title": "Best AI Tools to Make Money Online in 2026: Updated Guide for 2026",
+      "date": "2026-07-12",
+      "cursor": 205
     }
   ]
 }
