@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T09:43:10.372Z",
-      "event": "published",
-      "slug": "best-ai-tools-to-make-money-online-in-2026",
-      "title": "Best AI Tools to Make Money Online in 2026",
-      "date": "2026-06-18",
-      "cursor": 1
-    },
-    {
       "at": "2026-06-18T09:43:11.053Z",
       "event": "published",
       "slug": "how-to-start-an-ai-blog-that-ranks-on-google-2026-06-18",
@@ -1599,6 +1591,14 @@
       "title": "How to Use Perplexity AI for Research and Content Creation: Updated Guide for 2026",
       "date": "2026-07-12",
       "cursor": 200
+    },
+    {
+      "at": "2026-07-12T09:59:49.326Z",
+      "event": "published",
+      "slug": "ai-automation-tools-for-small-business-save-15-hours-per-week-2026-07-12",
+      "title": "AI Automation Tools for Small Business: Save 15 Hours Per Week: Updated Guide for 2026",
+      "date": "2026-07-12",
+      "cursor": 201
     }
   ]
 }
