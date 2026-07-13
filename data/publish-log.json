@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T09:43:12.345Z",
-      "event": "published",
-      "slug": "how-to-make-money-with-chatgpt-10-proven-methods-2026-06-18",
-      "title": "How to Make Money with ChatGPT: 10 Proven Methods",
-      "date": "2026-06-18",
-      "cursor": 11
-    },
-    {
       "at": "2026-06-18T09:43:12.462Z",
       "event": "published",
       "slug": "youtube-automation-with-ai-earn-without-showing-your-face-2026-06-18",
@@ -1599,6 +1591,14 @@
       "title": "ChatGPT vs Claude vs Gemini: Which AI Is Best for Making Money: Updated Guide for 2026",
       "date": "2026-07-13",
       "cursor": 210
+    },
+    {
+      "at": "2026-07-13T11:26:26.644Z",
+      "event": "published",
+      "slug": "how-to-make-500-month-with-an-ai-blog-realistic-guide-2026-07-13",
+      "title": "How to Make $500/Month with an AI Blog (Realistic Guide): Updated Guide for 2026",
+      "date": "2026-07-13",
+      "cursor": 211
     }
   ]
 }
