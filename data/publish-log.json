@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T09:43:15.423Z",
-      "event": "published",
-      "slug": "best-ai-tools-for-students-study-smarter-not-harder",
-      "title": "Best AI Tools for Students: Study Smarter, Not Harder",
-      "date": "2026-06-18",
-      "cursor": 29
-    },
-    {
       "at": "2026-06-18T09:43:15.560Z",
       "event": "published",
       "slug": "how-to-make-per-day-online-with-no-investment",
@@ -1599,6 +1591,14 @@
       "title": "Best AI Chatbots for Business in 2026 (Ranked and Reviewed): Updated Guide for 2026",
       "date": "2026-07-15",
       "cursor": 228
+    },
+    {
+      "at": "2026-07-15T15:46:29.574Z",
+      "event": "published",
+      "slug": "print-on-demand-with-ai-design-products-without-any-skills-2026-07-15",
+      "title": "Print on Demand with AI: Design Products Without Any Skills: Updated Guide for 2026",
+      "date": "2026-07-15",
+      "cursor": 229
     }
   ]
 }
