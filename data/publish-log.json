@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T09:43:15.560Z",
-      "event": "published",
-      "slug": "how-to-make-per-day-online-with-no-investment",
-      "title": "How to Make  Per Day Online with No Investment",
-      "date": "2026-06-18",
-      "cursor": 30
-    },
-    {
       "at": "2026-06-18T09:43:15.693Z",
       "event": "published",
       "slug": "ai-resume-builder-get-more-interviews-with-ai-optimized-cvs",
@@ -1599,6 +1591,14 @@
       "title": "Print on Demand with AI: Design Products Without Any Skills: Updated Guide for 2026",
       "date": "2026-07-15",
       "cursor": 229
+    },
+    {
+      "at": "2026-07-15T17:34:50.244Z",
+      "event": "published",
+      "slug": "how-to-create-and-sell-an-ai-course-online-for-2026-07-15",
+      "title": "How to Create and Sell an AI Course Online for +: Updated Guide for 2026",
+      "date": "2026-07-15",
+      "cursor": 230
     }
   ]
 }
