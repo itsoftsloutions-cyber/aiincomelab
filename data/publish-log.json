@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-19T05:20:20.484Z",
-      "event": "published",
-      "slug": "google-search-console-for-bloggers-the-complete-guide",
-      "title": "Google Search Console for Bloggers: The Complete Guide",
-      "date": "2026-06-19",
-      "cursor": 36
-    },
-    {
       "at": "2026-06-19T10:55:21.050Z",
       "event": "published",
       "slug": "how-to-earn-money-from-instagram-with-ai-in-2026",
@@ -1599,6 +1591,14 @@
       "title": "AI Resume Builder: Get More Interviews with AI-Optimized CVs: Updated Guide for 2026",
       "date": "2026-07-16",
       "cursor": 235
+    },
+    {
+      "at": "2026-07-16T10:20:08.069Z",
+      "event": "published",
+      "slug": "notion-ai-vs-chatgpt-which-is-better-for-productivity-2026-07-16",
+      "title": "Notion AI vs ChatGPT: Which Is Better for Productivity?: Updated Guide for 2026",
+      "date": "2026-07-16",
+      "cursor": 236
     }
   ]
 }
