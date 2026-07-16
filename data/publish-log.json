@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-18T18:33:43.300Z",
-      "event": "published",
-      "slug": "ai-for-real-estate-tools-that-save-agents-10-hours-per-week",
-      "title": "AI for Real Estate: Tools That Save Agents 10 Hours Per Week",
-      "date": "2026-06-18",
-      "cursor": 34
-    },
-    {
       "at": "2026-06-18T22:23:45.228Z",
       "event": "published",
       "slug": "top-10-ai-side-hustles-you-can-start-this-weekend",
@@ -1599,6 +1591,14 @@
       "title": "Best AI Tools for Students: Study Smarter, Not Harder: Updated Guide for 2026",
       "date": "2026-07-15",
       "cursor": 233
+    },
+    {
+      "at": "2026-07-16T03:31:16.888Z",
+      "event": "published",
+      "slug": "how-to-make-per-day-online-with-no-investment-2026-07-16",
+      "title": "How to Make  Per Day Online with No Investment: Updated Guide for 2026",
+      "date": "2026-07-16",
+      "cursor": 234
     }
   ]
 }
