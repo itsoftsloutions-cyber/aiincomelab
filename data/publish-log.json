@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-23T10:00:19.799Z",
-      "event": "published",
-      "slug": "ai-freelancing-how-to-charge-50-150-hour-using-ai-tools-2026-06-23",
-      "title": "AI Freelancing: How to Charge $50-$150/Hour Using AI Tools: Updated Guide for 2026",
-      "date": "2026-06-23",
-      "cursor": 64
-    },
-    {
       "at": "2026-06-23T12:45:08.931Z",
       "event": "published",
       "slug": "midjourney-for-beginners-create-and-sell-ai-art-2026-06-23",
@@ -1599,6 +1591,14 @@
       "title": "Google AdSense Approval: A Complete Beginner Guide: Updated Guide for 2026",
       "date": "2026-07-19",
       "cursor": 263
+    },
+    {
+      "at": "2026-07-19T11:19:25.951Z",
+      "event": "published",
+      "slug": "seo-for-beginners-how-to-rank-your-first-blog-post-on-google-2026-07-19",
+      "title": "SEO for Beginners: How to Rank Your First Blog Post on Google: Updated Guide for 2026",
+      "date": "2026-07-19",
+      "cursor": 264
     }
   ]
 }
