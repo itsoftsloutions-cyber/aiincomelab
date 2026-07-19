@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-23T12:45:08.931Z",
-      "event": "published",
-      "slug": "midjourney-for-beginners-create-and-sell-ai-art-2026-06-23",
-      "title": "Midjourney for Beginners: Create and Sell AI Art: Updated Guide for 2026",
-      "date": "2026-06-23",
-      "cursor": 65
-    },
-    {
       "at": "2026-06-23T16:37:12.629Z",
       "event": "published",
       "slug": "email-marketing-with-ai-build-a-list-and-earn-1-per-subscriber-2026-06-23",
@@ -1599,6 +1591,14 @@
       "title": "SEO for Beginners: How to Rank Your First Blog Post on Google: Updated Guide for 2026",
       "date": "2026-07-19",
       "cursor": 264
+    },
+    {
+      "at": "2026-07-19T13:46:31.848Z",
+      "event": "published",
+      "slug": "best-ai-tools-for-passive-income-in-2026-2026-07-19",
+      "title": "Best AI Tools for Passive Income in 2026: Updated Guide for 2026",
+      "date": "2026-07-19",
+      "cursor": 265
     }
   ]
 }
