@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-23T16:37:12.629Z",
-      "event": "published",
-      "slug": "email-marketing-with-ai-build-a-list-and-earn-1-per-subscriber-2026-06-23",
-      "title": "Email Marketing with AI: Build a List and Earn $1 Per Subscriber: Updated Guide for 2026",
-      "date": "2026-06-23",
-      "cursor": 66
-    },
-    {
       "at": "2026-06-23T20:20:14.102Z",
       "event": "published",
       "slug": "google-discovery-traffic-how-to-get-millions-of-clicks-from-google-2026-06-23",
@@ -1599,6 +1591,14 @@
       "title": "Best AI Tools for Passive Income in 2026: Updated Guide for 2026",
       "date": "2026-07-19",
       "cursor": 265
+    },
+    {
+      "at": "2026-07-19T15:09:26.078Z",
+      "event": "published",
+      "slug": "how-to-make-money-with-chatgpt-10-proven-methods-2026-07-19",
+      "title": "How to Make Money with ChatGPT: 10 Proven Methods: Updated Guide for 2026",
+      "date": "2026-07-19",
+      "cursor": 266
     }
   ]
 }
