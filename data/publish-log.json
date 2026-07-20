@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-24T20:02:17.897Z",
-      "event": "published",
-      "slug": "how-to-use-ai-to-write-a-blog-post-in-30-minutes-2026-06-24",
-      "title": "How to Use AI to Write a Blog Post in 30 Minutes: Updated Guide for 2026",
-      "date": "2026-06-24",
-      "cursor": 73
-    },
-    {
       "at": "2026-06-24T21:41:33.617Z",
       "event": "published",
       "slug": "dropshipping-with-ai-automate-your-store-and-scale-faster-2026-06-24",
@@ -1599,6 +1591,14 @@
       "title": "AI Tools for Social Media: Grow to 10,000 Followers Faster: Updated Guide for 2026",
       "date": "2026-07-20",
       "cursor": 272
+    },
+    {
+      "at": "2026-07-20T11:10:32.506Z",
+      "event": "published",
+      "slug": "how-to-build-a-niche-website-that-earns-000-month-2026-07-20",
+      "title": "How to Build a Niche Website That Earns ,000/Month: Updated Guide for 2026",
+      "date": "2026-07-20",
+      "cursor": 273
     }
   ]
 }
