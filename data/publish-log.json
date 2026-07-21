@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-25T16:34:08.169Z",
-      "event": "published",
-      "slug": "how-to-automate-your-blog-with-ai-publish-without-burnout-2026-06-25",
-      "title": "How to Automate Your Blog With AI: Publish Without Burnout: Updated Guide for 2026",
-      "date": "2026-06-25",
-      "cursor": 79
-    },
-    {
       "at": "2026-06-25T20:20:04.669Z",
       "event": "published",
       "slug": "best-ai-tools-for-students-study-smarter-not-harder-2026-06-25",
@@ -1599,6 +1591,14 @@
       "title": "Dropshipping with AI: Automate Your Store and Scale Faster: Updated Guide for 2026",
       "date": "2026-07-21",
       "cursor": 278
+    },
+    {
+      "at": "2026-07-21T06:38:13.724Z",
+      "event": "published",
+      "slug": "best-ai-chatbots-for-business-in-2026-ranked-and-reviewed-2026-07-21",
+      "title": "Best AI Chatbots for Business in 2026 (Ranked and Reviewed): Updated Guide for 2026",
+      "date": "2026-07-21",
+      "cursor": 279
     }
   ]
 }
