@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-27T04:13:06.235Z",
-      "event": "published",
-      "slug": "ai-for-e-commerce-boost-sales-by-30-with-these-tools-2026-06-27",
-      "title": "AI for E-commerce: Boost Sales by 30% with These Tools: Updated Guide for 2026",
-      "date": "2026-06-27",
-      "cursor": 89
-    },
-    {
       "at": "2026-06-27T08:48:31.236Z",
       "event": "published",
       "slug": "how-to-build-a-personal-brand-online-using-ai-2026-06-27",
@@ -1599,6 +1591,14 @@
       "title": "How to Start a Podcast with AI: Launch in One Weekend: Updated Guide for 2026",
       "date": "2026-07-22",
       "cursor": 288
+    },
+    {
+      "at": "2026-07-22T14:18:25.388Z",
+      "event": "published",
+      "slug": "ai-for-real-estate-tools-that-save-agents-10-hours-per-week-2026-07-22",
+      "title": "AI for Real Estate: Tools That Save Agents 10 Hours Per Week: Updated Guide for 2026",
+      "date": "2026-07-22",
+      "cursor": 289
     }
   ]
 }
