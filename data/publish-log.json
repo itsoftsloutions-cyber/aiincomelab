@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-28T04:46:28.126Z",
-      "event": "published",
-      "slug": "how-to-use-perplexity-ai-for-research-and-content-creation-2026-06-28",
-      "title": "How to Use Perplexity AI for Research and Content Creation: Updated Guide for 2026",
-      "date": "2026-06-28",
-      "cursor": 98
-    },
-    {
       "at": "2026-06-28T09:28:39.715Z",
       "event": "published",
       "slug": "ai-automation-tools-for-small-business-save-15-hours-per-week-2026-06-28",
@@ -1599,6 +1591,14 @@
       "title": "Best Grammarly Alternatives in 2026 (Free and Paid): Updated Guide for 2026",
       "date": "2026-07-23",
       "cursor": 297
+    },
+    {
+      "at": "2026-07-23T17:42:36.478Z",
+      "event": "published",
+      "slug": "how-to-use-ai-to-grow-your-business-to-000-month-2026-07-23",
+      "title": "How to Use AI to Grow Your Business to ,000/Month: Updated Guide for 2026",
+      "date": "2026-07-23",
+      "cursor": 298
     }
   ]
 }
