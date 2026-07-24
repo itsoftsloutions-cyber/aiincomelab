@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-06-29T16:09:45.404Z",
-      "event": "published",
-      "slug": "chatgpt-vs-claude-vs-gemini-which-ai-is-best-for-making-money-2026-06-29",
-      "title": "ChatGPT vs Claude vs Gemini: Which AI Is Best for Making Money: Updated Guide for 2026",
-      "date": "2026-06-29",
-      "cursor": 108
-    },
-    {
       "at": "2026-06-29T20:11:15.404Z",
       "event": "published",
       "slug": "how-to-make-500-month-with-an-ai-blog-realistic-guide-2026-06-29",
@@ -1599,6 +1591,14 @@
       "title": "Best AI Tools to Make Money Online in 2026: Updated Guide for 2026",
       "date": "2026-07-24",
       "cursor": 307
+    },
+    {
+      "at": "2026-07-24T19:43:05.236Z",
+      "event": "published",
+      "slug": "how-to-start-an-ai-blog-that-ranks-on-google-2026-07-24",
+      "title": "How to Start an AI Blog That Ranks on Google: Updated Guide for 2026",
+      "date": "2026-07-24",
+      "cursor": 308
     }
   ]
 }
