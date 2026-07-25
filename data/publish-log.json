@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-07-01T10:09:07.099Z",
-      "event": "published",
-      "slug": "google-discovery-traffic-how-to-get-millions-of-clicks-from-google-2026-07-01",
-      "title": "Google Discovery Traffic: How to Get Millions of Clicks from Google: Updated Guide for 2026",
-      "date": "2026-07-01",
-      "cursor": 118
-    },
-    {
       "at": "2026-07-01T14:54:36.338Z",
       "event": "published",
       "slug": "ai-tools-for-social-media-grow-to-10-000-followers-faster-2026-07-01",
@@ -1599,6 +1591,14 @@
       "title": "How to Make Money with ChatGPT: 10 Proven Methods: Updated Guide for 2026",
       "date": "2026-07-25",
       "cursor": 317
+    },
+    {
+      "at": "2026-07-25T19:23:47.331Z",
+      "event": "published",
+      "slug": "youtube-automation-with-ai-earn-without-showing-your-face-2026-07-25",
+      "title": "YouTube Automation with AI: Earn Without Showing Your Face: Updated Guide for 2026",
+      "date": "2026-07-25",
+      "cursor": 318
     }
   ]
 }
