@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-07-05T23:14:42.125Z",
-      "event": "published",
-      "slug": "how-to-start-an-ai-blog-that-ranks-on-google-2026-07-05",
-      "title": "How to Start an AI Blog That Ranks on Google: Updated Guide for 2026",
-      "date": "2026-07-05",
-      "cursor": 155
-    },
-    {
       "at": "2026-07-06T04:35:26.567Z",
       "event": "published",
       "slug": "ai-productivity-workflow-do-8-hours-of-work-in-3-2026-07-06",
@@ -1599,6 +1591,14 @@
       "title": "AI Automation Tools for Small Business: Save 15 Hours Per Week: Updated Guide for 2026",
       "date": "2026-07-30",
       "cursor": 354
+    },
+    {
+      "at": "2026-07-30T06:37:35.436Z",
+      "event": "published",
+      "slug": "how-to-make-30-50-day-with-ai-minimum-income-guide-for-beginners-2026-07-30",
+      "title": "How to Make $30-$50/Day with AI: Minimum Income Guide for Beginners: Updated Guide for 2026",
+      "date": "2026-07-30",
+      "cursor": 355
     }
   ]
 }
