@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-07-10T23:10:56.013Z",
-      "event": "published",
-      "slug": "top-10-ai-side-hustles-you-can-start-this-weekend-2026-07-10",
-      "title": "Top 10 AI Side Hustles You Can Start This Weekend: Updated Guide for 2026",
-      "date": "2026-07-10",
-      "cursor": 188
-    },
-    {
       "at": "2026-07-11T03:35:52.006Z",
       "event": "published",
       "slug": "google-search-console-for-bloggers-the-complete-guide-2026-07-11",
@@ -1599,6 +1591,14 @@
       "title": "How to Make  Per Day Online with No Investment: Updated Guide for 2026",
       "date": "2026-08-02",
       "cursor": 387
+    },
+    {
+      "at": "2026-08-02T23:06:15.334Z",
+      "event": "published",
+      "slug": "ai-resume-builder-get-more-interviews-with-ai-optimized-cvs-2026-08-02",
+      "title": "AI Resume Builder: Get More Interviews with AI-Optimized CVs: Updated Guide for 2026",
+      "date": "2026-08-02",
+      "cursor": 388
     }
   ]
 }
