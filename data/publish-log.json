@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-07-11T19:21:35.521Z",
-      "event": "published",
-      "slug": "how-to-use-ai-to-grow-your-business-to-000-month-2026-07-11",
-      "title": "How to Use AI to Grow Your Business to ,000/Month: Updated Guide for 2026",
-      "date": "2026-07-11",
-      "cursor": 196
-    },
-    {
       "at": "2026-07-11T21:01:31.587Z",
       "event": "published",
       "slug": "ai-tools-for-content-creators-complete-toolkit-for-2026-2026-07-11",
@@ -1599,6 +1591,14 @@
       "title": "AI for E-commerce: Boost Sales by 30% with These Tools: Updated Guide for 2026",
       "date": "2026-08-03",
       "cursor": 395
+    },
+    {
+      "at": "2026-08-03T23:15:52.035Z",
+      "event": "published",
+      "slug": "how-to-build-a-personal-brand-online-using-ai-2026-08-03",
+      "title": "How to Build a Personal Brand Online Using AI: Updated Guide for 2026",
+      "date": "2026-08-03",
+      "cursor": 396
     }
   ]
 }
