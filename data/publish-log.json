@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-07-21T17:40:13.475Z",
-      "event": "published",
-      "slug": "canva-ai-features-how-to-design-like-a-pro-for-free-2026-07-21",
-      "title": "Canva AI Features: How to Design Like a Pro for Free: Updated Guide for 2026",
-      "date": "2026-07-21",
-      "cursor": 282
-    },
-    {
       "at": "2026-07-21T19:46:35.364Z",
       "event": "published",
       "slug": "how-to-automate-your-blog-with-ai-publish-without-burnout-2026-07-21",
@@ -1599,6 +1591,14 @@
       "title": "How to Use AI to Write a Blog Post in 30 Minutes: Updated Guide for 2026",
       "date": "2026-08-12",
       "cursor": 481
+    },
+    {
+      "at": "2026-08-12T22:56:01.852Z",
+      "event": "published",
+      "slug": "dropshipping-with-ai-automate-your-store-and-scale-faster-2026-08-12",
+      "title": "Dropshipping with AI: Automate Your Store and Scale Faster: Updated Guide for 2026",
+      "date": "2026-08-12",
+      "cursor": 482
     }
   ]
 }
