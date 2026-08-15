@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-07-25T11:22:53.552Z",
-      "event": "published",
-      "slug": "google-adsense-approval-a-complete-beginner-guide-2026-07-25",
-      "title": "Google AdSense Approval: A Complete Beginner Guide: Updated Guide for 2026",
-      "date": "2026-07-25",
-      "cursor": 314
-    },
-    {
       "at": "2026-07-25T13:57:21.526Z",
       "event": "published",
       "slug": "seo-for-beginners-how-to-rank-your-first-blog-post-on-google-2026-07-25",
@@ -1599,6 +1591,14 @@
       "title": "AI Productivity Workflow: Do 8 Hours of Work in 3: Updated Guide for 2026",
       "date": "2026-08-15",
       "cursor": 513
+    },
+    {
+      "at": "2026-08-15T18:44:00.279Z",
+      "event": "published",
+      "slug": "best-free-ai-tools-you-can-use-today-2026-08-15",
+      "title": "Best Free AI Tools You Can Use Today: Updated Guide for 2026",
+      "date": "2026-08-15",
+      "cursor": 514
     }
   ]
 }
