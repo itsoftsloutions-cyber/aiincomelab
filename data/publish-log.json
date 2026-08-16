@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-07-26T19:31:29.938Z",
-      "event": "published",
-      "slug": "ai-writing-tools-compared-which-one-actually-helps-you-rank-2026-07-26",
-      "title": "AI Writing Tools Compared: Which One Actually Helps You Rank?: Updated Guide for 2026",
-      "date": "2026-07-26",
-      "cursor": 327
-    },
-    {
       "at": "2026-07-26T21:08:44.568Z",
       "event": "published",
       "slug": "how-to-use-ai-to-write-a-blog-post-in-30-minutes-2026-07-26",
@@ -1599,6 +1591,14 @@
       "title": "Google Discovery Traffic: How to Get Millions of Clicks from Google: Updated Guide for 2026",
       "date": "2026-08-16",
       "cursor": 526
+    },
+    {
+      "at": "2026-08-16T20:33:45.726Z",
+      "event": "published",
+      "slug": "ai-tools-for-social-media-grow-to-10-000-followers-faster-2026-08-16",
+      "title": "AI Tools for Social Media: Grow to 10,000 Followers Faster: Updated Guide for 2026",
+      "date": "2026-08-16",
+      "cursor": 527
     }
   ]
 }
