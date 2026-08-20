@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-01T19:23:32.909Z",
-      "event": "published",
-      "slug": "jasper-ai-review-2026-is-it-worth-the-price-for-bloggers-2026-08-01",
-      "title": "Jasper AI Review 2026: Is It Worth the Price for Bloggers?: Updated Guide for 2026",
-      "date": "2026-08-01",
-      "cursor": 376
-    },
-    {
       "at": "2026-08-01T21:06:32.045Z",
       "event": "published",
       "slug": "how-to-make-money-with-ai-on-fiverr-in-2026-2026-08-01",
@@ -1599,6 +1591,14 @@
       "title": "Midjourney for Beginners: Create and Sell AI Art: Updated Guide for 2026",
       "date": "2026-08-20",
       "cursor": 575
+    },
+    {
+      "at": "2026-08-20T22:39:13.828Z",
+      "event": "published",
+      "slug": "email-marketing-with-ai-build-a-list-and-earn-1-per-subscriber-2026-08-20",
+      "title": "Email Marketing with AI: Build a List and Earn $1 Per Subscriber: Updated Guide for 2026",
+      "date": "2026-08-20",
+      "cursor": 576
     }
   ]
 }
