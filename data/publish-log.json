@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-03T23:15:52.035Z",
-      "event": "published",
-      "slug": "how-to-build-a-personal-brand-online-using-ai-2026-08-03",
-      "title": "How to Build a Personal Brand Online Using AI: Updated Guide for 2026",
-      "date": "2026-08-03",
-      "cursor": 396
-    },
-    {
       "at": "2026-08-04T03:31:38.158Z",
       "event": "published",
       "slug": "ai-keyword-research-find-low-competition-keywords-that-rank-2026-08-04",
@@ -1599,6 +1591,14 @@
       "title": "AI for Real Estate: Tools That Save Agents 10 Hours Per Week: Updated Guide for 2026",
       "date": "2026-08-22",
       "cursor": 595
+    },
+    {
+      "at": "2026-08-22T14:33:22.256Z",
+      "event": "published",
+      "slug": "top-10-ai-side-hustles-you-can-start-this-weekend-2026-08-22",
+      "title": "Top 10 AI Side Hustles You Can Start This Weekend: Updated Guide for 2026",
+      "date": "2026-08-22",
+      "cursor": 596
     }
   ]
 }
