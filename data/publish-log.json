@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-07T19:10:30.965Z",
-      "event": "published",
-      "slug": "ai-tools-for-social-media-grow-to-10-000-followers-faster-2026-08-07",
-      "title": "AI Tools for Social Media: Grow to 10,000 Followers Faster: Updated Guide for 2026",
-      "date": "2026-08-07",
-      "cursor": 425
-    },
-    {
       "at": "2026-08-07T20:53:25.126Z",
       "event": "published",
       "slug": "how-to-build-a-niche-website-that-earns-000-month-2026-08-07",
@@ -1599,6 +1591,14 @@
       "title": "YouTube Automation with AI: Earn Without Showing Your Face: Updated Guide for 2026",
       "date": "2026-08-24",
       "cursor": 624
+    },
+    {
+      "at": "2026-08-25T01:48:03.074Z",
+      "event": "published",
+      "slug": "ai-freelancing-how-to-charge-50-150-hour-using-ai-tools-2026-08-25",
+      "title": "AI Freelancing: How to Charge $50-$150/Hour Using AI Tools: Updated Guide for 2026",
+      "date": "2026-08-25",
+      "cursor": 625
     }
   ]
 }
