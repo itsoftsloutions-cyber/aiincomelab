@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-09T05:15:13.423Z",
-      "event": "published",
-      "slug": "notion-ai-vs-chatgpt-which-is-better-for-productivity-2026-08-09",
-      "title": "Notion AI vs ChatGPT: Which Is Better for Productivity?: Updated Guide for 2026",
-      "date": "2026-08-09",
-      "cursor": 440
-    },
-    {
       "at": "2026-08-09T07:10:56.522Z",
       "event": "published",
       "slug": "how-to-start-a-podcast-with-ai-launch-in-one-weekend-2026-08-09",
@@ -1599,6 +1591,14 @@
       "title": "Canva AI Features: How to Design Like a Pro for Free: Updated Guide for 2026",
       "date": "2026-08-26",
       "cursor": 639
+    },
+    {
+      "at": "2026-08-26T07:04:13.454Z",
+      "event": "published",
+      "slug": "how-to-automate-your-blog-with-ai-publish-without-burnout-2026-08-26",
+      "title": "How to Automate Your Blog With AI: Publish Without Burnout: Updated Guide for 2026",
+      "date": "2026-08-26",
+      "cursor": 640
     }
   ]
 }
