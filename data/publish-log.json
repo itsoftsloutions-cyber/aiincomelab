@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-11T05:18:17.635Z",
-      "event": "published",
-      "slug": "ai-productivity-workflow-do-8-hours-of-work-in-3-2026-08-11",
-      "title": "AI Productivity Workflow: Do 8 Hours of Work in 3: Updated Guide for 2026",
-      "date": "2026-08-11",
-      "cursor": 462
-    },
-    {
       "at": "2026-08-11T07:23:39.783Z",
       "event": "published",
       "slug": "best-free-ai-tools-you-can-use-today-2026-08-11",
@@ -1599,6 +1591,14 @@
       "title": "How to Make $30-$50/Day with AI: Minimum Income Guide for Beginners: Updated Guide for 2026",
       "date": "2026-08-31",
       "cursor": 661
+    },
+    {
+      "at": "2026-08-31T13:35:33.441Z",
+      "event": "published",
+      "slug": "5-ai-methods-that-pay-20-100-day-real-earnings-data-2026-08-31",
+      "title": "5 AI Methods That Pay $20-$100/Day (Real Earnings Data): Updated Guide for 2026",
+      "date": "2026-08-31",
+      "cursor": 662
     }
   ]
 }
