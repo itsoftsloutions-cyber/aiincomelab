@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-15T04:41:58.756Z",
-      "event": "published",
-      "slug": "ai-automation-tools-for-small-business-save-15-hours-per-week-2026-08-15",
-      "title": "AI Automation Tools for Small Business: Save 15 Hours Per Week: Updated Guide for 2026",
-      "date": "2026-08-15",
-      "cursor": 507
-    },
-    {
       "at": "2026-08-15T06:54:16.973Z",
       "event": "published",
       "slug": "how-to-make-30-50-day-with-ai-minimum-income-guide-for-beginners-2026-08-15",
@@ -1599,6 +1591,14 @@
       "title": "How to Use AI to Grow Your Business to ,000/Month: Updated Guide for 2026",
       "date": "2026-09-09",
       "cursor": 706
+    },
+    {
+      "at": "2026-09-09T12:56:03.279Z",
+      "event": "published",
+      "slug": "ai-tools-for-content-creators-complete-toolkit-for-2026-2026-09-09",
+      "title": "AI Tools for Content Creators: Complete Toolkit for 2026: Updated Guide for 2026",
+      "date": "2026-09-09",
+      "cursor": 707
     }
   ]
 }
