@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-17T13:02:07.157Z",
-      "event": "published",
-      "slug": "print-on-demand-with-ai-design-products-without-any-skills-2026-08-17",
-      "title": "Print on Demand with AI: Design Products Without Any Skills: Updated Guide for 2026",
-      "date": "2026-08-17",
-      "cursor": 535
-    },
-    {
       "at": "2026-08-17T14:38:14.802Z",
       "event": "published",
       "slug": "how-to-create-and-sell-an-ai-course-online-for-2026-08-17",
@@ -1599,6 +1591,14 @@
       "title": "How to Make Money with AI on Fiverr in 2026: Updated Guide for 2026",
       "date": "2026-09-15",
       "cursor": 734
+    },
+    {
+      "at": "2026-09-16T04:42:46.045Z",
+      "event": "published",
+      "slug": "ai-writing-tools-compared-which-one-actually-helps-you-rank-2026-09-16",
+      "title": "AI Writing Tools Compared: Which One Actually Helps You Rank?: Updated Guide for 2026",
+      "date": "2026-09-16",
+      "cursor": 735
     }
   ]
 }
