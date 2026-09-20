@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-19T03:07:19.362Z",
-      "event": "published",
-      "slug": "ai-tools-for-content-creators-complete-toolkit-for-2026-2026-08-19",
-      "title": "AI Tools for Content Creators: Complete Toolkit for 2026: Updated Guide for 2026",
-      "date": "2026-08-19",
-      "cursor": 554
-    },
-    {
       "at": "2026-08-19T04:47:52.990Z",
       "event": "published",
       "slug": "ai-business-ideas-that-actually-make-money-in-2026-2026-08-19",
@@ -1599,6 +1591,14 @@
       "title": "How to Build a Personal Brand Online Using AI: Updated Guide for 2026",
       "date": "2026-09-20",
       "cursor": 753
+    },
+    {
+      "at": "2026-09-20T04:50:15.854Z",
+      "event": "published",
+      "slug": "ai-keyword-research-find-low-competition-keywords-that-rank-2026-09-20",
+      "title": "AI Keyword Research: Find Low-Competition Keywords That Rank: Updated Guide for 2026",
+      "date": "2026-09-20",
+      "cursor": 754
     }
   ]
 }
