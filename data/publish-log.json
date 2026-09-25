@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-21T04:50:08.715Z",
-      "event": "published",
-      "slug": "how-to-build-a-niche-website-that-earns-000-month-2026-08-21",
-      "title": "How to Build a Niche Website That Earns ,000/Month: Updated Guide for 2026",
-      "date": "2026-08-21",
-      "cursor": 579
-    },
-    {
       "at": "2026-08-21T07:03:16.635Z",
       "event": "published",
       "slug": "jasper-ai-review-2026-is-it-worth-the-price-for-bloggers-2026-08-21",
@@ -1599,6 +1591,14 @@
       "title": "AI Freelancing: How to Charge $50-$150/Hour Using AI Tools: Updated Guide for 2026",
       "date": "2026-09-25",
       "cursor": 778
+    },
+    {
+      "at": "2026-09-25T18:31:08.755Z",
+      "event": "published",
+      "slug": "midjourney-for-beginners-create-and-sell-ai-art-2026-09-25",
+      "title": "Midjourney for Beginners: Create and Sell AI Art: Updated Guide for 2026",
+      "date": "2026-09-25",
+      "cursor": 779
     }
   ]
 }
