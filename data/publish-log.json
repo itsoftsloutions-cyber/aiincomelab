@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-24T22:38:57.950Z",
-      "event": "published",
-      "slug": "youtube-automation-with-ai-earn-without-showing-your-face-2026-08-24",
-      "title": "YouTube Automation with AI: Earn Without Showing Your Face: Updated Guide for 2026",
-      "date": "2026-08-24",
-      "cursor": 624
-    },
-    {
       "at": "2026-08-25T01:48:03.074Z",
       "event": "published",
       "slug": "ai-freelancing-how-to-charge-50-150-hour-using-ai-tools-2026-08-25",
@@ -1599,6 +1591,14 @@
       "title": "How to Make $500/Month with an AI Blog (Realistic Guide): Updated Guide for 2026",
       "date": "2026-10-06",
       "cursor": 823
+    },
+    {
+      "at": "2026-10-07T01:28:24.954Z",
+      "event": "published",
+      "slug": "google-adsense-approval-a-complete-beginner-guide-2026-10-07",
+      "title": "Google AdSense Approval: A Complete Beginner Guide: Updated Guide for 2026",
+      "date": "2026-10-07",
+      "cursor": 824
     }
   ]
 }
