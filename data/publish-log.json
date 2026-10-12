@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-08-26T16:55:32.374Z",
-      "event": "published",
-      "slug": "how-to-start-a-podcast-with-ai-launch-in-one-weekend-2026-08-26",
-      "title": "How to Start a Podcast with AI: Launch in One Weekend: Updated Guide for 2026",
-      "date": "2026-08-26",
-      "cursor": 645
-    },
-    {
       "at": "2026-08-26T19:58:03.189Z",
       "event": "published",
       "slug": "ai-for-real-estate-tools-that-save-agents-10-hours-per-week-2026-08-26",
@@ -1599,6 +1591,14 @@
       "title": "How to Automate Your Blog With AI: Publish Without Burnout: Updated Guide for 2026",
       "date": "2026-10-12",
       "cursor": 844
+    },
+    {
+      "at": "2026-10-12T22:54:03.869Z",
+      "event": "published",
+      "slug": "best-ai-tools-for-students-study-smarter-not-harder-2026-10-12",
+      "title": "Best AI Tools for Students: Study Smarter, Not Harder: Updated Guide for 2026",
+      "date": "2026-10-12",
+      "cursor": 845
     }
   ]
 }
