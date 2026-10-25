@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-09-08T16:34:07.636Z",
-      "event": "published",
-      "slug": "ai-keyword-research-find-low-competition-keywords-that-rank-2026-09-08",
-      "title": "AI Keyword Research: Find Low-Competition Keywords That Rank: Updated Guide for 2026",
-      "date": "2026-09-08",
-      "cursor": 703
-    },
-    {
       "at": "2026-09-08T21:04:49.356Z",
       "event": "published",
       "slug": "how-to-monetize-a-blog-with-no-traffic-yet-2026-09-08",
@@ -1599,6 +1591,14 @@
       "title": "Top 10 AI Side Hustles You Can Start This Weekend: Updated Guide for 2026",
       "date": "2026-10-25",
       "cursor": 902
+    },
+    {
+      "at": "2026-10-25T16:05:06.441Z",
+      "event": "published",
+      "slug": "google-search-console-for-bloggers-the-complete-guide-2026-10-25",
+      "title": "Google Search Console for Bloggers: The Complete Guide: Updated Guide for 2026",
+      "date": "2026-10-25",
+      "cursor": 903
     }
   ]
 }
