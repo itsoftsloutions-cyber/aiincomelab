@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-09-17T07:34:21.683Z",
-      "event": "published",
-      "slug": "how-to-create-and-sell-an-ai-course-online-for-2026-09-17",
-      "title": "How to Create and Sell an AI Course Online for +: Updated Guide for 2026",
-      "date": "2026-09-17",
-      "cursor": 740
-    },
-    {
       "at": "2026-09-17T13:22:57.069Z",
       "event": "published",
       "slug": "canva-ai-features-how-to-design-like-a-pro-for-free-2026-09-17",
@@ -1599,6 +1591,14 @@
       "title": "AI Writing Tools Compared: Which One Actually Helps You Rank?: Updated Guide for 2026",
       "date": "2026-11-03",
       "cursor": 939
+    },
+    {
+      "at": "2026-11-04T06:05:04.835Z",
+      "event": "published",
+      "slug": "how-to-use-ai-to-write-a-blog-post-in-30-minutes-2026-11-04",
+      "title": "How to Use AI to Write a Blog Post in 30 Minutes: Updated Guide for 2026",
+      "date": "2026-11-04",
+      "cursor": 940
     }
   ]
 }
