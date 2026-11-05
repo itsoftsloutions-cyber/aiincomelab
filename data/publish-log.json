@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-09-18T11:06:24.942Z",
-      "event": "published",
-      "slug": "ai-resume-builder-get-more-interviews-with-ai-optimized-cvs-2026-09-18",
-      "title": "AI Resume Builder: Get More Interviews with AI-Optimized CVs: Updated Guide for 2026",
-      "date": "2026-09-18",
-      "cursor": 745
-    },
-    {
       "at": "2026-09-18T16:19:41.212Z",
       "event": "published",
       "slug": "notion-ai-vs-chatgpt-which-is-better-for-productivity-2026-09-18",
@@ -1599,6 +1591,14 @@
       "title": "How to Create and Sell an AI Course Online for +: Updated Guide for 2026",
       "date": "2026-11-05",
       "cursor": 944
+    },
+    {
+      "at": "2026-11-05T21:01:42.820Z",
+      "event": "published",
+      "slug": "canva-ai-features-how-to-design-like-a-pro-for-free-2026-11-05",
+      "title": "Canva AI Features: How to Design Like a Pro for Free: Updated Guide for 2026",
+      "date": "2026-11-05",
+      "cursor": 945
     }
   ]
 }
