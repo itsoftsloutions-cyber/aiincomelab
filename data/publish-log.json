@@ -1,14 +1,6 @@
 {
   "events": [
     {
-      "at": "2026-09-24T17:04:20.013Z",
-      "event": "published",
-      "slug": "seo-for-beginners-how-to-rank-your-first-blog-post-on-google-2026-09-24",
-      "title": "SEO for Beginners: How to Rank Your First Blog Post on Google: Updated Guide for 2026",
-      "date": "2026-09-24",
-      "cursor": 774
-    },
-    {
       "at": "2026-09-24T21:27:22.151Z",
       "event": "published",
       "slug": "best-ai-tools-for-passive-income-in-2026-2026-09-24",
@@ -1599,6 +1591,14 @@
       "title": "Best Free AI Tools You Can Use Today: Updated Guide for 2026",
       "date": "2026-11-14",
       "cursor": 973
+    },
+    {
+      "at": "2026-11-14T14:58:39.862Z",
+      "event": "published",
+      "slug": "ai-affiliate-marketing-a-beginner-s-playbook-2026-11-14",
+      "title": "AI Affiliate Marketing: A Beginner's Playbook: Updated Guide for 2026",
+      "date": "2026-11-14",
+      "cursor": 974
     }
   ]
 }
